@@ -1,3 +1,5 @@
+import { syncJournalEntry, syncWeight, syncCompletedSession, syncCheckIn, syncPR } from './sync'
+
 export type JournalEntry = {
   date: string
   timeOfDay: 'morning' | 'evening'
@@ -20,6 +22,23 @@ export type CompletedSession = {
   completedSets: Record<string, number[]>
 }
 
+export type CheckInEntry = {
+  date: string
+  sessions: number
+  nutrition: number
+  sleep: number
+  energy: number
+  wins: string
+  struggles: string
+  goals: string
+}
+
+export type PREntry = {
+  lift: string
+  value: string
+  date: string
+}
+
 function getKey(userId: string, type: string) {
   return `ctc_${type}_${userId}`
 }
@@ -36,6 +55,7 @@ export function saveJournalEntry(userId: string, entry: JournalEntry) {
     entries.push(entry)
   }
   localStorage.setItem(key, JSON.stringify(entries))
+  syncJournalEntry(userId, entry)
 }
 
 export function getJournalEntries(userId: string): JournalEntry[] {
@@ -59,6 +79,7 @@ export function saveWeight(userId: string, entry: WeightEntry) {
   }
   entries.sort((a, b) => a.date.localeCompare(b.date))
   localStorage.setItem(key, JSON.stringify(entries))
+  syncWeight(userId, entry)
 }
 
 export function getWeights(userId: string): WeightEntry[] {
@@ -76,6 +97,7 @@ export function saveCompletedSession(userId: string, session: CompletedSession) 
   const sessions = getCompletedSessions(userId)
   sessions.push(session)
   localStorage.setItem(key, JSON.stringify(sessions))
+  syncCompletedSession(userId, session)
 }
 
 export function getCompletedSessions(userId: string): CompletedSession[] {
@@ -109,17 +131,6 @@ export function getStreak(userId: string): number {
   return streak
 }
 
-export type CheckInEntry = {
-  date: string
-  sessions: number
-  nutrition: number
-  sleep: number
-  energy: number
-  wins: string
-  struggles: string
-  goals: string
-}
-
 export function saveCheckIn(userId: string, entry: CheckInEntry) {
   const key = getKey(userId, 'checkins')
   const entries = getCheckIns(userId)
@@ -128,12 +139,32 @@ export function saveCheckIn(userId: string, entry: CheckInEntry) {
   else entries.push(entry)
   entries.sort((a, b) => b.date.localeCompare(a.date))
   localStorage.setItem(key, JSON.stringify(entries))
+  syncCheckIn(userId, entry)
 }
 
 export function getCheckIns(userId: string): CheckInEntry[] {
   try {
     const key = getKey(userId, 'checkins')
     const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+export function savePR(userId: string, entry: PREntry) {
+  const key = `ctc_prs_${userId}`
+  const prs = getPRs(userId)
+  const idx = prs.findIndex((p) => p.lift === entry.lift)
+  if (idx >= 0) prs[idx] = entry
+  else prs.push(entry)
+  localStorage.setItem(key, JSON.stringify(prs))
+  syncPR(userId, entry.lift, entry.value, entry.date)
+}
+
+export function getPRs(userId: string): PREntry[] {
+  try {
+    const raw = localStorage.getItem(`ctc_prs_${userId}`)
     return raw ? JSON.parse(raw) : []
   } catch {
     return []

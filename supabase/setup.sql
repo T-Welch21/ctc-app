@@ -1,4 +1,4 @@
--- Run this in the Supabase SQL Editor (Dashboard → SQL Editor → New Query)
+-- Run this in the Supabase SQL Editor (Dashboard > SQL Editor > New Query)
 -- This creates all tables needed for the CTC app
 
 -- Profiles table (extends Supabase auth.users)
@@ -13,10 +13,8 @@ create table if not exists public.profiles (
   updated_at timestamptz default now()
 );
 
--- Enable RLS
 alter table public.profiles enable row level security;
 
--- Users can read/update their own profile
 create policy "Users can view own profile"
   on public.profiles for select
   using (auth.uid() = id);
@@ -83,6 +81,45 @@ create policy "Users can manage own sessions"
   on public.completed_sessions for all
   using (auth.uid() = user_id);
 
+-- Weekly check-ins
+create table if not exists public.check_ins (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  date date not null,
+  sessions integer default 0,
+  nutrition integer check (nutrition between 1 and 10),
+  sleep integer check (sleep between 1 and 10),
+  energy integer check (energy between 1 and 10),
+  wins text,
+  struggles text,
+  goals text,
+  created_at timestamptz default now(),
+  unique(user_id, date)
+);
+
+alter table public.check_ins enable row level security;
+
+create policy "Users can manage own check-ins"
+  on public.check_ins for all
+  using (auth.uid() = user_id);
+
+-- Personal records (PRs)
+create table if not exists public.personal_records (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  lift text not null,
+  value text not null,
+  date date not null,
+  created_at timestamptz default now(),
+  unique(user_id, lift)
+);
+
+alter table public.personal_records enable row level security;
+
+create policy "Users can manage own PRs"
+  on public.personal_records for all
+  using (auth.uid() = user_id);
+
 -- Auto-create profile on signup
 create or replace function public.handle_new_user()
 returns trigger as $$
@@ -93,6 +130,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
-create or replace trigger on_auth_user_created
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();

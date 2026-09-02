@@ -2,26 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TrendingUp, Scale, Calendar, Award, X, ChevronRight, ChevronDown, ChevronUp, ClipboardCheck } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { getWeights, saveWeight, getCompletedSessions, getStreak, getCheckIns } from '../lib/storage'
-
-type PREntry = { lift: string; value: string; date: string }
-
-function getPRs(userId: string): PREntry[] {
-  try {
-    const raw = localStorage.getItem(`ctc_prs_${userId}`)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
-function savePR(userId: string, entry: PREntry) {
-  const prs = getPRs(userId)
-  const idx = prs.findIndex((p) => p.lift === entry.lift)
-  if (idx >= 0) prs[idx] = entry
-  else prs.push(entry)
-  localStorage.setItem(`ctc_prs_${userId}`, JSON.stringify(prs))
-}
+import { getWeights, saveWeight, getCompletedSessions, getStreak, getCheckIns, getPRs, savePR } from '../lib/storage'
 
 const lifts = ['Bench Press', 'Squat', 'Deadlift', '40-Yard Dash']
 
