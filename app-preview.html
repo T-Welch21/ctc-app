@@ -1,0 +1,1063 @@
+<title>CTC App Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0A0A0A;
+    --card: #141414;
+    --elevated: #1E1E1E;
+    --lime: #B3FF1D;
+    --lime-dim: #8BCC00;
+    --lime-glow: rgba(179, 255, 29, 0.15);
+    --text: #F5F5F0;
+    --text-sec: #A0A0A0;
+    --text-muted: #666666;
+    --border: #2A2A2A;
+    --border-lt: #333;
+    --warning: #FFB800;
+    --indigo: #818cf8;
+    --danger: #FF4444;
+    --success: #00D26A;
+    --display: 'Space Grotesk', system-ui, sans-serif;
+    --body: 'Inter', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lime-glow) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    animation: drift 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .2; }
+    50% { transform: translate(-50%, -50%) scale(1.25); opacity: .35; }
+  }
+
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    position: relative;
+  }
+
+  .hero h1 span { color: var(--lime); }
+
+  .tagline {
+    font-family: var(--display);
+    font-size: .7rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 1rem;
+  }
+
+  .hero-sub {
+    color: var(--text-sec);
+    font-size: .95rem;
+    margin-top: 1.5rem;
+    max-width: 32ch;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: .5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+  }
+
+  .badge {
+    font-family: var(--display);
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .35rem .75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-sec);
+    background: var(--card);
+  }
+
+  .badge--lime {
+    border-color: color-mix(in srgb, var(--lime) 30%, transparent);
+    color: var(--lime);
+    background: color-mix(in srgb, var(--lime) 8%, var(--card));
+  }
+
+  /* ---- Screens section ---- */
+  .section {
+    padding: 4rem 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--display);
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin-bottom: .5rem;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+    font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  .section-desc {
+    color: var(--text-sec);
+    font-size: .85rem;
+    max-width: 50ch;
+    line-height: 1.55;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Phone frames */
+  .phone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  .phone {
+    width: 260px;
+    border-radius: 28px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    position: relative;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 22px;
+    background: var(--bg);
+    border-radius: 0 0 14px 14px;
+    border: 2px solid var(--border);
+    border-top: none;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    padding: 32px 16px 16px;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-label {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: .8rem;
+    color: var(--text-sec);
+    text-align: center;
+  }
+
+  /* --- Shared UI elements inside phones --- */
+  .ph-eyebrow {
+    font-family: var(--display);
+    font-size: .5rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--text-sec);
+    margin-bottom: .2rem;
+  }
+
+  .ph-heading {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .ph-sub {
+    font-size: .65rem;
+    color: var(--text-muted);
+    margin-top: .15rem;
+  }
+
+  .ph-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: .75rem;
+    margin-top: .5rem;
+  }
+
+  .ph-card--glow {
+    border-color: color-mix(in srgb, var(--lime) 25%, transparent);
+  }
+
+  .ph-pill {
+    display: inline-block;
+    font-family: var(--display);
+    font-size: .45rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .2rem .4rem;
+    border-radius: 999px;
+  }
+
+  .ph-pill--lime {
+    background: color-mix(in srgb, var(--lime) 12%, transparent);
+    color: var(--lime);
+  }
+
+  .ph-pill--warn {
+    background: color-mix(in srgb, var(--warning) 12%, transparent);
+    color: var(--warning);
+  }
+
+  .ph-row {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .ph-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .ph-btn {
+    display: block;
+    width: 100%;
+    padding: .55rem;
+    border-radius: 10px;
+    border: none;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: .7rem;
+    text-align: center;
+    cursor: default;
+  }
+
+  .ph-btn--lime {
+    background: var(--lime);
+    color: var(--bg);
+    box-shadow: 0 0 16px var(--lime-glow);
+  }
+
+  .ph-btn--outline {
+    background: transparent;
+    color: var(--lime);
+    border: 1px solid color-mix(in srgb, var(--lime) 30%, transparent);
+  }
+
+  .ph-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: .35rem;
+    margin-top: .5rem;
+  }
+
+  .ph-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: .45rem .25rem;
+    text-align: center;
+  }
+
+  .ph-stat-val {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: .9rem;
+  }
+
+  .ph-stat-label {
+    font-size: .4rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-top: .1rem;
+  }
+
+  /* bottom nav mock */
+  .ph-nav {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid var(--border);
+    padding-top: .5rem;
+  }
+
+  .ph-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .1rem;
+    font-family: var(--display);
+    font-size: .4rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .ph-nav-item--active { color: var(--lime); }
+
+  .ph-nav-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* streak bar */
+  .streak-row {
+    display: flex;
+    gap: 3px;
+    margin-top: .35rem;
+  }
+
+  .streak-bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--elevated);
+  }
+
+  .streak-bar--on { background: var(--lime); }
+
+  /* exercise row */
+  .ex-row {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  }
+
+  .ex-row:last-child { border-bottom: none; }
+
+  .ex-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: var(--elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-size: .55rem;
+    font-weight: 700;
+    color: var(--text-sec);
+    flex-shrink: 0;
+  }
+
+  .ex-num--done {
+    background: color-mix(in srgb, var(--lime) 20%, transparent);
+    color: var(--lime);
+  }
+
+  .ex-name {
+    font-family: var(--display);
+    font-size: .6rem;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .ex-meta {
+    font-size: .45rem;
+    color: var(--text-muted);
+  }
+
+  /* timer */
+  .timer-bar {
+    background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--lime) 30%, transparent);
+    border-radius: 12px;
+    padding: .5rem .6rem;
+    margin-top: .4rem;
+  }
+
+  .timer-val {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--lime);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer-track {
+    height: 4px;
+    background: var(--elevated);
+    border-radius: 2px;
+    margin-top: .35rem;
+    overflow: hidden;
+  }
+
+  .timer-fill {
+    height: 100%;
+    width: 40%;
+    background: var(--lime);
+    border-radius: 2px;
+  }
+
+  /* set buttons */
+  .set-row {
+    display: flex;
+    gap: .25rem;
+    margin-top: .25rem;
+  }
+
+  .set-btn {
+    flex: 1;
+    padding: .3rem;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    background: var(--elevated);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: .55rem;
+    color: var(--text-sec);
+    text-align: center;
+  }
+
+  .set-btn--done {
+    background: color-mix(in srgb, var(--lime) 20%, transparent);
+    border-color: var(--lime);
+    color: var(--lime);
+  }
+
+  /* slider mock */
+  .slider-mock {
+    height: 4px;
+    background: var(--elevated);
+    border-radius: 2px;
+    margin-top: .3rem;
+    position: relative;
+  }
+
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 8px var(--lime-glow);
+  }
+
+  /* roster row */
+  .roster-row {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem;
+    background: var(--elevated);
+    border-radius: 10px;
+    margin-top: .3rem;
+  }
+
+  .roster-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--lime) 10%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: .5rem;
+    color: var(--lime);
+    flex-shrink: 0;
+  }
+
+  .roster-info { flex: 1; min-width: 0; }
+
+  .roster-name {
+    font-family: var(--display);
+    font-size: .55rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .roster-email {
+    font-size: .4rem;
+    color: var(--text-muted);
+  }
+
+  /* chart mock */
+  .chart-wrap {
+    background: var(--elevated);
+    border-radius: 10px;
+    padding: .5rem;
+    margin-top: .35rem;
+  }
+
+  /* input mock */
+  .input-mock {
+    background: var(--elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .3rem .5rem;
+    font-size: .5rem;
+    color: var(--text-muted);
+  }
+
+  /* Features list */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .feat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+  }
+
+  .feat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+    margin-bottom: .6rem;
+  }
+
+  .feat-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: .85rem;
+    margin-bottom: .25rem;
+  }
+
+  .feat-desc {
+    font-size: .75rem;
+    color: var(--text-sec);
+    line-height: 1.45;
+  }
+
+  /* footer */
+  .footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .footer p {
+    font-size: .75rem;
+    color: var(--text-muted);
+  }
+
+  .footer a {
+    color: var(--lime);
+    text-decoration: none;
+  }
+
+  /* check */
+  .ck {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    font-size: .45rem;
+    flex-shrink: 0;
+  }
+
+  .ck--on {
+    background: var(--lime);
+    color: var(--bg);
+  }
+
+  .ck--off {
+    border: 1.5px solid var(--text-muted);
+  }
+
+  .devotional-text {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: .6rem;
+    color: var(--lime);
+    line-height: 1.5;
+  }
+</style>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>CALLED TO<br><span>COMPETE</span></h1>
+  <p class="tagline">Compete Harder &middot; Train Smarter &middot; Feel Better</p>
+  <p class="hero-sub">The complete digital training platform for Called to Compete athletes. Every feature Tyler needs, zero manual work.</p>
+  <div class="badge-row">
+    <span class="badge badge--lime">React + Vite</span>
+    <span class="badge badge--lime">Supabase Auth</span>
+    <span class="badge">PWA Ready</span>
+    <span class="badge">Offline First</span>
+    <span class="badge">Stripe (Soon)</span>
+  </div>
+</div>
+
+<!-- SCREENS -->
+<div class="section">
+  <p class="section-label">App Screens</p>
+  <p class="section-title">Every screen, built and working</p>
+  <p class="section-desc">Eight core pages, real data, live Supabase sync. Here's what the app looks like on a phone.</p>
+
+  <div class="phone-grid">
+
+    <!-- LOGIN -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen" style="justify-content:center;text-align:center;">
+          <div style="font-family:var(--display);font-size:1.4rem;font-weight:700;line-height:1.1;">CALLED TO<br><span style="color:var(--lime)">COMPETE</span></div>
+          <div style="font-size:.4rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);margin-top:.5rem;">Compete Harder &middot; Train Smarter &middot; Feel Better</div>
+          <div style="color:var(--text-sec);font-size:.55rem;margin-top:.6rem;">Welcome back. Time to work.</div>
+          <div style="margin-top:1rem;">
+            <div class="input-mock" style="margin-bottom:.3rem;">Email</div>
+            <div class="input-mock" style="margin-bottom:.5rem;">Password</div>
+            <div class="ph-btn ph-btn--lime">Sign In</div>
+          </div>
+          <div style="font-size:.45rem;color:var(--text-muted);margin-top:.6rem;">Forgot password?</div>
+          <div style="font-size:.45rem;color:var(--text-sec);margin-top:.3rem;">Don't have an account? <span style="color:var(--lime)">Sign up</span></div>
+        </div>
+      </div>
+      <p class="phone-label">Login</p>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-size:.55rem;color:var(--text-sec);">Good morning</div>
+              <div style="font-family:var(--display);font-size:1rem;font-weight:700;">Tyler <span style="color:var(--lime)">.</span></div>
+            </div>
+            <div style="width:18px;height:18px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--text-sec);">⚙</div>
+          </div>
+
+          <div class="ph-card" style="margin-top:.6rem;">
+            <div class="ph-row" style="margin-bottom:.25rem;">
+              <span style="font-size:.55rem;color:var(--lime);">🔥</span>
+              <span style="font-family:var(--display);font-size:.55rem;font-weight:600;">3 Day Streak</span>
+            </div>
+            <div class="streak-row">
+              <div class="streak-bar"></div>
+              <div class="streak-bar streak-bar--on"></div>
+              <div class="streak-bar streak-bar--on"></div>
+              <div class="streak-bar streak-bar--on"></div>
+              <div class="streak-bar"></div>
+              <div class="streak-bar"></div>
+              <div class="streak-bar" style="border:1px solid var(--border-lt);background:transparent;"></div>
+            </div>
+          </div>
+
+          <div class="ph-card" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div class="ph-eyebrow">Up Next</div>
+              <div style="font-family:var(--display);font-size:.65rem;font-weight:600;">Lower Body Power</div>
+              <div style="font-size:.45rem;color:var(--text-muted);margin-top:.1rem;">Athletic Performance · 55 min</div>
+            </div>
+            <div style="width:22px;height:22px;border-radius:8px;background:color-mix(in srgb,var(--lime) 10%,transparent);display:flex;align-items:center;justify-content:center;color:var(--lime);font-size:.6rem;">▶</div>
+          </div>
+
+          <div class="ph-card">
+            <div class="ph-row" style="margin-bottom:.3rem;">
+              <span style="font-size:.5rem;color:var(--lime);">❝</span>
+              <span class="ph-eyebrow" style="margin:0;">Daily Devotional</span>
+            </div>
+            <div class="devotional-text">"You were not created to settle. You were created to lead."</div>
+            <div style="font-size:.4rem;color:var(--text-muted);margin-top:.2rem;">— Coach Tyler</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-top:.4rem;">
+            <div class="ph-card" style="margin:0;"><div style="font-family:var(--display);font-size:.55rem;font-weight:600;">Weekly Check-in</div><div style="font-size:.4rem;color:var(--text-muted);">Log your progress</div></div>
+            <div class="ph-card" style="margin:0;"><div style="font-family:var(--display);font-size:.55rem;font-weight:600;">Message Coach</div><div style="font-size:.4rem;color:var(--text-muted);">Text Tyler directly</div></div>
+          </div>
+
+          <div class="ph-nav">
+            <div class="ph-nav-item ph-nav-item--active"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">💪</div>Training</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📖</div>Journal</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📈</div>Progress</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📊</div>Command</div>
+          </div>
+        </div>
+      </div>
+      <p class="phone-label">Dashboard</p>
+    </div>
+
+    <!-- TRAINING DAY -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div style="display:flex;align-items:center;gap:.3rem;margin-bottom:.15rem;">
+            <span style="font-size:.55rem;color:var(--text-sec);">←</span>
+            <div style="flex:1;">
+              <div style="font-size:.4rem;color:var(--text-sec);">Day 1</div>
+              <div style="font-family:var(--display);font-size:.75rem;font-weight:700;">Lower Body Power</div>
+            </div>
+            <div style="font-size:.4rem;color:var(--text-muted);">⏱ 55 min</div>
+          </div>
+
+          <div style="height:4px;background:var(--elevated);border-radius:2px;overflow:hidden;margin-bottom:.4rem;">
+            <div style="height:100%;width:35%;background:var(--lime);border-radius:2px;"></div>
+          </div>
+
+          <div class="timer-bar">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:.4rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:.1em;">Rest Timer</div>
+                <div class="timer-val">1:48</div>
+              </div>
+              <div style="font-size:.4rem;color:var(--text-muted);">Skip</div>
+            </div>
+            <div class="timer-track"><div class="timer-fill"></div></div>
+          </div>
+
+          <div class="ph-card">
+            <div class="ex-row">
+              <div class="ex-num ex-num--done">✓</div>
+              <div style="flex:1;"><div class="ex-name" style="color:var(--lime);">Barbell Back Squat</div><div class="ex-meta">4 sets × 6 · 3-1-1-0</div></div>
+            </div>
+            <div class="set-row">
+              <div class="set-btn set-btn--done">✓</div>
+              <div class="set-btn set-btn--done">✓</div>
+              <div class="set-btn">S3</div>
+              <div class="set-btn">S4</div>
+            </div>
+            <div style="display:flex;gap:.2rem;margin-top:.25rem;">
+              <div class="input-mock" style="flex:1;">225 lbs</div>
+              <div class="input-mock" style="flex:1;">Felt strong</div>
+            </div>
+          </div>
+
+          <div class="ph-card">
+            <div class="ex-row" style="border:none;">
+              <div class="ex-num">2</div>
+              <div style="flex:1;"><div class="ex-name">Romanian Deadlift</div><div class="ex-meta">3 sets × 8 · 2:00 rest</div></div>
+            </div>
+          </div>
+
+          <div class="ph-card">
+            <div class="ex-row" style="border:none;">
+              <div class="ex-num">3</div>
+              <div style="flex:1;"><div class="ex-name">Bulgarian Split Squat</div><div class="ex-meta">3 sets × 10 each · 1:30 rest</div></div>
+            </div>
+          </div>
+
+          <div class="ph-nav">
+            <div class="ph-nav-item"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item ph-nav-item--active"><div class="ph-nav-icon">💪</div>Training</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📖</div>Journal</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📈</div>Progress</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📊</div>Command</div>
+          </div>
+        </div>
+      </div>
+      <p class="phone-label">Training Day + Rest Timer</p>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-eyebrow">The Strongest Version</div>
+          <div class="ph-heading">Daily Journal</div>
+
+          <div style="display:flex;background:var(--card);border-radius:8px;padding:2px;margin-top:.5rem;border:1px solid var(--border);">
+            <div style="flex:1;text-align:center;padding:.3rem;border-radius:6px;background:color-mix(in srgb,var(--lime) 15%,transparent);color:var(--lime);font-size:.5rem;font-weight:500;">☀ Morning</div>
+            <div style="flex:1;text-align:center;padding:.3rem;font-size:.5rem;color:var(--text-muted);">🌙 Evening</div>
+          </div>
+
+          <div class="ph-card ph-card--glow">
+            <div class="ph-eyebrow">Today's Affirmation</div>
+            <div class="devotional-text">"I am disciplined in every area of my life."</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-top:.4rem;">
+            <div class="ph-card" style="margin:0;text-align:center;">
+              <div style="font-size:.5rem;color:var(--warning);">⚡ Energy</div>
+              <div class="slider-mock" style="margin:.25rem 0;"><div class="slider-thumb" style="left:70%;"></div></div>
+              <div style="font-family:var(--display);font-weight:700;color:var(--lime);">7</div>
+            </div>
+            <div class="ph-card" style="margin:0;text-align:center;">
+              <div style="font-size:.5rem;color:var(--indigo);">🧠 Mind</div>
+              <div class="slider-mock" style="margin:.25rem 0;"><div class="slider-thumb" style="left:80%;"></div></div>
+              <div style="font-family:var(--display);font-weight:700;color:var(--lime);">8</div>
+            </div>
+          </div>
+
+          <div class="ph-card">
+            <div class="ph-eyebrow">Needle Movers</div>
+            <div style="display:flex;flex-direction:column;gap:.25rem;margin-top:.2rem;">
+              <div class="ph-row"><div class="ck ck--on">✓</div><span style="font-size:.5rem;color:var(--text-sec);text-decoration:line-through;">Train with intensity</span></div>
+              <div class="ph-row"><div class="ck ck--on">✓</div><span style="font-size:.5rem;color:var(--text-sec);text-decoration:line-through;">Eat with purpose</span></div>
+              <div class="ph-row"><div class="ck ck--on">✓</div><span style="font-size:.5rem;color:var(--text-sec);text-decoration:line-through;">Hydrate (1 gallon)</span></div>
+              <div class="ph-row"><div class="ck ck--off"></div><span style="font-size:.5rem;">Read 10 pages</span></div>
+              <div class="ph-row"><div class="ck ck--off"></div><span style="font-size:.5rem;">No excuses today</span></div>
+            </div>
+          </div>
+
+          <div class="ph-btn ph-btn--lime" style="margin-top:.4rem;">Save Entry</div>
+
+          <div class="ph-nav">
+            <div class="ph-nav-item"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">💪</div>Training</div>
+            <div class="ph-nav-item ph-nav-item--active"><div class="ph-nav-icon">📖</div>Journal</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📈</div>Progress</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📊</div>Command</div>
+          </div>
+        </div>
+      </div>
+      <p class="phone-label">Daily Journal</p>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-heading">Progress</div>
+          <div class="ph-sub">Track your growth over time</div>
+
+          <div class="ph-stat-grid">
+            <div class="ph-stat"><div style="color:var(--lime);font-size:.5rem;margin-bottom:.15rem;">📅</div><div class="ph-stat-val">12</div><div class="ph-stat-label">Sessions</div></div>
+            <div class="ph-stat"><div style="color:var(--warning);font-size:.5rem;margin-bottom:.15rem;">📈</div><div class="ph-stat-val">5</div><div class="ph-stat-label">Streak</div></div>
+            <div class="ph-stat"><div style="color:var(--indigo);font-size:.5rem;margin-bottom:.15rem;">🏆</div><div class="ph-stat-val">3</div><div class="ph-stat-label">PRs Set</div></div>
+          </div>
+
+          <div class="ph-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+              <div class="ph-row"><span style="font-size:.5rem;">⚖</span><span style="font-family:var(--display);font-size:.55rem;font-weight:600;">Body Weight</span></div>
+              <span style="font-size:.45rem;color:var(--lime);">Log</span>
+            </div>
+            <div class="ph-row" style="gap:.3rem;margin-bottom:.2rem;">
+              <span style="font-family:var(--display);font-weight:700;font-size:1.1rem;color:var(--lime);">185</span>
+              <span style="font-size:.45rem;color:var(--text-muted);">lbs</span>
+              <span style="font-size:.4rem;color:var(--lime);margin-left:.2rem;">-1.5</span>
+            </div>
+            <div class="chart-wrap">
+              <svg viewBox="0 0 200 50" style="width:100%;height:40px;">
+                <defs>
+                  <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#B3FF1D" stop-opacity=".3"/>
+                    <stop offset="100%" stop-color="#B3FF1D" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,30 L28,28 L57,32 L85,25 L114,27 L142,20 L171,18 L200,15 L200,50 L0,50 Z" fill="url(#cg)"/>
+                <path d="M0,30 L28,28 L57,32 L85,25 L114,27 L142,20 L171,18 L200,15" fill="none" stroke="#B3FF1D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="200" cy="15" r="3.5" fill="#B3FF1D"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="ph-card">
+            <div style="font-family:var(--display);font-size:.55rem;font-weight:600;margin-bottom:.25rem;">Performance Markers</div>
+            <div class="ex-row"><span style="font-size:.5rem;flex:1;">Bench Press</span><span style="font-family:var(--display);font-size:.5rem;font-weight:600;color:var(--lime);">225 lbs</span></div>
+            <div class="ex-row"><span style="font-size:.5rem;flex:1;">Squat</span><span style="font-family:var(--display);font-size:.5rem;font-weight:600;color:var(--lime);">315 lbs</span></div>
+            <div class="ex-row"><span style="font-size:.5rem;flex:1;">Deadlift</span><span style="font-family:var(--display);font-size:.5rem;font-weight:600;color:var(--lime);">365 lbs</span></div>
+            <div class="ex-row"><span style="font-size:.5rem;flex:1;">40-Yard Dash</span><span style="font-size:.45rem;color:var(--text-muted);">Tap to log</span></div>
+          </div>
+
+          <div class="ph-nav">
+            <div class="ph-nav-item"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">💪</div>Training</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📖</div>Journal</div>
+            <div class="ph-nav-item ph-nav-item--active"><div class="ph-nav-icon">📈</div>Progress</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📊</div>Command</div>
+          </div>
+        </div>
+      </div>
+      <p class="phone-label">Progress + Weight Chart</p>
+    </div>
+
+    <!-- COMMAND CENTER -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-eyebrow">Coach View</div>
+          <div class="ph-heading">Command Center</div>
+
+          <div class="ph-stat-grid">
+            <div class="ph-stat"><div style="color:var(--lime);font-size:.5rem;margin-bottom:.1rem;">👥</div><div class="ph-stat-val">8</div><div class="ph-stat-label">Athletes</div></div>
+            <div class="ph-stat"><div style="color:var(--warning);font-size:.5rem;margin-bottom:.1rem;">💪</div><div class="ph-stat-val">2</div><div class="ph-stat-label">Programs</div></div>
+            <div class="ph-stat"><div style="color:var(--indigo);font-size:.5rem;margin-bottom:.1rem;">📊</div><div class="ph-stat-val">$1.6k</div><div class="ph-stat-label">MRR</div></div>
+          </div>
+
+          <div class="ph-card">
+            <div style="font-family:var(--display);font-size:.55rem;font-weight:600;margin-bottom:.3rem;">Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:.25rem;">
+              <div class="ph-row" style="padding:.25rem;border-radius:8px;">
+                <div style="width:22px;height:22px;border-radius:6px;background:var(--elevated);display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--lime);">📊</div>
+                <div><div style="font-family:var(--display);font-size:.5rem;font-weight:600;">CTC Admin Dashboard</div><div style="font-size:.35rem;color:var(--text-muted);">Manage clients, ledger, calendar</div></div>
+              </div>
+              <div class="ph-row" style="padding:.25rem;border-radius:8px;">
+                <div style="width:22px;height:22px;border-radius:6px;background:var(--elevated);display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--warning);">⭐</div>
+                <div><div style="font-family:var(--display);font-size:.5rem;font-weight:600;">Request a Review</div><div style="font-size:.35rem;color:var(--text-muted);">Send Google review link</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ph-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+              <div style="font-family:var(--display);font-size:.55rem;font-weight:600;">Athlete Roster</div>
+              <div style="font-size:.4rem;color:var(--text-muted);">↻</div>
+            </div>
+            <div class="roster-row"><div class="roster-avatar">M</div><div class="roster-info"><div class="roster-name">Marcus Johnson</div><div class="roster-email">marcus@email.com</div></div><div class="ph-pill ph-pill--lime">Active</div></div>
+            <div class="roster-row"><div class="roster-avatar">S</div><div class="roster-info"><div class="roster-name">Sarah Williams</div><div class="roster-email">sarah@email.com</div></div><div class="ph-pill ph-pill--lime">Active</div></div>
+            <div class="roster-row"><div class="roster-avatar">J</div><div class="roster-info"><div class="roster-name">James Davis</div><div class="roster-email">james@email.com</div></div><div class="ph-pill ph-pill--warn">New</div></div>
+          </div>
+
+          <div class="ph-nav">
+            <div class="ph-nav-item"><div class="ph-nav-icon">🏠</div>Home</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">💪</div>Training</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📖</div>Journal</div>
+            <div class="ph-nav-item"><div class="ph-nav-icon">📈</div>Progress</div>
+            <div class="ph-nav-item ph-nav-item--active"><div class="ph-nav-icon">📊</div>Command</div>
+          </div>
+        </div>
+      </div>
+      <p class="phone-label">Command Center (Coach)</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section">
+  <p class="section-label">What's Built</p>
+  <p class="section-title">Features shipping in v1</p>
+  <p class="section-desc">Everything that's live and working right now in the app.</p>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--lime) 12%,transparent);color:var(--lime);">🔐</div>
+      <div class="feat-title">Supabase Auth</div>
+      <div class="feat-desc">Email/password signup with password reset. Profile syncs to Supabase with localStorage fallback for offline use.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--warning) 12%,transparent);color:var(--warning);">⏱</div>
+      <div class="feat-title">Rest Timer</div>
+      <div class="feat-desc">Automatic countdown between sets. Pause, skip, dismiss. Phone vibration when rest is over. Reads rest time from each exercise.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--indigo) 12%,transparent);color:var(--indigo);">📝</div>
+      <div class="feat-title">Exercise Notes</div>
+      <div class="feat-desc">Log weight and notes per exercise during a session. Shows "last session" hints so athletes remember what they lifted.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--lime) 12%,transparent);color:var(--lime);">📊</div>
+      <div class="feat-title">Weight Trend Chart</div>
+      <div class="feat-desc">SVG line chart with gradient fill showing last 14 weigh-ins. Change indicator shows progress from previous entry.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--warning) 12%,transparent);color:var(--warning);">👥</div>
+      <div class="feat-title">Live Athlete Roster</div>
+      <div class="feat-desc">Command Center pulls athlete profiles from Supabase in real time. Shows active/new badges, join date, refresh button.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--indigo) 12%,transparent);color:var(--indigo);">📱</div>
+      <div class="feat-title">PWA + Offline</div>
+      <div class="feat-desc">Service worker, app manifest, installable on home screen. Dual storage: localStorage for instant/offline, Supabase for cross-device sync.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--lime) 12%,transparent);color:var(--lime);">🏆</div>
+      <div class="feat-title">Session Celebration</div>
+      <div class="feat-desc">Trophy overlay when all sets are completed. Shows session title and total sets crushed. Session data saved to storage.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon" style="background:color-mix(in srgb,var(--warning) 12%,transparent);color:var(--warning);">📖</div>
+      <div class="feat-title">Daily Journal</div>
+      <div class="feat-desc">Morning/evening toggle. Energy and mind sliders. Needle movers checklist. Gratitude prompt. Daily affirmation rotation. Full history.</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT'S NEXT -->
+<div class="section">
+  <p class="section-label">Roadmap</p>
+  <p class="section-title">Coming next</p>
+  <div class="features" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="feat" style="border-color:color-mix(in srgb,var(--lime) 15%,transparent);">
+      <div class="feat-title" style="font-size:.75rem;">Stripe Subscriptions</div>
+      <div class="feat-desc">In-app payment for programs. Auto-activates athlete accounts.</div>
+    </div>
+    <div class="feat" style="border-color:color-mix(in srgb,var(--lime) 15%,transparent);">
+      <div class="feat-title" style="font-size:.75rem;">Push Notifications</div>
+      <div class="feat-desc">Workout reminders, announcements from Coach Tyler.</div>
+    </div>
+    <div class="feat" style="border-color:color-mix(in srgb,var(--lime) 15%,transparent);">
+      <div class="feat-title" style="font-size:.75rem;">Video Library</div>
+      <div class="feat-desc">Exercise demo videos linked from each coaching cue.</div>
+    </div>
+    <div class="feat" style="border-color:color-mix(in srgb,var(--lime) 15%,transparent);">
+      <div class="feat-title" style="font-size:.75rem;">Broadcast Messages</div>
+      <div class="feat-desc">Tyler sends announcements to all athletes from Command Center.</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div style="font-family:var(--display);font-weight:700;font-size:1rem;margin-bottom:.5rem;">CALLED TO <span style="color:var(--lime);">COMPETE</span></div>
+  <p>Built by Tyler Welch & Gary &middot; Powered by React, Vite, Supabase</p>
+  <p style="margin-top:.25rem;"><a href="https://calledtocompete.net">calledtocompete.net</a></p>
+</div>
