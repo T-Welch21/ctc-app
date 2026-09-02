@@ -1,8 +1,14 @@
-import { Check, Play } from 'lucide-react'
+import { useState } from 'react'
+import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
-import { getCompletedSessions, getCurrentWeek } from '../lib/storage'
+import { getCompletedSessions, getCurrentWeek, getExerciseNotes } from '../lib/storage'
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr + 'T12:00:00')
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+}
 
 export default function Training() {
   const { user } = useAuth()
@@ -11,12 +17,21 @@ export default function Training() {
   const days = program.days
   const sessions = user ? getCompletedSessions(user.id) : []
   const todayStr = new Date().toISOString().split('T')[0]
+  const [showHistory, setShowHistory] = useState(false)
 
   const completedToday = new Set(
     sessions.filter((s) => s.date === todayStr).map((s) => s.dayIndex)
   )
   const completedDays = completedToday.size
   const currentWeek = user ? getCurrentWeek(user.id, program.weeks) : 1
+
+  const allNotes = user ? getExerciseNotes(user.id) : []
+  const pastSessions = [...sessions]
+    .reverse()
+    .filter((s) => s.date !== todayStr)
+    .slice(0, 10)
+
+  const uniqueDates = [...new Set(pastSessions.map((s) => s.date))]
 
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
@@ -88,6 +103,74 @@ export default function Training() {
           <p className="font-display font-semibold text-lime text-sm">
             {completedDays} of {days.length} sessions completed today
           </p>
+        </div>
+      )}
+
+      {/* Session history */}
+      {sessions.length > 0 && (
+        <div className="mt-6">
+          <button
+            onClick={() => setShowHistory(!showHistory)}
+            className="flex items-center gap-2 text-text-secondary text-sm mb-3"
+          >
+            <History size={16} />
+            <span className="font-display font-semibold">Session History</span>
+            <span className="text-text-muted text-xs">({sessions.length})</span>
+            {showHistory ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+
+          {showHistory && (
+            <div className="space-y-3 animate-fade-in">
+              {uniqueDates.length === 0 ? (
+                <p className="text-text-muted text-sm py-4 text-center">No past sessions yet</p>
+              ) : (
+                uniqueDates.map((date) => {
+                  const daySessions = pastSessions.filter((s) => s.date === date)
+                  return (
+                    <div key={date} className="rounded-2xl bg-bg-card border border-border p-4">
+                      <p className="font-display font-semibold text-sm mb-2">{formatDate(date)}</p>
+                      <div className="space-y-2">
+                        {daySessions.map((session, si) => {
+                          const day = program.days[session.dayIndex]
+                          if (!day) return null
+                          const totalSets = Object.values(session.completedSets).reduce(
+                            (acc, sets) => acc + sets.length, 0
+                          )
+                          const dayNotes = allNotes.filter(
+                            (n) => n.date === date && n.dayIndex === session.dayIndex
+                          )
+                          return (
+                            <div key={si} className="rounded-xl bg-bg-elevated p-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Dumbbell size={12} className="text-lime" />
+                                <span className="font-display font-semibold text-xs">{day.title}</span>
+                                <span className="text-text-muted text-[10px] ml-auto">{totalSets} sets</span>
+                              </div>
+                              {dayNotes.length > 0 && (
+                                <div className="mt-2 space-y-1">
+                                  {dayNotes.map((note, ni) => (
+                                    <div key={ni} className="flex items-center gap-2 text-[11px]">
+                                      <span className="text-text-secondary truncate flex-1">{note.exerciseName}</span>
+                                      {note.weight && (
+                                        <span className="text-lime font-display font-semibold">{note.weight} lbs</span>
+                                      )}
+                                      {note.notes && (
+                                        <span className="text-text-muted truncate max-w-[100px]">{note.notes}</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
