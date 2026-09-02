@@ -171,6 +171,46 @@ export function getPRs(userId: string): PREntry[] {
   }
 }
 
+export type ExerciseNote = {
+  date: string
+  dayIndex: number
+  exerciseName: string
+  weight: string
+  notes: string
+}
+
+export function saveExerciseNote(userId: string, note: ExerciseNote) {
+  const key = getKey(userId, 'exercise_notes')
+  const notes = getExerciseNotes(userId)
+  const idx = notes.findIndex(
+    (n) => n.date === note.date && n.dayIndex === note.dayIndex && n.exerciseName === note.exerciseName
+  )
+  if (idx >= 0) notes[idx] = note
+  else notes.push(note)
+  localStorage.setItem(key, JSON.stringify(notes))
+}
+
+export function getExerciseNotes(userId: string): ExerciseNote[] {
+  try {
+    const key = getKey(userId, 'exercise_notes')
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+export function getExerciseNotesForDay(userId: string, date: string, dayIndex: number): ExerciseNote[] {
+  return getExerciseNotes(userId).filter((n) => n.date === date && n.dayIndex === dayIndex)
+}
+
+export function getLastNoteForExercise(userId: string, exerciseName: string): ExerciseNote | null {
+  const notes = getExerciseNotes(userId).filter((n) => n.exerciseName === exerciseName)
+  if (notes.length === 0) return null
+  notes.sort((a, b) => b.date.localeCompare(a.date))
+  return notes[0]
+}
+
 export function getProgramStartDate(userId: string): string {
   const key = getKey(userId, 'program_start')
   const stored = localStorage.getItem(key)

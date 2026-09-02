@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
-import { saveCompletedSession } from '../lib/storage'
+import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise } from '../lib/storage'
 
 function parseRestSeconds(rest: string): number {
   if (!rest || rest === '-') return 0
@@ -31,6 +31,8 @@ export default function TrainingDay() {
   const [expandedExercise, setExpandedExercise] = useState<number | null>(0)
   const [sessionStarted, setSessionStarted] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [exerciseWeights, setExerciseWeights] = useState<Record<string, string>>({})
+  const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>({})
 
   const [timerSeconds, setTimerSeconds] = useState(0)
   const [timerRunning, setTimerRunning] = useState(false)
@@ -321,6 +323,37 @@ export default function TrainingDay() {
                         </div>
                       </div>
                     )}
+
+                    {/* Weight & notes */}
+                    {sessionStarted && (
+                      <div className="space-y-2">
+                        {(() => {
+                          const lastNote = user ? getLastNoteForExercise(user.id, exercise.name) : null
+                          return lastNote ? (
+                            <p className="text-text-muted text-[10px]">
+                              Last: {lastNote.weight && `${lastNote.weight} lbs`}{lastNote.weight && lastNote.notes ? ' · ' : ''}{lastNote.notes}
+                            </p>
+                          ) : null
+                        })()}
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            placeholder="Weight (lbs)"
+                            value={exerciseWeights[exercise.name] || ''}
+                            onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [exercise.name]: e.target.value }))}
+                            className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Notes"
+                            value={exerciseNotes[exercise.name] || ''}
+                            onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [exercise.name]: e.target.value }))}
+                            className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -348,12 +381,26 @@ export default function TrainingDay() {
                 for (const [name, sets] of Object.entries(completedSets)) {
                   setsData[name] = [...sets]
                 }
+                const today = new Date().toISOString().split('T')[0]
                 saveCompletedSession(user.id, {
-                  date: new Date().toISOString().split('T')[0],
+                  date: today,
                   dayIndex: idx,
                   programId: program.id,
                   completedSets: setsData,
                 })
+                for (const exercise of day.exercises) {
+                  const w = exerciseWeights[exercise.name]
+                  const n = exerciseNotes[exercise.name]
+                  if (w || n) {
+                    saveExerciseNote(user.id, {
+                      date: today,
+                      dayIndex: idx,
+                      exerciseName: exercise.name,
+                      weight: w || '',
+                      notes: n || '',
+                    })
+                  }
+                }
               }
               setShowCelebration(true)
             }}

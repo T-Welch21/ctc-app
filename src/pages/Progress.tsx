@@ -102,12 +102,59 @@ export default function Progress() {
                   {latestWeight.weight}
                 </span>
                 <span className="text-text-muted text-sm">lbs</span>
+                {weights.length >= 2 && (() => {
+                  const diff = latestWeight.weight - weights[weights.length - 2].weight
+                  if (diff === 0) return null
+                  return (
+                    <span className={`text-xs font-medium ${diff < 0 ? 'text-lime' : 'text-warning'}`}>
+                      {diff > 0 ? '+' : ''}{diff.toFixed(1)}
+                    </span>
+                  )
+                })()}
                 <span className="text-text-muted text-xs ml-auto">
                   {formatDate(latestWeight.date)}
                 </span>
               </div>
             )}
-            <div className="space-y-2 max-h-40 overflow-y-auto">
+
+            {/* Weight trend chart */}
+            {weights.length >= 2 && (() => {
+              const recent = weights.slice(-14)
+              const minW = Math.min(...recent.map((w) => w.weight)) - 2
+              const maxW = Math.max(...recent.map((w) => w.weight)) + 2
+              const range = maxW - minW || 1
+              const chartW = 280
+              const chartH = 80
+              const points = recent.map((w, i) => ({
+                x: (i / (recent.length - 1)) * chartW,
+                y: chartH - ((w.weight - minW) / range) * chartH,
+              }))
+              const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')
+              const areaD = pathD + ` L${chartW},${chartH} L0,${chartH} Z`
+              return (
+                <div className="rounded-xl bg-bg-elevated p-3 mb-3 overflow-hidden">
+                  <svg viewBox={`-10 -5 ${chartW + 20} ${chartH + 20}`} className="w-full h-20">
+                    <defs>
+                      <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#B3FF1D" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#B3FF1D" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d={areaD} fill="url(#wg)" />
+                    <path d={pathD} fill="none" stroke="#B3FF1D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    {points.map((p, i) => (
+                      <circle key={i} cx={p.x} cy={p.y} r={i === points.length - 1 ? 4 : 2.5} fill={i === points.length - 1 ? '#B3FF1D' : '#0A0A0A'} stroke="#B3FF1D" strokeWidth="1.5" />
+                    ))}
+                  </svg>
+                  <div className="flex justify-between text-[10px] text-text-muted mt-1">
+                    <span>{formatDate(recent[0].date)}</span>
+                    <span>{formatDate(recent[recent.length - 1].date)}</span>
+                  </div>
+                </div>
+              )
+            })()}
+
+            <div className="space-y-2 max-h-32 overflow-y-auto">
               {[...weights].reverse().map((w) => (
                 <div
                   key={w.date}
