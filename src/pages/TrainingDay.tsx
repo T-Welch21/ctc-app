@@ -1,9 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy } from 'lucide-react'
+import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
 import { saveCompletedSession } from '../lib/storage'
+
+function parseRestSeconds(rest: string): number {
+  if (!rest || rest === '-') return 0
+  const parts = rest.split(':')
+  if (parts.length === 2) return parseInt(parts[0]) * 60 + parseInt(parts[1])
+  const num = parseInt(rest)
+  return isNaN(num) ? 0 : num
+}
+
+function formatTimer(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
 
 export default function TrainingDay() {
   const { dayIndex } = useParams()
@@ -18,17 +32,66 @@ export default function TrainingDay() {
   const [sessionStarted, setSessionStarted] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
 
+  const [timerSeconds, setTimerSeconds] = useState(0)
+  const [timerRunning, setTimerRunning] = useState(false)
+  const [timerTotal, setTimerTotal] = useState(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+    setTimerRunning(false)
+  }, [])
+
+  const startTimer = useCallback((seconds: number) => {
+    stopTimer()
+    setTimerSeconds(seconds)
+    setTimerTotal(seconds)
+    setTimerRunning(true)
+  }, [stopTimer])
+
+  useEffect(() => {
+    if (!timerRunning || timerSeconds <= 0) return
+    timerRef.current = setInterval(() => {
+      setTimerSeconds((prev) => {
+        if (prev <= 1) {
+          stopTimer()
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200])
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [timerRunning, timerSeconds, stopTimer])
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [])
+
   if (!day) {
     navigate('/training', { replace: true })
     return null
   }
 
-  const toggleSet = (exerciseName: string, setIdx: number) => {
+  const toggleSet = (exerciseName: string, setIdx: number, restStr: string) => {
     setCompletedSets((prev) => {
       const current = prev[exerciseName] || new Set<number>()
       const next = new Set(current)
-      if (next.has(setIdx)) next.delete(setIdx)
-      else next.add(setIdx)
+      const wasCompleted = next.has(setIdx)
+      if (wasCompleted) {
+        next.delete(setIdx)
+      } else {
+        next.add(setIdx)
+        const restSec = parseRestSeconds(restStr)
+        if (restSec > 0) startTimer(restSec)
+      }
       return { ...prev, [exerciseName]: next }
     })
   }
@@ -37,6 +100,8 @@ export default function TrainingDay() {
   const completedTotal = Object.values(completedSets).reduce((acc, s) => acc + s.size, 0)
   const progress = totalSets > 0 ? (completedTotal / totalSets) * 100 : 0
   const allDone = completedTotal === totalSets && totalSets > 0
+
+  const timerProgress = timerTotal > 0 ? ((timerTotal - timerSeconds) / timerTotal) * 100 : 0
 
   return (
     <div className="min-h-screen pb-24 bg-bg">
@@ -67,6 +132,95 @@ export default function TrainingDay() {
           )}
         </div>
       </div>
+
+      {/* Rest timer overlay */}
+      {timerRunning && timerSeconds > 0 && (
+        <div className="sticky top-[85px] z-30 mx-5">
+          <div className="rounded-2xl bg-bg-card border border-lime/30 p-4 shadow-lg shadow-lime/5">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-text-secondary text-xs uppercase tracking-wider font-medium">Rest Timer</p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setTimerRunning(false)}
+                  className="p-1.5 rounded-lg bg-bg-elevated text-text-muted hover:text-text transition-colors"
+                >
+                  <Pause size={14} />
+                </button>
+                <button
+                  onClick={stopTimer}
+                  className="text-text-muted text-xs hover:text-text transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <p className="font-display font-bold text-3xl text-lime tabular-nums">
+                {formatTimer(timerSeconds)}
+              </p>
+              <div className="flex-1 h-2 bg-bg-elevated rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-lime rounded-full transition-all duration-1000 linear"
+                  style={{ width: `${timerProgress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Paused timer */}
+      {!timerRunning && timerSeconds > 0 && (
+        <div className="sticky top-[85px] z-30 mx-5">
+          <div className="rounded-2xl bg-bg-card border border-border p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <p className="font-display font-bold text-2xl text-text-muted tabular-nums">
+                  {formatTimer(timerSeconds)}
+                </p>
+                <span className="text-text-muted text-xs uppercase tracking-wider">Paused</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setTimerRunning(true)}
+                  className="p-2 rounded-lg bg-lime/10 text-lime hover:bg-lime/20 transition-colors"
+                >
+                  <Play size={14} />
+                </button>
+                <button
+                  onClick={() => startTimer(timerTotal)}
+                  className="p-2 rounded-lg bg-bg-elevated text-text-muted hover:text-text transition-colors"
+                >
+                  <RotateCcw size={14} />
+                </button>
+                <button
+                  onClick={() => { stopTimer(); setTimerSeconds(0) }}
+                  className="text-text-muted text-xs hover:text-text transition-colors px-2"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Timer done flash */}
+      {!timerRunning && timerSeconds === 0 && timerTotal > 0 && (
+        <div className="sticky top-[85px] z-30 mx-5">
+          <div className="rounded-2xl bg-lime/10 border border-lime/30 p-4 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <p className="font-display font-bold text-lime">Rest complete — next set!</p>
+              <button
+                onClick={() => setTimerTotal(0)}
+                className="text-lime text-xs hover:underline"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-lg mx-auto px-5 pt-4">
         {/* Warmup */}
@@ -153,7 +307,7 @@ export default function TrainingDay() {
                             return (
                               <button
                                 key={setIdx}
-                                onClick={() => toggleSet(exercise.name, setIdx)}
+                                onClick={() => toggleSet(exercise.name, setIdx, exercise.rest)}
                                 className={`flex-1 py-3 rounded-xl border-2 font-display font-bold text-sm transition-all duration-200 ${
                                   done
                                     ? 'bg-lime/20 border-lime text-lime'
@@ -186,6 +340,9 @@ export default function TrainingDay() {
         {sessionStarted && allDone && !showCelebration && (
           <button
             onClick={() => {
+              stopTimer()
+              setTimerSeconds(0)
+              setTimerTotal(0)
               if (user) {
                 const setsData: Record<string, number[]> = {}
                 for (const [name, sets] of Object.entries(completedSets)) {

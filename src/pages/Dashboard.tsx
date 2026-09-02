@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote, Settings } from 'lucide-react'
+import { Flame, ChevronRight, Quote, Settings, Play, Check } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getStreak, getCompletedSessions } from '../lib/storage'
+import { getProgram } from '../lib/programs'
 
 const devotionals = [
   { text: "You were not created to settle. You were created to lead.", author: "Coach Tyler" },
@@ -9,15 +10,27 @@ const devotionals = [
   { text: "The only way to prove you are a good sport is to lose.", author: "Ernie Banks" },
   { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke" },
   { text: "Champions keep playing until they get it right.", author: "Billie Jean King" },
+  { text: "The body achieves what the mind believes.", author: "Napoleon Hill" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "Pain is temporary. Quitting lasts forever.", author: "Lance Armstrong" },
+  { text: "The difference between the impossible and the possible lies in determination.", author: "Tommy Lasorda" },
+  { text: "Don't count the days. Make the days count.", author: "Muhammad Ali" },
+  { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+  { text: "It's not whether you get knocked down, it's whether you get up.", author: "Vince Lombardi" },
+  { text: "The harder the battle, the sweeter the victory.", author: "Les Brown" },
+  { text: "Compete harder. Train smarter. Feel better.", author: "Called to Compete" },
+  { text: "Excellence is not a singular act, but a habit. You are what you repeatedly do.", author: "Shaquille O'Neal" },
+  { text: "If you want something you've never had, you must be willing to do something you've never done.", author: "Thomas Jefferson" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "Sweat is just fat crying.", author: "Unknown" },
+  { text: "Today I will do what others won't, so tomorrow I can accomplish what others can't.", author: "Jerry Rice" },
+  { text: "Your body can stand almost anything. It's your mind you have to convince.", author: "Unknown" },
+  { text: "Be stronger than your excuses.", author: "Coach Tyler" },
 ]
 
 function getDevotional() {
   const day = Math.floor(Date.now() / 86400000)
   return devotionals[day % devotionals.length]
-}
-
-function getDayOfWeek() {
-  return new Date().getDay()
 }
 
 export default function Dashboard() {
@@ -33,9 +46,20 @@ export default function Dashboard() {
   const todayStr = new Date().toISOString().split('T')[0]
   const trainedToday = sessions.some((s) => s.date === todayStr)
 
-  const trackName = user?.identity === 'athlete' ? 'Athletic Performance' : 'Executive Performance Protocol'
-  const dayOfWeek = getDayOfWeek()
+  const program = getProgram(user?.identity || '')
+  const trackName = program.name
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+
+  const todaySessions = sessions.filter((s) => s.date === todayStr)
+  const completedDayIndexes = new Set(todaySessions.map((s) => s.dayIndex))
+  let nextDayIndex = 0
+  for (let i = 0; i < program.days.length; i++) {
+    if (!completedDayIndexes.has(i)) {
+      nextDayIndex = i
+      break
+    }
+  }
+  const nextDay = program.days[nextDayIndex]
 
   const last7 = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(Date.now() - (6 - i) * 86400000)
@@ -90,20 +114,32 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Today's Session */}
+      {/* Today's Session — smart suggestion */}
       <button
-        onClick={() => navigate('/training')}
+        onClick={() => navigate(trainedToday ? '/training' : `/training/${nextDayIndex}`)}
         className="animate-slide-up [animation-delay:100ms] opacity-0 w-full rounded-2xl bg-bg-card border border-border p-5 mb-4 text-left"
       >
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Today's Session</p>
-            <p className="font-display font-semibold">
-              {trainedToday ? 'Completed today' : 'Ready to train'}
+          <div className="flex-1">
+            <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">
+              {trainedToday ? 'Completed Today' : 'Up Next'}
             </p>
-            <p className="text-text-muted text-sm mt-1">{trackName} track</p>
+            <p className="font-display font-semibold">
+              {trainedToday ? nextDay?.title || 'All done today' : nextDay?.title || 'Ready to train'}
+            </p>
+            <p className="text-text-muted text-sm mt-1">
+              {trackName} · {nextDay?.duration || ''}
+            </p>
           </div>
-          <ChevronRight size={20} className="text-text-muted" />
+          {trainedToday ? (
+            <div className="p-2.5 rounded-xl bg-lime/10">
+              <Check size={20} className="text-lime" />
+            </div>
+          ) : (
+            <div className="p-2.5 rounded-xl bg-lime/10">
+              <Play size={20} className="text-lime" />
+            </div>
+          )}
         </div>
       </button>
 

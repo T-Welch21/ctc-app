@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Users,
   BarChart3,
@@ -8,7 +9,18 @@ import {
   Video,
   Send,
   Star,
+  RefreshCw,
 } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+
+type AthleteProfile = {
+  id: string
+  name: string | null
+  email: string
+  identity: string | null
+  onboarded: boolean
+  created_at: string
+}
 
 const quickActions = [
   {
@@ -41,7 +53,35 @@ const contentSections = [
   { label: 'Devotionals', icon: Quote, status: 'Active' },
 ]
 
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
 export default function Command() {
+  const [athletes, setAthletes] = useState<AthleteProfile[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const loadAthletes = async () => {
+    setLoading(true)
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, name, email, identity, onboarded, created_at')
+        .order('created_at', { ascending: false })
+      setAthletes(data || [])
+    } catch {
+      setAthletes([])
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    loadAthletes()
+  }, [])
+
+  const athleteCount = athletes.filter((a) => a.onboarded).length
+
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
       <div className="animate-fade-in mb-6">
@@ -53,7 +93,7 @@ export default function Command() {
       <div className="animate-slide-up grid grid-cols-3 gap-3 mb-6">
         <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
           <Users size={18} className="text-lime mx-auto mb-1" />
-          <p className="font-display font-bold text-xl">0</p>
+          <p className="font-display font-bold text-xl">{athleteCount}</p>
           <p className="text-text-muted text-[10px]">Athletes</p>
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
@@ -131,14 +171,60 @@ export default function Command() {
 
       {/* Roster */}
       <div className="animate-slide-up [animation-delay:300ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5">
-        <p className="font-display font-semibold mb-3">Athlete Roster</p>
-        <div className="py-8 text-center">
-          <Users size={32} className="text-text-muted mx-auto mb-2" />
-          <p className="text-text-muted text-sm">No athletes yet</p>
-          <p className="text-text-muted text-xs mt-1">
-            Athletes appear here when they subscribe through the app
-          </p>
+        <div className="flex items-center justify-between mb-3">
+          <p className="font-display font-semibold">Athlete Roster</p>
+          <button
+            onClick={loadAthletes}
+            className="text-text-muted hover:text-text-secondary transition-colors"
+          >
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
         </div>
+
+        {athletes.length === 0 ? (
+          <div className="py-8 text-center">
+            <Users size={32} className="text-text-muted mx-auto mb-2" />
+            <p className="text-text-muted text-sm">No athletes yet</p>
+            <p className="text-text-muted text-xs mt-1">
+              Athletes appear here when they sign up through the app
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {athletes.map((athlete) => (
+              <div
+                key={athlete.id}
+                className="flex items-center gap-3 p-3 rounded-xl bg-bg-elevated"
+              >
+                <div className="w-9 h-9 rounded-xl bg-lime/10 flex items-center justify-center shrink-0">
+                  <span className="font-display text-lime text-sm font-bold">
+                    {(athlete.name || athlete.email).charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-display font-semibold text-sm truncate">
+                    {athlete.name || 'No name'}
+                  </p>
+                  <p className="text-text-muted text-xs truncate">{athlete.email}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span
+                    className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      athlete.onboarded
+                        ? 'bg-lime/10 text-lime'
+                        : 'bg-warning/10 text-warning'
+                    }`}
+                  >
+                    {athlete.onboarded ? 'Active' : 'New'}
+                  </span>
+                  <p className="text-text-muted text-[10px] mt-1">
+                    {formatDate(athlete.created_at)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
