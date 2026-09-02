@@ -138,15 +138,18 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-6 py-12">
-      <div className="animate-fade-in max-w-sm mx-auto w-full">
+    <div className="min-h-screen flex flex-col justify-center px-6 py-12 login-glow">
+      <div className="animate-fade-in max-w-sm mx-auto w-full relative z-10">
         <div className="text-center mb-10">
           <h1 className="font-display text-4xl font-bold tracking-tight mb-2">
             CALLED TO
             <br />
             <span className="text-lime">COMPETE</span>
           </h1>
-          <p className="text-text-secondary text-sm mt-3">
+          <p className="text-text-muted text-xs uppercase tracking-[0.2em] mt-3">
+            Compete Harder · Train Smarter · Feel Better
+          </p>
+          <p className="text-text-secondary text-sm mt-4">
             {mode === 'login' ? 'Welcome back. Time to work.' : 'You were created to lead.'}
           </p>
         </div>
