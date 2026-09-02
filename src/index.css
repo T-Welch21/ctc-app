@@ -97,3 +97,34 @@ input, textarea, select, button {
 .animate-slide-up {
   animation: slide-up 0.5s ease-out forwards;
 }
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-bg-elevated);
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-lime);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--color-lime-glow);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-lime);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px var(--color-lime-glow);
+}

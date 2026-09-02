@@ -126,7 +126,7 @@ export default function Dashboard() {
       {/* Quick actions */}
       <div className="animate-slide-up [animation-delay:300ms] opacity-0 grid grid-cols-2 gap-3">
         <button
-          onClick={() => navigate('/progress')}
+          onClick={() => navigate('/check-in')}
           className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors"
         >
           <p className="font-display font-semibold text-sm">Weekly Check-in</p>

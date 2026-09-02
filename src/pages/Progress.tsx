@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { TrendingUp, Scale, Calendar, Award, X, ChevronRight } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getWeights, saveWeight, getCompletedSessions, getStreak } from '../lib/storage'
@@ -31,6 +32,7 @@ function formatDate(dateStr: string) {
 
 export default function Progress() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [showWeightModal, setShowWeightModal] = useState(false)
   const [showPRModal, setShowPRModal] = useState<string | null>(null)
   const [weightInput, setWeightInput] = useState('')
@@ -143,7 +145,10 @@ export default function Progress() {
         <p className="text-text-secondary text-sm mb-4">
           Submit your weekly update so Coach Tyler can track your progress.
         </p>
-        <button className="w-full border border-lime/30 text-lime font-display font-semibold py-3 rounded-xl hover:bg-lime/5 transition-colors">
+        <button
+          onClick={() => navigate('/check-in')}
+          className="w-full border border-lime/30 text-lime font-display font-semibold py-3 rounded-xl hover:bg-lime/5 transition-colors"
+        >
           Start Check-in
         </button>
       </div>
