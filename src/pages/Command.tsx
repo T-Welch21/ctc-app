@@ -22,7 +22,7 @@ const quickActions = [
     label: 'Request a Review',
     desc: 'Send Google review link to a client',
     icon: Star,
-    href: 'sms:?&body=Hey! I'd love if you could leave a quick Google review for Called to Compete. It really helps: https://g.page/r/calledtocompete/review',
+    href: 'sms:?&body=Hey! I would love if you could leave a quick Google review for Called to Compete. It really helps: https://g.page/r/calledtocompete/review',
     color: 'text-warning',
   },
   {
