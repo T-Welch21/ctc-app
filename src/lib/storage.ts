@@ -108,3 +108,52 @@ export function getStreak(userId: string): number {
   }
   return streak
 }
+
+export type CheckInEntry = {
+  date: string
+  sessions: number
+  nutrition: number
+  sleep: number
+  energy: number
+  wins: string
+  struggles: string
+  goals: string
+}
+
+export function saveCheckIn(userId: string, entry: CheckInEntry) {
+  const key = getKey(userId, 'checkins')
+  const entries = getCheckIns(userId)
+  const idx = entries.findIndex((e) => e.date === entry.date)
+  if (idx >= 0) entries[idx] = entry
+  else entries.push(entry)
+  entries.sort((a, b) => b.date.localeCompare(a.date))
+  localStorage.setItem(key, JSON.stringify(entries))
+}
+
+export function getCheckIns(userId: string): CheckInEntry[] {
+  try {
+    const key = getKey(userId, 'checkins')
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+export function getProgramStartDate(userId: string): string {
+  const key = getKey(userId, 'program_start')
+  const stored = localStorage.getItem(key)
+  if (stored) return stored
+  const today = new Date().toISOString().split('T')[0]
+  localStorage.setItem(key, today)
+  return today
+}
+
+export function getCurrentWeek(userId: string, totalWeeks: number): number {
+  const start = getProgramStartDate(userId)
+  const startDate = new Date(start + 'T00:00:00')
+  const now = new Date()
+  const daysDiff = Math.floor((now.getTime() - startDate.getTime()) / 86400000)
+  const week = Math.floor(daysDiff / 7) + 1
+  return Math.min(week, totalWeeks)
+}

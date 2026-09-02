@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Sun, Moon, Zap, Brain, Check, CheckCircle } from 'lucide-react'
+import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronUp, Clock } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { saveJournalEntry } from '../lib/storage'
+import { saveJournalEntry, getJournalEntries, type JournalEntry } from '../lib/storage'
 
 const needleMovers = [
   'Train with intensity',
@@ -24,6 +24,20 @@ function getAffirmation() {
   return affirmations[day % affirmations.length]
 }
 
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr + 'T12:00:00')
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatDayName(dateStr: string) {
+  const d = new Date(dateStr + 'T12:00:00')
+  const today = new Date().toISOString().split('T')[0]
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+  if (dateStr === today) return 'Today'
+  if (dateStr === yesterday) return 'Yesterday'
+  return d.toLocaleDateString('en-US', { weekday: 'short' })
+}
+
 export default function Journal() {
   const { user } = useAuth()
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'evening'>('morning')
@@ -32,7 +46,14 @@ export default function Journal() {
   const [checked, setChecked] = useState<Set<number>>(new Set())
   const [gratitude, setGratitude] = useState('')
   const [saved, setSaved] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
   const affirmation = getAffirmation()
+
+  const entries = user ? getJournalEntries(user.id) : []
+  const todayStr = new Date().toISOString().split('T')[0]
+  const pastEntries = entries
+    .filter((e) => e.date !== todayStr || e.timeOfDay !== timeOfDay)
+    .sort((a, b) => b.date.localeCompare(a.date))
 
   const toggleCheck = (i: number) => {
     const next = new Set(checked)
@@ -43,9 +64,8 @@ export default function Journal() {
 
   const handleSave = () => {
     if (!user) return
-    const today = new Date().toISOString().split('T')[0]
     saveJournalEntry(user.id, {
-      date: today,
+      date: todayStr,
       timeOfDay,
       energy,
       mind,
@@ -180,6 +200,84 @@ export default function Journal() {
           'Save Entry'
         )}
       </button>
+
+      {/* History section */}
+      {pastEntries.length > 0 && (
+        <div className="mt-8">
+          <button
+            onClick={() => setShowHistory(!showHistory)}
+            className="w-full flex items-center justify-between mb-4"
+          >
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-text-secondary" />
+              <p className="font-display font-semibold text-sm">Past Entries</p>
+              <span className="text-text-muted text-xs">({pastEntries.length})</span>
+            </div>
+            {showHistory ? (
+              <ChevronUp size={18} className="text-text-muted" />
+            ) : (
+              <ChevronDown size={18} className="text-text-muted" />
+            )}
+          </button>
+
+          {showHistory && (
+            <div className="space-y-3">
+              {pastEntries.slice(0, 10).map((entry, i) => (
+                <HistoryCard key={`${entry.date}-${entry.timeOfDay}`} entry={entry} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
+  return (
+    <div
+      className="animate-slide-up opacity-0 rounded-2xl bg-bg-card border border-border p-4"
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          {entry.timeOfDay === 'morning' ? (
+            <Sun size={14} className="text-warning" />
+          ) : (
+            <Moon size={14} className="text-[#818cf8]" />
+          )}
+          <span className="font-display font-semibold text-sm">
+            {formatDayName(entry.date)}, {formatDate(entry.date)}
+          </span>
+        </div>
+        <span className="text-text-muted text-xs capitalize">{entry.timeOfDay}</span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 mb-2">
+        <div className="flex items-center gap-1.5">
+          <Zap size={12} className="text-warning" />
+          <span className="text-text-secondary text-xs">Energy: </span>
+          <span className="text-lime font-display font-semibold text-xs">{entry.energy}/10</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Brain size={12} className="text-[#818cf8]" />
+          <span className="text-text-secondary text-xs">Mind: </span>
+          <span className="text-lime font-display font-semibold text-xs">{entry.mind}/10</span>
+        </div>
+      </div>
+
+      {entry.checkedItems.length > 0 && (
+        <div className="flex items-center gap-1 mb-2">
+          <Check size={12} className="text-lime" />
+          <span className="text-text-muted text-xs">
+            {entry.checkedItems.length} of 5 needle movers
+          </span>
+        </div>
+      )}
+
+      {entry.gratitude && (
+        <p className="text-text-secondary text-xs italic truncate">"{entry.gratitude}"</p>
+      )}
     </div>
   )
 }

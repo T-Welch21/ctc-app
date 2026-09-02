@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+import { saveCheckIn } from '../lib/storage'
 
 const questions = [
   { key: 'sessions', label: 'How many sessions did you complete this week?', type: 'number', placeholder: '0' },
@@ -12,18 +13,6 @@ const questions = [
   { key: 'struggles', label: 'Biggest challenge', type: 'text', placeholder: 'What was hard?' },
   { key: 'goals', label: 'Top goal for next week', type: 'text', placeholder: 'What are you focused on?' },
 ]
-
-function saveCheckIn(userId: string, data: Record<string, string | number>) {
-  const key = `ctc_checkins_${userId}`
-  try {
-    const raw = localStorage.getItem(key)
-    const entries = raw ? JSON.parse(raw) : []
-    entries.push({ ...data, date: new Date().toISOString().split('T')[0] })
-    localStorage.setItem(key, JSON.stringify(entries))
-  } catch {
-    // storage fallback
-  }
-}
 
 export default function CheckIn() {
   const { user } = useAuth()
@@ -41,7 +30,17 @@ export default function CheckIn() {
 
   const handleSubmit = () => {
     if (!user) return
-    saveCheckIn(user.id, answers)
+    const today = new Date().toISOString().split('T')[0]
+    saveCheckIn(user.id, {
+      date: today,
+      sessions: Number(answers.sessions) || 0,
+      nutrition: Number(answers.nutrition) || 5,
+      sleep: Number(answers.sleep) || 5,
+      energy: Number(answers.energy) || 5,
+      wins: String(answers.wins || ''),
+      struggles: String(answers.struggles || ''),
+      goals: String(answers.goals || ''),
+    })
     setSubmitted(true)
   }
 

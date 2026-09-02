@@ -2,7 +2,7 @@ import { Check, Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
-import { getCompletedSessions } from '../lib/storage'
+import { getCompletedSessions, getCurrentWeek } from '../lib/storage'
 
 export default function Training() {
   const { user } = useAuth()
@@ -16,13 +16,14 @@ export default function Training() {
     sessions.filter((s) => s.date === todayStr).map((s) => s.dayIndex)
   )
   const completedDays = completedToday.size
+  const currentWeek = user ? getCurrentWeek(user.id, program.weeks) : 1
 
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
       <div className="animate-fade-in mb-6">
         <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Current Program</p>
         <h1 className="font-display text-2xl font-bold">{program.name}</h1>
-        <p className="text-text-muted text-sm mt-1">Week 1 of {program.weeks}</p>
+        <p className="text-text-muted text-sm mt-1">Week {currentWeek} of {program.weeks}</p>
       </div>
 
       {/* Week progress */}

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TrendingUp, Scale, Calendar, Award, X, ChevronRight } from 'lucide-react'
+import { TrendingUp, Scale, Calendar, Award, X, ChevronRight, ChevronDown, ChevronUp, ClipboardCheck } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { getWeights, saveWeight, getCompletedSessions, getStreak } from '../lib/storage'
+import { getWeights, saveWeight, getCompletedSessions, getStreak, getCheckIns } from '../lib/storage'
 
 type PREntry = { lift: string; value: string; date: string }
 
@@ -39,9 +39,11 @@ export default function Progress() {
   const [prInput, setPrInput] = useState('')
   const [weights, setWeights] = useState(() => (user ? getWeights(user.id) : []))
   const [prs, setPRs] = useState(() => (user ? getPRs(user.id) : []))
+  const [showCheckIns, setShowCheckIns] = useState(false)
 
   const sessions = user ? getCompletedSessions(user.id) : []
   const streak = user ? getStreak(user.id) : 0
+  const checkIns = user ? getCheckIns(user.id) : []
   const latestWeight = weights.length > 0 ? weights[weights.length - 1] : null
   const prCount = prs.length
 
@@ -141,7 +143,18 @@ export default function Progress() {
 
       {/* Weekly check-in */}
       <div className="animate-slide-up [animation-delay:200ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
-        <p className="font-display font-semibold mb-2">Weekly Check-in</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="font-display font-semibold">Weekly Check-in</p>
+          {checkIns.length > 0 && (
+            <button
+              onClick={() => setShowCheckIns(!showCheckIns)}
+              className="flex items-center gap-1 text-text-muted text-xs"
+            >
+              History ({checkIns.length})
+              {showCheckIns ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+          )}
+        </div>
         <p className="text-text-secondary text-sm mb-4">
           Submit your weekly update so Coach Tyler can track your progress.
         </p>
@@ -151,6 +164,40 @@ export default function Progress() {
         >
           Start Check-in
         </button>
+
+        {/* Check-in history */}
+        {showCheckIns && checkIns.length > 0 && (
+          <div className="mt-4 space-y-3 border-t border-border pt-4">
+            {checkIns.slice(0, 5).map((ci) => (
+              <div key={ci.date} className="rounded-xl bg-bg-elevated p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <ClipboardCheck size={12} className="text-lime" />
+                    <span className="font-display font-semibold text-xs">{formatDate(ci.date)}</span>
+                  </div>
+                  <span className="text-text-muted text-xs">{ci.sessions} sessions</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  <div className="text-center">
+                    <p className="text-text-muted text-[10px]">Nutrition</p>
+                    <p className="text-lime font-display font-bold text-sm">{ci.nutrition}/10</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-text-muted text-[10px]">Sleep</p>
+                    <p className="text-lime font-display font-bold text-sm">{ci.sleep}/10</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-text-muted text-[10px]">Energy</p>
+                    <p className="text-lime font-display font-bold text-sm">{ci.energy}/10</p>
+                  </div>
+                </div>
+                {ci.wins && (
+                  <p className="text-text-secondary text-xs truncate">Win: {ci.wins}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Performance markers */}
