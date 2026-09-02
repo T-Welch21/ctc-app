@@ -20,6 +20,11 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
+// TODO: Swap to Supabase auth once API keys are confirmed working.
+// The Supabase client is set up in lib/supabase.ts and database
+// schema is ready in supabase/setup.sql — just need valid keys
+// in .env and then uncomment the Supabase auth flow below.
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -38,7 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, _password: string) => {
-    // TODO: Replace with Supabase auth
     const u: User = { id: crypto.randomUUID(), email, onboarded: false }
     const stored = localStorage.getItem('ctc_user_data_' + email)
     if (stored) {
@@ -52,7 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signup = async (email: string, _password: string, name: string) => {
-    // TODO: Replace with Supabase auth
     const u: User = { id: crypto.randomUUID(), email, name, onboarded: false }
     persistUser(u)
   }
