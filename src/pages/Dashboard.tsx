@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote } from 'lucide-react'
+import { Flame, ChevronRight, Quote, Settings } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getStreak, getCompletedSessions } from '../lib/storage'
 
@@ -50,11 +50,19 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
       {/* Header */}
-      <div className="animate-fade-in mb-6">
-        <p className="text-text-secondary text-sm">{greeting}</p>
-        <h1 className="font-display text-2xl font-bold mt-0.5">
-          {firstName} <span className="text-lime">.</span>
-        </h1>
+      <div className="animate-fade-in mb-6 flex items-start justify-between">
+        <div>
+          <p className="text-text-secondary text-sm">{greeting}</p>
+          <h1 className="font-display text-2xl font-bold mt-0.5">
+            {firstName} <span className="text-lime">.</span>
+          </h1>
+        </div>
+        <button
+          onClick={() => navigate('/settings')}
+          className="p-2 rounded-xl hover:bg-bg-card transition-colors text-text-secondary hover:text-text"
+        >
+          <Settings size={22} />
+        </button>
       </div>
 
       {/* Streak card */}

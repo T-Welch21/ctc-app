@@ -9,6 +9,7 @@ import TrainingDay from './pages/TrainingDay'
 import Journal from './pages/Journal'
 import Progress from './pages/Progress'
 import Command from './pages/Command'
+import Settings from './pages/Settings'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -39,17 +40,21 @@ function AppRoutes() {
     )
   }
 
-  const showNav = !['/onboarding'].includes(location.pathname) && !location.pathname.match(/^\/training\/\d/)
+  const showNav =
+    !['/onboarding', '/settings'].includes(location.pathname) &&
+    !location.pathname.match(/^\/training\/\d/)
 
   return (
     <>
       <Routes>
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/training" element={<Training />} />
         <Route path="/training/:dayIndex" element={<TrainingDay />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/command" element={<Command />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
       {showNav && <BottomNav />}

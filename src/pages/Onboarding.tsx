@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Flame, Briefcase, Crown, Palette, Shapes } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Flame, Briefcase, Crown, Palette, Shapes } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 
 const identities = [
@@ -20,16 +20,12 @@ const goals = [
 ]
 
 export default function Onboarding() {
-  const [step, setStep] = useState(0)
-  const [selectedIdentity, setSelectedIdentity] = useState('')
-  const [selectedGoal, setSelectedGoal] = useState('')
   const { user, completeOnboarding } = useAuth()
   const navigate = useNavigate()
-
-  if (user?.onboarded) {
-    navigate('/dashboard', { replace: true })
-    return null
-  }
+  const isReOnboarding = !!user?.onboarded
+  const [step, setStep] = useState(0)
+  const [selectedIdentity, setSelectedIdentity] = useState(user?.identity || '')
+  const [selectedGoal, setSelectedGoal] = useState(user?.goal || '')
 
   const handleFinish = () => {
     completeOnboarding(selectedIdentity, selectedGoal)
@@ -38,6 +34,16 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen flex flex-col px-6 py-12">
+      {/* Back button for re-onboarding */}
+      {isReOnboarding && step === 0 && (
+        <button
+          onClick={() => navigate(-1)}
+          className="animate-fade-in flex items-center gap-1.5 text-text-secondary hover:text-text text-sm mb-4 transition-colors"
+        >
+          <ArrowLeft size={16} /> Back
+        </button>
+      )}
+
       {/* Progress dots */}
       <div className="flex justify-center gap-2 mb-12">
         {[0, 1].map((i) => (
@@ -57,7 +63,9 @@ export default function Onboarding() {
               How do you <span className="text-lime">compete</span>?
             </h1>
             <p className="text-text-secondary text-sm">
-              This shapes your training track. You can always change it later.
+              {isReOnboarding
+                ? 'Switch your training track anytime.'
+                : 'This shapes your training track. You can always change it later.'}
             </p>
           </div>
 
@@ -140,7 +148,7 @@ export default function Onboarding() {
               disabled={!selectedGoal}
               className="flex-[2] bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed glow-lime"
             >
-              Let's Go
+              {isReOnboarding ? 'Save Changes' : "Let's Go"}
             </button>
           </div>
         </div>

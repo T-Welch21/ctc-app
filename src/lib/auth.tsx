@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { supabase } from './supabase'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 type User = {
   id: string
@@ -15,68 +17,152 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string, name: string) => Promise<void>
   logout: () => void
-  completeOnboarding: (identity: string, goal: string) => void
+  completeOnboarding: (identity: string, goal: string) => Promise<void>
+  updateProfile: (updates: Partial<User>) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-// TODO: Swap to Supabase auth once API keys are confirmed working.
-// The Supabase client is set up in lib/supabase.ts and database
-// schema is ready in supabase/setup.sql — just need valid keys
-// in .env and then uncomment the Supabase auth flow below.
+function profileKey(id: string) {
+  return `ctc_profile_${id}`
+}
+
+function getLocalProfile(id: string): Partial<User> {
+  try {
+    const raw = localStorage.getItem(profileKey(id))
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function saveLocalProfile(user: User) {
+  localStorage.setItem(profileKey(user.id), JSON.stringify(user))
+}
+
+async function fetchProfile(id: string): Promise<Partial<User> | null> {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('name, identity, goal, onboarded')
+      .eq('id', id)
+      .single()
+    if (error || !data) return null
+    return data
+  } catch {
+    return null
+  }
+}
+
+async function syncProfile(user: User): Promise<void> {
+  try {
+    await supabase.from('profiles').upsert({
+      id: user.id,
+      email: user.email,
+      name: user.name || null,
+      identity: user.identity || null,
+      goal: user.goal || null,
+      onboarded: user.onboarded || false,
+    })
+  } catch {
+    // DB may be down — local cache is the fallback
+  }
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const stored = localStorage.getItem('ctc_user')
-    if (stored) {
-      setUser(JSON.parse(stored))
+  const buildUser = async (su: SupabaseUser): Promise<User> => {
+    const base: User = {
+      id: su.id,
+      email: su.email || '',
+      name: su.user_metadata?.name,
     }
-    setLoading(false)
+
+    const remote = await fetchProfile(su.id)
+    if (remote) {
+      const merged = { ...base, ...remote }
+      saveLocalProfile(merged)
+      return merged
+    }
+
+    const local = getLocalProfile(su.id)
+    return { ...base, ...local }
+  }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        const u = await buildUser(session.user)
+        setUser(u)
+      }
+      setLoading(false)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!session?.user) {
+        setUser(null)
+      } else {
+        const u = await buildUser(session.user)
+        setUser(u)
+      }
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  const persistUser = (u: User) => {
-    setUser(u)
-    localStorage.setItem('ctc_user', JSON.stringify(u))
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw new Error(error.message)
   }
 
-  const login = async (email: string, _password: string) => {
-    const u: User = { id: crypto.randomUUID(), email, onboarded: false }
-    const stored = localStorage.getItem('ctc_user_data_' + email)
-    if (stored) {
-      const data = JSON.parse(stored)
-      u.name = data.name
-      u.identity = data.identity
-      u.goal = data.goal
-      u.onboarded = data.onboarded
+  const signup = async (email: string, password: string, name: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
+    })
+    if (error) throw new Error(error.message)
+
+    if (data.user) {
+      const profile: User = { id: data.user.id, email, name, onboarded: false }
+      saveLocalProfile(profile)
+      await syncProfile(profile)
     }
-    persistUser(u)
-  }
 
-  const signup = async (email: string, _password: string, name: string) => {
-    const u: User = { id: crypto.randomUUID(), email, name, onboarded: false }
-    persistUser(u)
-  }
-
-  const logout = () => {
-    if (user) {
-      localStorage.setItem('ctc_user_data_' + user.email, JSON.stringify(user))
+    if (data.user && !data.session) {
+      throw new Error('CHECK_EMAIL')
     }
+  }
+
+  const logout = async () => {
+    await supabase.auth.signOut()
     setUser(null)
-    localStorage.removeItem('ctc_user')
   }
 
-  const completeOnboarding = (identity: string, goal: string) => {
+  const completeOnboarding = async (identity: string, goal: string) => {
     if (!user) return
     const updated = { ...user, identity, goal, onboarded: true }
-    persistUser(updated)
-    localStorage.setItem('ctc_user_data_' + updated.email, JSON.stringify(updated))
+    setUser(updated)
+    saveLocalProfile(updated)
+    await syncProfile(updated)
+  }
+
+  const updateProfile = async (updates: Partial<User>) => {
+    if (!user) return
+    const updated = { ...user, ...updates }
+    setUser(updated)
+    saveLocalProfile(updated)
+    await syncProfile(updated)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, completeOnboarding }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, signup, logout, completeOnboarding, updateProfile }}
+    >
       {children}
     </AuthContext.Provider>
   )
