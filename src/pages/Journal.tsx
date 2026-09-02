@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Sun, Moon, Zap, Brain, Check } from 'lucide-react'
+import { Sun, Moon, Zap, Brain, Check, CheckCircle } from 'lucide-react'
+import { useAuth } from '../lib/auth'
+import { saveJournalEntry } from '../lib/storage'
 
 const needleMovers = [
   'Train with intensity',
@@ -23,11 +25,13 @@ function getAffirmation() {
 }
 
 export default function Journal() {
+  const { user } = useAuth()
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'evening'>('morning')
   const [energy, setEnergy] = useState(5)
   const [mind, setMind] = useState(5)
   const [checked, setChecked] = useState<Set<number>>(new Set())
   const [gratitude, setGratitude] = useState('')
+  const [saved, setSaved] = useState(false)
   const affirmation = getAffirmation()
 
   const toggleCheck = (i: number) => {
@@ -35,6 +39,22 @@ export default function Journal() {
     if (next.has(i)) next.delete(i)
     else next.add(i)
     setChecked(next)
+  }
+
+  const handleSave = () => {
+    if (!user) return
+    const today = new Date().toISOString().split('T')[0]
+    saveJournalEntry(user.id, {
+      date: today,
+      timeOfDay,
+      energy,
+      mind,
+      checkedItems: [...checked],
+      gratitude,
+      affirmation,
+    })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
   }
 
   return (
@@ -144,8 +164,21 @@ export default function Journal() {
       </div>
 
       {/* Save */}
-      <button className="animate-slide-up [animation-delay:400ms] opacity-0 w-full bg-lime text-bg font-display font-semibold py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime">
-        Save Entry
+      <button
+        onClick={handleSave}
+        className={`animate-slide-up [animation-delay:400ms] opacity-0 w-full font-display font-semibold py-3.5 rounded-xl transition-all active:scale-[0.98] ${
+          saved
+            ? 'bg-success text-bg'
+            : 'bg-lime text-bg hover:brightness-110 glow-lime'
+        }`}
+      >
+        {saved ? (
+          <span className="flex items-center justify-center gap-2">
+            <CheckCircle size={18} /> Saved
+          </span>
+        ) : (
+          'Save Entry'
+        )}
       </button>
     </div>
   )

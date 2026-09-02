@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import { Flame, ChevronRight, Quote } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+import { getStreak, getCompletedSessions } from '../lib/storage'
 
 const devotionals = [
   { text: "You were not created to settle. You were created to lead.", author: "Coach Tyler" },
@@ -14,14 +16,36 @@ function getDevotional() {
   return devotionals[day % devotionals.length]
 }
 
+function getDayOfWeek() {
+  return new Date().getDay()
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const firstName = user?.name?.split(' ')[0] || 'Competitor'
   const devotional = getDevotional()
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
+  const streak = user ? getStreak(user.id) : 0
+  const sessions = user ? getCompletedSessions(user.id) : []
+  const todayStr = new Date().toISOString().split('T')[0]
+  const trainedToday = sessions.some((s) => s.date === todayStr)
+
   const trackName = user?.identity === 'athlete' ? 'Athletic Performance' : 'Executive Performance Protocol'
+  const dayOfWeek = getDayOfWeek()
+  const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+
+  const last7 = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date(Date.now() - (6 - i) * 86400000)
+    const dateStr = d.toISOString().split('T')[0]
+    return {
+      label: dayLabels[d.getDay()],
+      trained: sessions.some((s) => s.date === dateStr),
+      isToday: i === 6,
+    }
+  })
 
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
@@ -34,35 +58,46 @@ export default function Dashboard() {
       </div>
 
       {/* Streak card */}
-      <div className="animate-slide-up rounded-2xl bg-bg-card border border-border p-5 mb-4 gradient-border">
+      <div className={`animate-slide-up rounded-2xl bg-bg-card border border-border p-5 mb-4 ${streak > 0 ? 'gradient-border' : ''}`}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Flame size={20} className="text-text-muted" />
-            <span className="font-display font-semibold text-sm">Current Streak</span>
+            <Flame size={20} className={streak > 0 ? 'text-lime' : 'text-text-muted'} />
+            <span className="font-display font-semibold text-sm">
+              {streak > 0 ? `${streak} Day Streak` : 'Current Streak'}
+            </span>
           </div>
-          <span className="text-text-muted text-xs">Start training to begin</span>
+          {streak === 0 && <span className="text-text-muted text-xs">Start training to begin</span>}
         </div>
         <div className="flex gap-1.5">
-          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
+          {last7.map((day, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full h-2 rounded-full bg-bg-elevated" />
-              <span className="text-[10px] text-text-muted">{day}</span>
+              <div className={`w-full h-2 rounded-full transition-colors ${
+                day.trained ? 'bg-lime' : day.isToday ? 'bg-border-light' : 'bg-bg-elevated'
+              }`} />
+              <span className={`text-[10px] ${day.isToday ? 'text-text font-medium' : 'text-text-muted'}`}>
+                {day.label}
+              </span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Today's Session */}
-      <div className="animate-slide-up [animation-delay:100ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+      <button
+        onClick={() => navigate('/training')}
+        className="animate-slide-up [animation-delay:100ms] opacity-0 w-full rounded-2xl bg-bg-card border border-border p-5 mb-4 text-left"
+      >
         <div className="flex items-center justify-between">
           <div>
             <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Today's Session</p>
-            <p className="font-display font-semibold">No session scheduled</p>
+            <p className="font-display font-semibold">
+              {trainedToday ? 'Completed today' : 'Ready to train'}
+            </p>
             <p className="text-text-muted text-sm mt-1">{trackName} track</p>
           </div>
           <ChevronRight size={20} className="text-text-muted" />
         </div>
-      </div>
+      </button>
 
       {/* Devotional */}
       <div className="animate-slide-up [animation-delay:200ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
@@ -82,7 +117,10 @@ export default function Dashboard() {
 
       {/* Quick actions */}
       <div className="animate-slide-up [animation-delay:300ms] opacity-0 grid grid-cols-2 gap-3">
-        <button className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors">
+        <button
+          onClick={() => navigate('/progress')}
+          className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors"
+        >
           <p className="font-display font-semibold text-sm">Weekly Check-in</p>
           <p className="text-text-muted text-xs mt-1">Log your progress</p>
         </button>

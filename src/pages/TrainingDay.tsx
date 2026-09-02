@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
+import { saveCompletedSession } from '../lib/storage'
 
 export default function TrainingDay() {
   const { dayIndex } = useParams()
@@ -183,7 +184,21 @@ export default function TrainingDay() {
         {/* Finish button */}
         {sessionStarted && allDone && (
           <button
-            onClick={() => navigate('/training')}
+            onClick={() => {
+              if (user) {
+                const setsData: Record<string, number[]> = {}
+                for (const [name, sets] of Object.entries(completedSets)) {
+                  setsData[name] = [...sets]
+                }
+                saveCompletedSession(user.id, {
+                  date: new Date().toISOString().split('T')[0],
+                  dayIndex: idx,
+                  programId: program.id,
+                  completedSets: setsData,
+                })
+              }
+              navigate('/training')
+            }}
             className="w-full bg-lime text-bg font-display font-semibold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime animate-pulse-glow mt-6"
           >
             Session Complete
