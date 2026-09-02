@@ -132,10 +132,13 @@ export default function Dashboard() {
           <p className="font-display font-semibold text-sm">Weekly Check-in</p>
           <p className="text-text-muted text-xs mt-1">Log your progress</p>
         </button>
-        <button className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors">
+        <a
+          href="sms:+12546402697"
+          className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors block"
+        >
           <p className="font-display font-semibold text-sm">Message Coach</p>
-          <p className="text-text-muted text-xs mt-1">Connect with Tyler</p>
-        </button>
+          <p className="text-text-muted text-xs mt-1">Text Tyler directly</p>
+        </a>
       </div>
     </div>
   )
