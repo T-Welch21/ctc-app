@@ -18,8 +18,14 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-lime border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
+        <div className="animate-fade-in text-center">
+          <h1 className="font-display text-3xl font-bold tracking-tight">
+            CALLED TO<br />
+            <span className="text-lime">COMPETE</span>
+          </h1>
+          <div className="mt-6 w-8 h-8 border-2 border-lime border-t-transparent rounded-full animate-spin mx-auto" />
+        </div>
       </div>
     )
   }

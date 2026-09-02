@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
 import { saveCompletedSession } from '../lib/storage'
@@ -16,6 +16,7 @@ export default function TrainingDay() {
   const [completedSets, setCompletedSets] = useState<Record<string, Set<number>>>({})
   const [expandedExercise, setExpandedExercise] = useState<number | null>(0)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
 
   if (!day) {
     navigate('/training', { replace: true })
@@ -182,7 +183,7 @@ export default function TrainingDay() {
         )}
 
         {/* Finish button */}
-        {sessionStarted && allDone && (
+        {sessionStarted && allDone && !showCelebration && (
           <button
             onClick={() => {
               if (user) {
@@ -197,14 +198,36 @@ export default function TrainingDay() {
                   completedSets: setsData,
                 })
               }
-              navigate('/training')
+              setShowCelebration(true)
             }}
             className="w-full bg-lime text-bg font-display font-semibold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime animate-pulse-glow mt-6"
           >
-            Session Complete
+            Complete Session
           </button>
         )}
       </div>
+
+      {/* Celebration overlay */}
+      {showCelebration && (
+        <div className="fixed inset-0 bg-bg/95 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="animate-fade-in text-center px-8">
+            <div className="inline-flex p-5 rounded-3xl bg-lime/10 mb-6 animate-pulse-glow">
+              <Trophy size={56} className="text-lime" />
+            </div>
+            <h1 className="font-display text-3xl font-bold mb-2">Session Complete</h1>
+            <p className="text-text-secondary mb-2">{day.title}</p>
+            <p className="text-lime font-display font-semibold text-lg mb-8">
+              {totalSets} sets crushed
+            </p>
+            <button
+              onClick={() => navigate('/training')}
+              className="bg-lime text-bg font-display font-semibold text-lg py-4 px-12 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

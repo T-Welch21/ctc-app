@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield } from 'lucide-react'
+import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 
 const identityLabels: Record<string, string> = {
@@ -12,13 +12,22 @@ const identityLabels: Record<string, string> = {
 }
 
 export default function Settings() {
-  const { user, logout } = useAuth()
+  const { user, logout, updateProfile } = useAuth()
   const navigate = useNavigate()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [editingName, setEditingName] = useState(false)
+  const [nameInput, setNameInput] = useState(user?.name || '')
 
   const handleLogout = async () => {
     await logout()
     navigate('/', { replace: true })
+  }
+
+  const handleSaveName = async () => {
+    if (nameInput.trim() && nameInput.trim() !== user?.name) {
+      await updateProfile({ name: nameInput.trim() })
+    }
+    setEditingName(false)
   }
 
   return (
@@ -45,8 +54,31 @@ export default function Settings() {
                 {user?.name?.charAt(0)?.toUpperCase() || '?'}
               </span>
             </div>
-            <div>
-              <h2 className="font-display font-bold text-lg">{user?.name || 'Competitor'}</h2>
+            <div className="flex-1">
+              {editingName ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    autoFocus
+                    className="bg-bg-elevated border border-border rounded-lg px-3 py-1.5 text-text font-display font-bold text-lg focus:outline-none focus:border-lime/50 w-full"
+                  />
+                  <button onClick={handleSaveName} className="text-lime p-1">
+                    <Check size={18} />
+                  </button>
+                  <button onClick={() => { setEditingName(false); setNameInput(user?.name || '') }} className="text-text-muted p-1">
+                    <X size={18} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h2 className="font-display font-bold text-lg">{user?.name || 'Competitor'}</h2>
+                  <button onClick={() => setEditingName(true)} className="text-text-muted hover:text-text-secondary transition-colors">
+                    <Pencil size={14} />
+                  </button>
+                </div>
+              )}
               <p className="text-text-secondary text-sm">{user?.email}</p>
             </div>
           </div>
