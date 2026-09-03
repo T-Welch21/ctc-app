@@ -234,3 +234,11 @@ export function getCurrentWeek(userId: string, totalWeeks: number): number {
   const week = Math.floor(daysDiff / 7) + 1
   return Math.min(week, totalWeeks)
 }
+
+export function getSelectedProgramId(userId: string): string | null {
+  return localStorage.getItem(`ctc_selected_program_${userId}`)
+}
+
+export function setSelectedProgramId(userId: string, programId: string) {
+  localStorage.setItem(`ctc_selected_program_${userId}`, programId)
+}

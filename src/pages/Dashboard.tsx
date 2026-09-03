@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, ShoppingBag, MessageCircle, Swords, Zap } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns } from '../lib/storage'
-import { getProgram } from '../lib/programs'
+import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns, getSelectedProgramId } from '../lib/storage'
+import { getProgramById, getProgram } from '../lib/programs'
 import { supabase } from '../lib/supabase'
 
 const devotionals = [
@@ -109,7 +109,8 @@ export default function Dashboard() {
   const todayStr = new Date().toISOString().split('T')[0]
   const trainedToday = sessions.some((s) => s.date === todayStr)
 
-  const program = getProgram(user?.identity || '')
+  const savedProgramId = user ? getSelectedProgramId(user.id) : null
+  const program = (savedProgramId && getProgramById(savedProgramId)) || getProgram(user?.identity || '')
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
   const todaySessions = sessions.filter((s) => s.date === todayStr)

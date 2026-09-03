@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { getProgram } from '../lib/programs'
-import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs } from '../lib/storage'
+import { getProgramById, getProgram } from '../lib/programs'
+import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs, getSelectedProgramId } from '../lib/storage'
 
 function parseRestSeconds(rest: string): number {
   if (!rest || rest === '-') return 0
@@ -23,7 +23,8 @@ export default function TrainingDay() {
   const { dayIndex } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const program = getProgram(user?.identity || '')
+  const savedId = user ? getSelectedProgramId(user.id) : null
+  const program = (savedId && getProgramById(savedId)) || getProgram(user?.identity || '')
   const idx = parseInt(dayIndex || '0')
   const day = program.days[idx]
 
@@ -33,7 +34,7 @@ export default function TrainingDay() {
   const [showCelebration, setShowCelebration] = useState(false)
   const [exerciseWeights, setExerciseWeights] = useState<Record<string, string>>({})
   const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>({})
-  const [newPRs, setNewPRs] = useState<string[]>([])
+  const [newPRs, setNewPRs] = useState<{ name: string; weight: string }[]>([])
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -84,10 +85,10 @@ export default function TrainingDay() {
   useEffect(() => {
     if (!user || !day) return
     const prefilled: Record<string, string> = {}
-    for (const exercise of day.exercises) {
+    day.exercises.forEach((exercise, i) => {
       const last = getLastNoteForExercise(user.id, exercise.name)
-      if (last?.weight) prefilled[exercise.name] = last.weight
-    }
+      if (last?.weight) prefilled[exKey(i, exercise.name)] = last.weight
+    })
     if (Object.keys(prefilled).length > 0) setExerciseWeights(prefilled)
   }, [user, day])
 
@@ -106,9 +107,11 @@ export default function TrainingDay() {
     return null
   }
 
-  const toggleSet = (exerciseName: string, setIdx: number, restStr: string) => {
+  const exKey = (i: number, name: string) => `${i}:${name}`
+
+  const toggleSet = (key: string, setIdx: number, restStr: string) => {
     setCompletedSets((prev) => {
-      const current = prev[exerciseName] || new Set<number>()
+      const current = prev[key] || new Set<number>()
       const next = new Set(current)
       const wasCompleted = next.has(setIdx)
       if (wasCompleted) {
@@ -118,7 +121,7 @@ export default function TrainingDay() {
         const restSec = parseRestSeconds(restStr)
         if (restSec > 0) startTimer(restSec)
       }
-      return { ...prev, [exerciseName]: next }
+      return { ...prev, [key]: next }
     })
   }
 
@@ -278,12 +281,13 @@ export default function TrainingDay() {
         <div className="space-y-3">
           {day.exercises.map((exercise, i) => {
             const isExpanded = expandedExercise === i
-            const exerciseSets = completedSets[exercise.name] || new Set()
+            const key = exKey(i, exercise.name)
+            const exerciseSets = completedSets[key] || new Set()
             const exerciseDone = exerciseSets.size === exercise.sets
 
             return (
               <div
-                key={exercise.name}
+                key={`${i}-${exercise.name}`}
                 className={`animate-slide-up opacity-0 rounded-2xl border transition-all duration-200 ${
                   exerciseDone
                     ? 'bg-lime/5 border-lime/20'
@@ -340,7 +344,7 @@ export default function TrainingDay() {
                             return (
                               <button
                                 key={setIdx}
-                                onClick={() => toggleSet(exercise.name, setIdx, exercise.rest)}
+                                onClick={() => toggleSet(key, setIdx, exercise.rest)}
                                 className={`flex-1 py-3 rounded-xl border-2 font-display font-bold text-sm transition-all duration-200 ${
                                   done
                                     ? 'bg-lime/20 border-lime text-lime'
@@ -371,15 +375,15 @@ export default function TrainingDay() {
                             type="number"
                             inputMode="decimal"
                             placeholder="Weight (lbs)"
-                            value={exerciseWeights[exercise.name] || ''}
-                            onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [exercise.name]: e.target.value }))}
+                            value={exerciseWeights[key] || ''}
+                            onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [key]: e.target.value }))}
                             className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
                           />
                           <input
                             type="text"
                             placeholder="Notes"
-                            value={exerciseNotes[exercise.name] || ''}
-                            onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [exercise.name]: e.target.value }))}
+                            value={exerciseNotes[key] || ''}
+                            onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [key]: e.target.value }))}
                             className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
                           />
                         </div>
@@ -420,13 +424,14 @@ export default function TrainingDay() {
                   completedSets: setsData,
                 })
 
-                const detectedPRs: string[] = []
+                const detectedPRs: { name: string; weight: string }[] = []
                 const allNotes = getExerciseNotes(user.id)
                 const existingPRs = getPRs(user.id)
 
-                for (const exercise of day.exercises) {
-                  const w = exerciseWeights[exercise.name]
-                  const n = exerciseNotes[exercise.name]
+                day.exercises.forEach((exercise, i) => {
+                  const k = exKey(i, exercise.name)
+                  const w = exerciseWeights[k]
+                  const n = exerciseNotes[k]
                   if (w || n) {
                     saveExerciseNote(user.id, {
                       date: today,
@@ -448,12 +453,12 @@ export default function TrainingDay() {
                       const pastMax = pastWeights.length > 0 ? Math.max(...pastWeights) : 0
                       const previousBest = Math.max(pastMax, existingMax)
                       if (currentWeight > previousBest && previousBest > 0) {
-                        detectedPRs.push(exercise.name)
+                        detectedPRs.push({ name: exercise.name, weight: w })
                         savePR(user.id, { lift: exercise.name, value: w, date: today })
                       }
                     }
                   }
-                }
+                })
                 setNewPRs(detectedPRs)
               }
               setShowCelebration(true)
@@ -505,11 +510,11 @@ export default function TrainingDay() {
                   </p>
                 </div>
                 <div className="space-y-1.5">
-                  {newPRs.map((name) => (
-                    <div key={name} className="flex items-center justify-center gap-2">
-                      <span className="text-text text-sm font-medium">{name}</span>
+                  {newPRs.map((pr, i) => (
+                    <div key={i} className="flex items-center justify-center gap-2">
+                      <span className="text-text text-sm font-medium">{pr.name}</span>
                       <span className="text-lime font-display font-bold text-sm">
-                        {exerciseWeights[name]} lbs
+                        {pr.weight} lbs
                       </span>
                     </div>
                   ))}
