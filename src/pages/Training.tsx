@@ -16,6 +16,7 @@ const categoryColors: Record<string, string> = {
   hybrid: 'text-[#818cf8] bg-[#818cf8]/10',
   conditioning: 'text-warning bg-warning/10',
   functional: 'text-lime bg-lime/10',
+  running: 'text-cyan-400 bg-cyan-400/10',
 }
 
 function useSelectedProgram(userId: string | undefined, identity: string) {

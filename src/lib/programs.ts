@@ -24,7 +24,7 @@ export type Program = {
   days: TrainingDay[]
   frequency: string
   description: string
-  category: 'strength' | 'hybrid' | 'conditioning' | 'functional'
+  category: 'strength' | 'hybrid' | 'conditioning' | 'functional' | 'running'
 }
 
 export const athleticProgram: Program = {
@@ -1618,8 +1618,145 @@ export const hyroxProgram: Program = {
   ],
 }
 
+export const runningProgram: Program = {
+  id: 'running',
+  name: 'Running',
+  weeks: 4,
+  frequency: '3x / week',
+  description: 'Speed work, threshold training, and long runs. Get faster, go farther.',
+  category: 'running',
+  days: [
+    {
+      day: 'Day 1',
+      title: 'Speed + Track Work',
+      warmup: '15 min: easy jog (1 mile), dynamic stretches, A-skips, B-skips, high knees, 4 × 100m strides building to 90%',
+      duration: '55 min',
+      exercises: [
+        {
+          name: '400m Repeat',
+          sets: 6,
+          reps: '1',
+          rest: '1:30',
+          cues: 'Run at your current mile pace. Relaxed shoulders, quick turnover. Each rep should feel controlled, not all-out.',
+        },
+        {
+          name: '200m Sprint',
+          sets: 4,
+          reps: '1',
+          rest: '1:00',
+          cues: '90-95% effort. Drive your arms, stay tall. Focus on form even when tired.',
+        },
+        {
+          name: '100m Stride',
+          sets: 4,
+          reps: '1',
+          rest: '0:45',
+          cues: 'Smooth acceleration to 85%. Feel the speed, don\'t force it. Walk back recovery.',
+        },
+        {
+          name: 'Hill Sprint',
+          sets: 4,
+          reps: '60m',
+          rest: '2:00',
+          cues: 'Find a moderate hill. Drive the knees, pump the arms. Walk down for recovery. Power, not pace.',
+        },
+        {
+          name: 'Core Circuit — Plank + Dead Bug + Bird Dog',
+          sets: 2,
+          reps: '30 sec each',
+          rest: '0:30',
+          cues: 'Running-specific core. Stable hips = faster legs. No rushing.',
+        },
+      ],
+      cooldown: '10 min: easy jog (0.5 mile), calf stretch, hip flexor stretch, hamstring stretch, quad stretch',
+    },
+    {
+      day: 'Day 2',
+      title: 'Threshold + Tempo',
+      warmup: '15 min: easy jog (1 mile), leg swings, hip circles, 4 × 100m strides at tempo effort',
+      duration: '50 min',
+      exercises: [
+        {
+          name: 'Tempo Run',
+          sets: 1,
+          reps: '20 min',
+          rest: '-',
+          cues: 'Comfortably hard — you can talk in short phrases but not full sentences. This is your lactate threshold pace. Stay steady, don\'t fade.',
+        },
+        {
+          name: '1km Threshold Interval',
+          sets: 3,
+          reps: '1',
+          rest: '2:00',
+          cues: '10-15 seconds per mile faster than your tempo pace. Hold it steady through the full kilometer. Recovery is easy jogging.',
+        },
+        {
+          name: 'Cruise Interval — 1 Mile',
+          sets: 2,
+          reps: '1',
+          rest: '1:30',
+          cues: 'Run at half-marathon effort. Controlled breathing. The goal is sustained speed, not a race. Jog the recovery.',
+        },
+        {
+          name: 'Fartlek Finish',
+          sets: 1,
+          reps: '10 min',
+          rest: '-',
+          cues: 'Alternate 1 min hard / 1 min easy for 10 minutes. The hard portions should be faster than tempo. Finish strong.',
+        },
+      ],
+      cooldown: '10 min: easy jog (0.5 mile), foam roll calves and quads, pigeon stretch, standing hamstring stretch',
+    },
+    {
+      day: 'Day 3',
+      title: 'Long Run + Endurance',
+      warmup: '10 min: walk to easy jog, start slow and let the pace come to you. No stretching — warm up with the first mile.',
+      duration: '60-90 min',
+      exercises: [
+        {
+          name: 'Long Run',
+          sets: 1,
+          reps: '60-90 min',
+          rest: '-',
+          cues: 'Easy conversational pace for the first 75%. You should be able to hold a full conversation. The last 25%, pick it up to moderate effort. Finish stronger than you started.',
+        },
+        {
+          name: 'Progression Miles (last 2 miles)',
+          sets: 2,
+          reps: '1 mile each',
+          rest: '0:00',
+          cues: 'Drop your pace by 15-20 seconds per mile for each of the last 2 miles. Simulate the end of a race. Practice closing hard.',
+        },
+        {
+          name: 'Walking Cooldown',
+          sets: 1,
+          reps: '5 min',
+          rest: '-',
+          cues: 'Walk it out. Don\'t stop moving abruptly. Let your heart rate come down gradually.',
+        },
+        {
+          name: 'Post-Run Stretch Routine',
+          sets: 1,
+          reps: '10 min',
+          rest: '-',
+          cues: 'Calves (30 sec each), hip flexors (30 sec each), hamstrings (30 sec each), quads (30 sec each), pigeon stretch (45 sec each). Hold each stretch — don\'t bounce.',
+        },
+        {
+          name: 'Foam Roll — Legs',
+          sets: 1,
+          reps: '5 min',
+          rest: '-',
+          cues: 'Calves, IT band, quads, hamstrings, glutes. Slow passes. Spend extra time on tight spots. This is how you stay healthy.',
+        },
+      ],
+      cooldown: 'Hydrate immediately. Refuel within 30 minutes — protein + carbs. Your next long run depends on today\'s recovery.',
+    },
+  ],
+}
+
 export const allPrograms: Program[] = [
   functionalFitnessProgram,
+  runningProgram,
   hybridProgram,
   athleticProgram,
   strengthProgram,
