@@ -1,4 +1,4 @@
-import { Home, Dumbbell, BookOpen, TrendingUp, LayoutDashboard } from 'lucide-react'
+import { Home, Dumbbell, BookOpen, TrendingUp, ShoppingBag, LayoutDashboard } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const tabs = [
@@ -6,6 +6,7 @@ const tabs = [
   { path: '/training', icon: Dumbbell, label: 'Training' },
   { path: '/journal', icon: BookOpen, label: 'Journal' },
   { path: '/progress', icon: TrendingUp, label: 'Progress' },
+  { path: '/shop', icon: ShoppingBag, label: 'Shop' },
   { path: '/command', icon: LayoutDashboard, label: 'Command' },
 ]
 
@@ -22,7 +23,7 @@ export default function BottomNav() {
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              className="flex flex-col items-center gap-0.5 py-1 px-3 transition-all duration-200"
+              className="flex flex-col items-center gap-0.5 py-1 px-1.5 transition-all duration-200"
             >
               <div className={`p-1.5 rounded-xl transition-all duration-200 ${active ? 'bg-lime-glow' : ''}`}>
                 <tab.icon

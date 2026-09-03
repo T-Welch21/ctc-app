@@ -50,7 +50,7 @@ function AppRoutes() {
   }
 
   const showNav =
-    !['/onboarding', '/settings', '/check-in', '/messages', '/shop'].includes(location.pathname) &&
+    !['/onboarding', '/settings', '/check-in', '/messages'].includes(location.pathname) &&
     !location.pathname.match(/^\/training\/\d/)
 
   return (
