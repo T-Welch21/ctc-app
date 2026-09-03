@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell, ArrowRight, ChevronLeft } from 'lucide-react'
+import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell, ArrowRight, ChevronLeft, Flame, Zap } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { allPrograms, getProgramById, getProgram } from '../lib/programs'
@@ -11,12 +11,12 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
-const categoryColors: Record<string, string> = {
-  strength: 'text-red-400 bg-red-400/10',
-  hybrid: 'text-[#818cf8] bg-[#818cf8]/10',
-  conditioning: 'text-warning bg-warning/10',
-  functional: 'text-lime bg-lime/10',
-  running: 'text-cyan-400 bg-cyan-400/10',
+const categoryColors: Record<string, { text: string; bg: string; accent: string }> = {
+  strength: { text: 'text-red-400', bg: 'bg-red-400/10', accent: 'from-red-400/20 to-transparent' },
+  hybrid: { text: 'text-[#818cf8]', bg: 'bg-[#818cf8]/10', accent: 'from-[#818cf8]/20 to-transparent' },
+  conditioning: { text: 'text-warning', bg: 'bg-warning/10', accent: 'from-warning/20 to-transparent' },
+  functional: { text: 'text-lime', bg: 'bg-lime/10', accent: 'from-lime/20 to-transparent' },
+  running: { text: 'text-cyan-400', bg: 'bg-cyan-400/10', accent: 'from-cyan-400/20 to-transparent' },
 }
 
 function useSelectedProgram(userId: string | undefined, identity: string) {
@@ -59,6 +59,8 @@ export default function Training() {
 
   const uniqueDates = [...new Set(pastSessions.map((s) => s.date))]
 
+  const cat = categoryColors[selectedProgram.category] || categoryColors.functional
+
   const switchProgram = (program: Program) => {
     setSelectedProgram(program)
     if (user) setSelectedProgramId(user.id, program.id)
@@ -68,62 +70,67 @@ export default function Training() {
   if (showProgramPicker) {
     return (
       <div className="min-h-screen pb-24 px-5 pt-14">
-        <div className="animate-fade-in mb-6">
+        <div className="animate-fade-in mb-8">
           <button
             onClick={() => setShowProgramPicker(false)}
-            className="flex items-center gap-1.5 text-text-secondary hover:text-text text-sm mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-text-secondary hover:text-text text-sm mb-6 transition-colors"
           >
             <ChevronLeft size={16} /> Back
           </button>
-          <h1 className="font-display text-2xl font-bold mb-1">Choose Your Program</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight mb-2">Choose Your Program</h1>
           <p className="text-text-muted text-sm">Pick the one that matches how you want to train.</p>
         </div>
 
         <div className="space-y-3">
           {allPrograms.map((program, i) => {
             const isActive = program.id === selectedProgram.id
-            const colorClass = categoryColors[program.category] || 'text-lime bg-lime/10'
+            const pCat = categoryColors[program.category] || categoryColors.functional
             return (
               <button
                 key={program.id}
                 onClick={() => switchProgram(program)}
-                className={`animate-slide-up opacity-0 w-full rounded-2xl border p-5 text-left transition-all duration-200 active:scale-[0.98] ${
+                className={`animate-slide-up opacity-0 w-full rounded-2xl border p-5 text-left transition-all duration-200 active:scale-[0.98] relative overflow-hidden ${
                   isActive
-                    ? 'bg-lime/5 border-lime/30'
+                    ? 'bg-bg-card border-lime/40'
                     : 'bg-bg-card border-border hover:border-border-light'
                 }`}
                 style={{ animationDelay: `${i * 60}ms` }}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className={`font-display font-bold text-lg ${isActive ? 'text-lime' : 'text-text'}`}>
-                      {program.name}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${colorClass}`}>
-                        {program.category}
-                      </span>
-                      <span className="text-text-muted text-xs">{program.frequency}</span>
-                      <span className="text-text-muted text-xs">·</span>
-                      <span className="text-text-muted text-xs">{program.weeks} weeks</span>
+                {isActive && (
+                  <div className={`absolute inset-0 bg-gradient-to-br ${pCat.accent} pointer-events-none`} />
+                )}
+                <div className="relative">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className={`font-display font-bold text-lg tracking-tight ${isActive ? 'text-text' : 'text-text'}`}>
+                        {program.name}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${pCat.text} ${pCat.bg}`}>
+                          {program.category}
+                        </span>
+                        <span className="text-text-muted text-xs">{program.frequency}</span>
+                        <span className="text-text-muted text-[8px]">|</span>
+                        <span className="text-text-muted text-xs">{program.weeks} weeks</span>
+                      </div>
                     </div>
+                    {isActive && (
+                      <div className="w-7 h-7 rounded-full bg-lime flex items-center justify-center shrink-0 mt-0.5">
+                        <Check size={14} className="text-bg" strokeWidth={3} />
+                      </div>
+                    )}
                   </div>
-                  {isActive && (
-                    <div className="w-6 h-6 rounded-full bg-lime flex items-center justify-center shrink-0 mt-1">
-                      <Check size={14} className="text-bg" />
-                    </div>
-                  )}
-                </div>
-                <p className="text-text-secondary text-sm mt-2 leading-relaxed">{program.description}</p>
-                <div className="flex items-center gap-3 mt-3">
-                  {program.days.slice(0, 4).map((day, di) => (
-                    <span key={di} className="text-[10px] text-text-muted bg-bg-elevated px-2 py-0.5 rounded-full">
-                      {day.title.length > 18 ? day.title.substring(0, 18) + '...' : day.title}
-                    </span>
-                  ))}
-                  {program.days.length > 4 && (
-                    <span className="text-[10px] text-text-muted">+{program.days.length - 4}</span>
-                  )}
+                  <p className="text-text-secondary text-sm mt-2 leading-relaxed">{program.description}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    {program.days.slice(0, 4).map((day, di) => (
+                      <span key={di} className="text-[10px] text-text-muted bg-bg-elevated/80 px-2.5 py-1 rounded-lg">
+                        {day.title.length > 18 ? day.title.substring(0, 18) + '...' : day.title}
+                      </span>
+                    ))}
+                    {program.days.length > 4 && (
+                      <span className="text-[10px] text-text-muted">+{program.days.length - 4}</span>
+                    )}
+                  </div>
                 </div>
               </button>
             )
@@ -135,99 +142,110 @@ export default function Training() {
 
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
-      {/* Program header — tappable to switch */}
-      <div className="animate-fade-in mb-4">
+      {/* Program header */}
+      <div className="animate-fade-in mb-6">
         <button
           onClick={() => setShowProgramPicker(true)}
-          className="w-full rounded-2xl bg-bg-card border border-border p-4 text-left transition-all hover:border-border-light active:scale-[0.99]"
+          className="w-full rounded-2xl bg-bg-card border border-border p-5 text-left transition-all hover:border-border-light active:scale-[0.99] relative overflow-hidden group"
         >
-          <div className="flex items-center justify-between">
+          <div className={`absolute inset-0 bg-gradient-to-br ${cat.accent} opacity-60 pointer-events-none`} />
+          <div className="relative flex items-center justify-between">
             <div>
-              <p className="text-text-muted text-[10px] uppercase tracking-widest mb-1">Current Program</p>
-              <p className="font-display text-xl font-bold">{selectedProgram.name}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${categoryColors[selectedProgram.category] || 'text-lime bg-lime/10'}`}>
+              <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-1.5">Current Program</p>
+              <p className="font-display text-2xl font-bold tracking-tight">{selectedProgram.name}</p>
+              <div className="flex items-center gap-2.5 mt-2">
+                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${cat.text} ${cat.bg}`}>
                   {selectedProgram.category}
                 </span>
-                <span className="text-text-muted text-xs">{selectedProgram.frequency}</span>
-                <span className="text-text-muted text-xs">·</span>
-                <span className="text-text-muted text-xs">Week {currentWeek} of {selectedProgram.weeks}</span>
+                <span className="text-text-secondary text-xs font-medium">{selectedProgram.frequency}</span>
+                <span className="text-border text-xs">|</span>
+                <span className="text-text-secondary text-xs font-medium">Week {currentWeek} of {selectedProgram.weeks}</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-text-muted">
-              <span className="text-[10px] uppercase tracking-wider">Switch</span>
+            <div className="flex items-center gap-1.5 text-text-muted group-hover:text-text transition-colors">
+              <span className="text-[10px] uppercase tracking-widest font-medium">Switch</span>
               <ArrowRight size={14} />
             </div>
           </div>
         </button>
       </div>
 
-      {/* Overall program progress */}
-      <div className="animate-slide-up rounded-2xl bg-bg-card border border-border p-4 mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-text-secondary text-xs uppercase tracking-wider">Program Progress</p>
-          <p className="text-lime font-display font-bold text-sm">{Math.round(programProgress)}%</p>
+      {/* Progress section */}
+      <div className="animate-slide-up mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium">Program Progress</p>
+          <p className={`${cat.text} font-display font-bold text-sm`}>{Math.round(programProgress)}%</p>
         </div>
-        <div className="h-2 bg-bg-elevated rounded-full overflow-hidden mb-2">
+        <div className="h-1.5 bg-bg-elevated rounded-full overflow-hidden mb-2">
           <div
             className="h-full bg-lime rounded-full transition-all duration-700 ease-out"
             style={{ width: `${programProgress}%` }}
           />
         </div>
-        <p className="text-text-muted text-xs">
-          {programSessions.length} of {totalProgramSessions} sessions completed
-        </p>
-      </div>
-
-      {/* Today's progress */}
-      <div className="animate-slide-up [animation-delay:50ms] opacity-0 flex gap-1.5 mb-4">
-        {days.map((_, i) => (
-          <div
-            key={i}
-            className={`flex-1 h-1.5 rounded-full transition-colors ${
-              completedToday.has(i) ? 'bg-lime' : 'bg-bg-elevated'
-            }`}
-          />
-        ))}
+        <div className="flex items-center justify-between">
+          <p className="text-text-muted text-xs">
+            {programSessions.length} of {totalProgramSessions} sessions
+          </p>
+          {/* Today's dots */}
+          <div className="flex gap-1">
+            {days.map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  completedToday.has(i) ? 'bg-lime' : 'bg-bg-elevated'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Training days */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {days.map((day, i) => {
           const done = completedToday.has(i)
           return (
             <button
               key={day.day}
               onClick={() => navigate(`/training/${i}`)}
-              className={`animate-slide-up opacity-0 w-full rounded-2xl border p-4 transition-all duration-200 text-left active:scale-[0.98] ${
+              className={`animate-slide-up opacity-0 w-full rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
                 done
-                  ? 'bg-lime/5 border-lime/20 hover:border-lime/30'
+                  ? 'bg-bg-card border-lime/30'
                   : 'bg-bg-card border-border hover:border-border-light'
               }`}
-              style={{ animationDelay: `${i * 80}ms` }}
+              style={{ animationDelay: `${(i + 1) * 70}ms` }}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      done ? 'bg-lime/20' : 'bg-lime/10'
-                    }`}
-                  >
-                    {done ? (
-                      <Check size={20} className="text-lime" />
-                    ) : (
-                      <Play size={20} className="text-lime ml-0.5" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-text-secondary text-xs">{day.day}</p>
-                    <p className={`font-display font-semibold ${done ? 'text-lime' : 'text-text'}`}>
-                      {day.title}
-                    </p>
-                    <p className="text-text-muted text-xs mt-0.5">
-                      {day.exercises.length} exercises · {day.duration}
-                    </p>
-                  </div>
+              {done && (
+                <div className="absolute inset-0 bg-gradient-to-r from-lime/8 to-transparent pointer-events-none" />
+              )}
+              <div className="relative flex items-center p-4 gap-4">
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                    done
+                      ? 'bg-lime/15'
+                      : 'bg-bg-elevated'
+                  }`}
+                >
+                  {done ? (
+                    <Check size={20} className="text-lime" strokeWidth={3} />
+                  ) : (
+                    <span className="font-display font-bold text-text-muted text-sm">{String(i + 1).padStart(2, '0')}</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`font-display font-bold text-[15px] tracking-tight ${done ? 'text-lime' : 'text-text'}`}>
+                    {day.title}
+                  </p>
+                  <p className="text-text-muted text-xs mt-0.5">
+                    {day.exercises.length} exercises · {day.duration}
+                  </p>
+                </div>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${done ? 'bg-lime/10' : 'bg-bg-elevated'}`}>
+                  {done ? (
+                    <Flame size={14} className="text-lime" />
+                  ) : (
+                    <Play size={14} className="text-text-muted ml-0.5" />
+                  )}
                 </div>
               </div>
             </button>
@@ -237,28 +255,31 @@ export default function Training() {
 
       {/* Daily summary */}
       {completedDays > 0 && (
-        <div className="animate-fade-in mt-6 rounded-2xl bg-lime/5 border border-lime/20 p-4 text-center">
+        <div className="animate-fade-in mt-6 rounded-2xl bg-lime/5 border border-lime/20 p-4 flex items-center justify-center gap-2">
+          <Zap size={16} className="text-lime" />
           <p className="font-display font-semibold text-lime text-sm">
-            {completedDays} of {days.length} sessions completed today
+            {completedDays === days.length ? 'All sessions crushed today' : `${completedDays} of ${days.length} sessions done today`}
           </p>
         </div>
       )}
 
       {/* Session history */}
       {programSessions.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-8">
           <button
             onClick={() => setShowHistory(!showHistory)}
-            className="flex items-center gap-2 text-text-secondary text-sm mb-3"
+            className="flex items-center gap-2 text-text-secondary text-sm mb-3 group"
           >
-            <History size={16} />
-            <span className="font-display font-semibold">Session History</span>
-            <span className="text-text-muted text-xs">({programSessions.length})</span>
-            {showHistory ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            <History size={14} className="text-text-muted" />
+            <span className="font-display font-bold text-xs uppercase tracking-widest">History</span>
+            <span className="text-text-muted text-[10px] font-medium bg-bg-elevated px-1.5 py-0.5 rounded-md">{programSessions.length}</span>
+            <div className="ml-auto">
+              {showHistory ? <ChevronUp size={14} className="text-text-muted" /> : <ChevronDown size={14} className="text-text-muted" />}
+            </div>
           </button>
 
           {showHistory && (
-            <div className="space-y-3 animate-fade-in">
+            <div className="space-y-2.5 animate-fade-in">
               {uniqueDates.length === 0 ? (
                 <p className="text-text-muted text-sm py-4 text-center">No past sessions yet</p>
               ) : (
@@ -266,7 +287,7 @@ export default function Training() {
                   const daySessions = pastSessions.filter((s) => s.date === date)
                   return (
                     <div key={date} className="rounded-2xl bg-bg-card border border-border p-4">
-                      <p className="font-display font-semibold text-sm mb-2">{formatDate(date)}</p>
+                      <p className="font-display font-bold text-xs uppercase tracking-wider text-text-secondary mb-3">{formatDate(date)}</p>
                       <div className="space-y-2">
                         {daySessions.map((session, si) => {
                           const day = selectedProgram.days[session.dayIndex]
@@ -281,8 +302,8 @@ export default function Training() {
                             <div key={si} className="rounded-xl bg-bg-elevated p-3">
                               <div className="flex items-center gap-2 mb-1">
                                 <Dumbbell size={12} className="text-lime" />
-                                <span className="font-display font-semibold text-xs">{day.title}</span>
-                                <span className="text-text-muted text-[10px] ml-auto">{totalSets} sets</span>
+                                <span className="font-display font-bold text-xs">{day.title}</span>
+                                <span className="text-text-muted text-[10px] ml-auto font-medium">{totalSets} sets</span>
                               </div>
                               {dayNotes.length > 0 && (
                                 <div className="mt-2 space-y-1">

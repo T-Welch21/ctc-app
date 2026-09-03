@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer } from 'lucide-react'
+import { ArrowLeft, Clock, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer, Zap } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getProgramById, getProgram } from '../lib/programs'
 import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs, getSelectedProgramId } from '../lib/storage'
@@ -81,7 +81,6 @@ export default function TrainingDay() {
     }
   }, [])
 
-  // Pre-fill weights from last session
   useEffect(() => {
     if (!user || !day) return
     const prefilled: Record<string, string> = {}
@@ -92,7 +91,6 @@ export default function TrainingDay() {
     if (Object.keys(prefilled).length > 0) setExerciseWeights(prefilled)
   }, [user, day])
 
-  // Elapsed workout timer
   useEffect(() => {
     if (sessionStarted && !showCelebration) {
       elapsedRef.current = setInterval(() => setElapsedSeconds((s) => s + 1), 1000)
@@ -135,31 +133,30 @@ export default function TrainingDay() {
   return (
     <div className="min-h-screen pb-24 bg-bg">
       {/* Header */}
-      <div className="sticky top-0 bg-bg/90 backdrop-blur-xl z-40 border-b border-border">
+      <div className="sticky top-0 bg-bg/90 backdrop-blur-xl z-40 border-b border-border/50">
         <div className="max-w-lg mx-auto px-5 py-4">
-          <div className="flex items-center gap-3 mb-3">
-            <button onClick={() => navigate('/training')} className="text-text-secondary hover:text-text transition-colors">
-              <ArrowLeft size={22} />
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate('/training')} className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-secondary hover:text-text transition-colors">
+              <ArrowLeft size={18} />
             </button>
             <div className="flex-1">
-              <p className="text-text-secondary text-xs">{day.day}</p>
-              <h1 className="font-display text-lg font-bold">{day.title}</h1>
+              <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium">{day.day}</p>
+              <h1 className="font-display text-lg font-bold tracking-tight">{day.title}</h1>
             </div>
             {sessionStarted && !showCelebration ? (
-              <div className="flex items-center gap-1.5 text-lime text-sm font-display font-semibold tabular-nums">
-                <Timer size={14} />
-                {formatTimer(elapsedSeconds)}
+              <div className="flex items-center gap-1.5 bg-lime/10 px-3 py-1.5 rounded-lg">
+                <Timer size={13} className="text-lime" />
+                <span className="text-lime text-sm font-display font-bold tabular-nums">{formatTimer(elapsedSeconds)}</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 text-text-muted text-sm">
-                <Clock size={14} />
-                {day.duration}
+              <div className="flex items-center gap-1.5 bg-bg-elevated px-3 py-1.5 rounded-lg">
+                <Clock size={13} className="text-text-muted" />
+                <span className="text-text-muted text-sm font-medium">{day.duration}</span>
               </div>
             )}
           </div>
-          {/* Progress bar */}
           {sessionStarted && (
-            <div className="h-1.5 bg-bg-elevated rounded-full overflow-hidden">
+            <div className="mt-3 h-1 bg-bg-elevated rounded-full overflow-hidden">
               <div
                 className="h-full bg-lime rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
@@ -171,10 +168,10 @@ export default function TrainingDay() {
 
       {/* Rest timer overlay */}
       {timerRunning && timerSeconds > 0 && (
-        <div className="sticky top-[85px] z-30 mx-5">
+        <div className="sticky top-[80px] z-30 mx-5 mt-3">
           <div className="rounded-2xl bg-bg-card border border-lime/30 p-4 shadow-lg shadow-lime/5">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-text-secondary text-xs uppercase tracking-wider font-medium">Rest Timer</p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium">Rest Timer</p>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setTimerRunning(false)}
@@ -184,17 +181,17 @@ export default function TrainingDay() {
                 </button>
                 <button
                   onClick={stopTimer}
-                  className="text-text-muted text-xs hover:text-text transition-colors"
+                  className="text-text-muted text-[10px] uppercase tracking-wider font-medium hover:text-text transition-colors"
                 >
                   Skip
                 </button>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <p className="font-display font-bold text-3xl text-lime tabular-nums">
+              <p className="font-display font-bold text-3xl text-lime tabular-nums min-w-[80px]">
                 {formatTimer(timerSeconds)}
               </p>
-              <div className="flex-1 h-2 bg-bg-elevated rounded-full overflow-hidden">
+              <div className="flex-1 h-1.5 bg-bg-elevated rounded-full overflow-hidden">
                 <div
                   className="h-full bg-lime rounded-full transition-all duration-1000 linear"
                   style={{ width: `${timerProgress}%` }}
@@ -207,14 +204,14 @@ export default function TrainingDay() {
 
       {/* Paused timer */}
       {!timerRunning && timerSeconds > 0 && (
-        <div className="sticky top-[85px] z-30 mx-5">
+        <div className="sticky top-[80px] z-30 mx-5 mt-3">
           <div className="rounded-2xl bg-bg-card border border-border p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <p className="font-display font-bold text-2xl text-text-muted tabular-nums">
                   {formatTimer(timerSeconds)}
                 </p>
-                <span className="text-text-muted text-xs uppercase tracking-wider">Paused</span>
+                <span className="text-text-muted text-[10px] uppercase tracking-widest font-medium">Paused</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -231,7 +228,7 @@ export default function TrainingDay() {
                 </button>
                 <button
                   onClick={() => { stopTimer(); setTimerSeconds(0) }}
-                  className="text-text-muted text-xs hover:text-text transition-colors px-2"
+                  className="text-text-muted text-[10px] uppercase tracking-wider font-medium hover:text-text transition-colors px-2"
                 >
                   Dismiss
                 </button>
@@ -243,13 +240,16 @@ export default function TrainingDay() {
 
       {/* Timer done flash */}
       {!timerRunning && timerSeconds === 0 && timerTotal > 0 && (
-        <div className="sticky top-[85px] z-30 mx-5">
+        <div className="sticky top-[80px] z-30 mx-5 mt-3">
           <div className="rounded-2xl bg-lime/10 border border-lime/30 p-4 animate-fade-in">
             <div className="flex items-center justify-between">
-              <p className="font-display font-bold text-lime">Rest complete — next set!</p>
+              <div className="flex items-center gap-2">
+                <Zap size={16} className="text-lime" />
+                <p className="font-display font-bold text-lime text-sm">Go — next set</p>
+              </div>
               <button
                 onClick={() => setTimerTotal(0)}
-                className="text-lime text-xs hover:underline"
+                className="text-lime/60 text-[10px] uppercase tracking-wider font-medium hover:text-lime transition-colors"
               >
                 Dismiss
               </button>
@@ -258,12 +258,12 @@ export default function TrainingDay() {
         </div>
       )}
 
-      <div className="max-w-lg mx-auto px-5 pt-4">
+      <div className="max-w-lg mx-auto px-5 pt-5">
         {/* Warmup */}
         {day.warmup && (
-          <div className="animate-fade-in rounded-2xl bg-bg-card border border-border p-4 mb-4">
-            <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Warm-Up</p>
-            <p className="text-sm text-text-secondary">{day.warmup}</p>
+          <div className="animate-fade-in rounded-2xl bg-bg-card border border-border p-4 mb-5">
+            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-2">Warm-Up</p>
+            <p className="text-sm text-text-secondary leading-relaxed">{day.warmup}</p>
           </div>
         )}
 
@@ -271,14 +271,14 @@ export default function TrainingDay() {
         {!sessionStarted && (
           <button
             onClick={() => setSessionStarted(true)}
-            className="animate-fade-in w-full bg-lime text-bg font-display font-semibold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime flex items-center justify-center gap-2 mb-6"
+            className="animate-fade-in w-full bg-lime text-bg font-display font-bold text-base py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime flex items-center justify-center gap-2.5 mb-6 uppercase tracking-wider"
           >
-            <Play size={22} className="ml-0.5" /> Start Session
+            <Play size={20} className="ml-0.5" /> Start Session
           </button>
         )}
 
         {/* Exercises */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {day.exercises.map((exercise, i) => {
             const isExpanded = expandedExercise === i
             const key = exKey(i, exercise.name)
@@ -288,56 +288,56 @@ export default function TrainingDay() {
             return (
               <div
                 key={`${i}-${exercise.name}`}
-                className={`animate-slide-up opacity-0 rounded-2xl border transition-all duration-200 ${
+                className={`animate-slide-up opacity-0 rounded-2xl border transition-all duration-200 relative overflow-hidden ${
                   exerciseDone
-                    ? 'bg-lime/5 border-lime/20'
+                    ? 'bg-bg-card border-lime/25'
                     : 'bg-bg-card border-border'
                 }`}
                 style={{ animationDelay: `${i * 60}ms` }}
               >
+                {exerciseDone && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-lime/5 to-transparent pointer-events-none" />
+                )}
                 {/* Exercise header */}
                 <button
                   onClick={() => setExpandedExercise(isExpanded ? null : i)}
-                  className="w-full flex items-center gap-3 p-4 text-left"
+                  className="relative w-full flex items-center gap-3 p-4 text-left"
                 >
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-display font-bold ${
-                    exerciseDone ? 'bg-lime/20 text-lime' : 'bg-bg-elevated text-text-secondary'
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-display font-bold shrink-0 ${
+                    exerciseDone ? 'bg-lime/15 text-lime' : 'bg-bg-elevated text-text-muted'
                   }`}>
-                    {exerciseDone ? <Check size={16} /> : i + 1}
+                    {exerciseDone ? <Check size={16} strokeWidth={3} /> : String(i + 1).padStart(2, '0')}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`font-display font-semibold text-sm ${exerciseDone ? 'text-lime' : 'text-text'}`}>
+                    <p className={`font-display font-bold text-sm tracking-tight ${exerciseDone ? 'text-lime' : 'text-text'}`}>
                       {exercise.name}
                     </p>
                     <p className="text-text-muted text-xs mt-0.5">
-                      {exercise.sets} sets × {exercise.reps}
+                      {exercise.sets > 1 ? `${exercise.sets} sets` : '1 set'} × {exercise.reps}
                       {exercise.tempo ? ` · ${exercise.tempo}` : ''}
                       {exercise.rest !== '-' ? ` · ${exercise.rest} rest` : ''}
                     </p>
                   </div>
                   {isExpanded ? (
-                    <ChevronUp size={18} className="text-text-muted shrink-0" />
+                    <ChevronUp size={16} className="text-text-muted shrink-0" />
                   ) : (
-                    <ChevronDown size={18} className="text-text-muted shrink-0" />
+                    <ChevronDown size={16} className="text-text-muted shrink-0" />
                   )}
                 </button>
 
                 {/* Expanded detail */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 space-y-3">
+                  <div className="relative px-4 pb-4 space-y-3">
                     {/* Coaching cues */}
-                    <div className="rounded-xl bg-bg-elevated p-3">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <Dumbbell size={12} className="text-lime" />
-                        <p className="text-[10px] uppercase tracking-wider text-lime font-medium">Coaching Cues</p>
-                      </div>
+                    <div className="rounded-xl bg-bg-elevated/70 p-3.5">
+                      <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-1.5">Coaching Cues</p>
                       <p className="text-text-secondary text-sm leading-relaxed">{exercise.cues}</p>
                     </div>
 
                     {/* Set tracker */}
                     {sessionStarted && (
                       <div>
-                        <p className="text-text-muted text-xs mb-2">Tap to complete each set</p>
+                        <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-2">Sets</p>
                         <div className="flex gap-2">
                           {Array.from({ length: exercise.sets }).map((_, setIdx) => {
                             const done = exerciseSets.has(setIdx)
@@ -347,11 +347,11 @@ export default function TrainingDay() {
                                 onClick={() => toggleSet(key, setIdx, exercise.rest)}
                                 className={`flex-1 py-3 rounded-xl border-2 font-display font-bold text-sm transition-all duration-200 ${
                                   done
-                                    ? 'bg-lime/20 border-lime text-lime'
-                                    : 'bg-bg-elevated border-border text-text-secondary hover:border-border-light'
+                                    ? 'bg-lime/15 border-lime/50 text-lime'
+                                    : 'bg-bg-elevated border-border text-text-muted hover:border-border-light active:scale-95'
                                 }`}
                               >
-                                {done ? <Check size={16} className="mx-auto" /> : `S${setIdx + 1}`}
+                                {done ? <Check size={16} className="mx-auto" strokeWidth={3} /> : setIdx + 1}
                               </button>
                             )
                           })}
@@ -365,7 +365,7 @@ export default function TrainingDay() {
                         {(() => {
                           const lastNote = user ? getLastNoteForExercise(user.id, exercise.name) : null
                           return lastNote ? (
-                            <p className="text-text-muted text-[10px]">
+                            <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium">
                               Last: {lastNote.weight && `${lastNote.weight} lbs`}{lastNote.weight && lastNote.notes ? ' · ' : ''}{lastNote.notes}
                             </p>
                           ) : null
@@ -377,14 +377,14 @@ export default function TrainingDay() {
                             placeholder="Weight (lbs)"
                             value={exerciseWeights[key] || ''}
                             onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [key]: e.target.value }))}
-                            className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+                            className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
                           />
                           <input
                             type="text"
                             placeholder="Notes"
                             value={exerciseNotes[key] || ''}
                             onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [key]: e.target.value }))}
-                            className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+                            className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
                           />
                         </div>
                       </div>
@@ -398,9 +398,9 @@ export default function TrainingDay() {
 
         {/* Cooldown */}
         {day.cooldown && (
-          <div className="rounded-2xl bg-bg-card border border-border p-4 mt-4">
-            <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Cool-Down</p>
-            <p className="text-sm text-text-secondary">{day.cooldown}</p>
+          <div className="rounded-2xl bg-bg-card border border-border p-4 mt-5">
+            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-2">Cool-Down</p>
+            <p className="text-sm text-text-secondary leading-relaxed">{day.cooldown}</p>
           </div>
         )}
 
@@ -463,7 +463,7 @@ export default function TrainingDay() {
               }
               setShowCelebration(true)
             }}
-            className="w-full bg-lime text-bg font-display font-semibold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime animate-pulse-glow mt-6"
+            className="w-full bg-lime text-bg font-display font-bold text-base py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime animate-pulse-glow mt-6 uppercase tracking-wider"
           >
             Complete Session
           </button>
@@ -472,30 +472,30 @@ export default function TrainingDay() {
 
       {/* Celebration overlay */}
       {showCelebration && (
-        <div className="fixed inset-0 bg-bg/95 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="animate-fade-in text-center px-8">
-            <div className="inline-flex p-5 rounded-3xl bg-lime/10 mb-6 animate-pulse-glow">
-              <Trophy size={56} className="text-lime" />
+        <div className="fixed inset-0 bg-bg/95 backdrop-blur-md z-50 flex items-center justify-center">
+          <div className="animate-fade-in text-center px-8 max-w-sm">
+            <div className="inline-flex p-6 rounded-3xl bg-lime/10 mb-6 animate-pulse-glow">
+              <Trophy size={48} className="text-lime" />
             </div>
-            <h1 className="font-display text-3xl font-bold mb-2">Session Complete</h1>
-            <p className="text-text-secondary mb-2">{day.title}</p>
+            <h1 className="font-display text-3xl font-bold tracking-tight mb-1">Session Complete</h1>
+            <p className="text-text-muted text-sm">{day.title}</p>
 
-            <div className="flex items-center justify-center gap-6 my-4">
+            <div className="flex items-center justify-center gap-8 my-6">
               <div>
-                <p className="font-display font-bold text-2xl text-lime">{totalSets}</p>
-                <p className="text-text-muted text-xs">Sets</p>
+                <p className="font-display font-bold text-3xl text-lime">{totalSets}</p>
+                <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">Sets</p>
               </div>
-              <div className="w-px h-8 bg-border" />
+              <div className="w-px h-10 bg-border" />
               <div>
-                <p className="font-display font-bold text-2xl text-text">{formatTimer(elapsedSeconds)}</p>
-                <p className="text-text-muted text-xs">Duration</p>
+                <p className="font-display font-bold text-3xl text-text">{formatTimer(elapsedSeconds)}</p>
+                <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">Duration</p>
               </div>
               {newPRs.length > 0 && (
                 <>
-                  <div className="w-px h-8 bg-border" />
+                  <div className="w-px h-10 bg-border" />
                   <div>
-                    <p className="font-display font-bold text-2xl text-[#818cf8]">{newPRs.length}</p>
-                    <p className="text-text-muted text-xs">New PRs</p>
+                    <p className="font-display font-bold text-3xl text-[#818cf8]">{newPRs.length}</p>
+                    <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">New PRs</p>
                   </div>
                 </>
               )}
@@ -503,13 +503,13 @@ export default function TrainingDay() {
 
             {newPRs.length > 0 && (
               <div className="my-4 rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Award size={18} className="text-[#818cf8]" />
-                  <p className="text-[#818cf8] font-display font-bold text-sm uppercase tracking-wider">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Award size={16} className="text-[#818cf8]" />
+                  <p className="text-[#818cf8] font-display font-bold text-[10px] uppercase tracking-[0.2em]">
                     Personal Records
                   </p>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {newPRs.map((pr, i) => (
                     <div key={i} className="flex items-center justify-center gap-2">
                       <span className="text-text text-sm font-medium">{pr.name}</span>
@@ -524,7 +524,7 @@ export default function TrainingDay() {
 
             <button
               onClick={() => navigate('/training')}
-              className="bg-lime text-bg font-display font-semibold text-lg py-4 px-12 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime mt-4"
+              className="bg-lime text-bg font-display font-bold text-base py-4 px-16 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime mt-4 uppercase tracking-wider"
             >
               Done
             </button>
