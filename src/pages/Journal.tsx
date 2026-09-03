@@ -44,7 +44,9 @@ export default function Journal() {
   const [energy, setEnergy] = useState(5)
   const [mind, setMind] = useState(5)
   const [checked, setChecked] = useState<Set<number>>(new Set())
-  const [gratitude, setGratitude] = useState('')
+  const [affirmation1, setAffirmation1] = useState('')
+  const [affirmation2, setAffirmation2] = useState('')
+  const [affirmation3, setAffirmation3] = useState('')
   const [saved, setSaved] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const affirmation = getAffirmation()
@@ -70,7 +72,7 @@ export default function Journal() {
       energy,
       mind,
       checkedItems: [...checked],
-      gratitude,
+      gratitude: [affirmation1, affirmation2, affirmation3].filter(Boolean).join('|||'),
       affirmation,
     })
     setSaved(true)
@@ -169,18 +171,41 @@ export default function Journal() {
         </div>
       </div>
 
-      {/* Gratitude */}
+      {/* Affirmations */}
       <div className="animate-slide-up [animation-delay:320ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
-        <p className="text-text-secondary text-xs uppercase tracking-wider mb-3">
-          {timeOfDay === 'morning' ? "I'm grateful for..." : 'Today I competed by...'}
-        </p>
-        <textarea
-          value={gratitude}
-          onChange={(e) => setGratitude(e.target.value)}
-          placeholder="Write here..."
-          rows={3}
-          className="w-full bg-transparent border-none resize-none text-text placeholder:text-text-muted focus:outline-none text-sm leading-relaxed"
-        />
+        <p className="text-text-secondary text-xs uppercase tracking-wider mb-4">My Affirmations</p>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lime font-display font-bold text-sm shrink-0">I am</span>
+            <input
+              type="text"
+              value={affirmation1}
+              onChange={(e) => setAffirmation1(e.target.value)}
+              placeholder="disciplined and relentless..."
+              className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-lime font-display font-bold text-sm shrink-0">I am</span>
+            <input
+              type="text"
+              value={affirmation2}
+              onChange={(e) => setAffirmation2(e.target.value)}
+              placeholder="built for this moment..."
+              className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-lime font-display font-bold text-sm shrink-0">I am</span>
+            <input
+              type="text"
+              value={affirmation3}
+              onChange={(e) => setAffirmation3(e.target.value)}
+              placeholder="called to compete..."
+              className="flex-1 bg-bg-elevated border border-border rounded-lg px-3 py-2.5 text-sm text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Save */}
@@ -276,7 +301,13 @@ function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
       )}
 
       {entry.gratitude && (
-        <p className="text-text-secondary text-xs italic truncate">"{entry.gratitude}"</p>
+        <div className="space-y-0.5">
+          {entry.gratitude.split('|||').map((a, i) => (
+            <p key={i} className="text-text-secondary text-xs italic truncate">
+              I am {a}
+            </p>
+          ))}
+        </div>
       )}
     </div>
   )
