@@ -8,7 +8,7 @@ const needleMovers = [
   'Eat with purpose',
   'Hydrate (1 gallon)',
   'Read 10 pages',
-  'No excuses today',
+  'Stretch / Mobility work',
 ]
 
 const affirmations = [
