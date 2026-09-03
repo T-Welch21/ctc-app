@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TrendingUp, Scale, Calendar, Award, X, ChevronRight, ChevronDown, ChevronUp, ClipboardCheck } from 'lucide-react'
+import { TrendingUp, Scale, Calendar, Award, X, ChevronRight, ChevronDown, ChevronUp, ClipboardCheck, Dumbbell } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { getWeights, saveWeight, getCompletedSessions, getStreak, getCheckIns, getPRs, savePR } from '../lib/storage'
+import { getWeights, saveWeight, getCompletedSessions, getStreak, getCheckIns, getPRs, savePR, getExerciseNotes } from '../lib/storage'
 
 const lifts = ['Bench Press', 'Squat', 'Deadlift', '40-Yard Dash']
 
@@ -22,11 +22,25 @@ export default function Progress() {
   const [prs, setPRs] = useState(() => (user ? getPRs(user.id) : []))
   const [showCheckIns, setShowCheckIns] = useState(false)
 
+  const [showExerciseHistory, setShowExerciseHistory] = useState(false)
+
   const sessions = user ? getCompletedSessions(user.id) : []
   const streak = user ? getStreak(user.id) : 0
   const checkIns = user ? getCheckIns(user.id) : []
+  const exerciseNotes = user ? getExerciseNotes(user.id) : []
   const latestWeight = weights.length > 0 ? weights[weights.length - 1] : null
   const prCount = prs.length
+
+  const exercisesByName = exerciseNotes
+    .filter((n) => n.weight)
+    .reduce<Record<string, { date: string; weight: string }[]>>((acc, n) => {
+      if (!acc[n.exerciseName]) acc[n.exerciseName] = []
+      acc[n.exerciseName].push({ date: n.date, weight: n.weight })
+      return acc
+    }, {})
+  const trackedExercises = Object.entries(exercisesByName)
+    .filter(([, entries]) => entries.length >= 1)
+    .sort((a, b) => b[1].length - a[1].length)
 
   const stats = [
     { label: 'Sessions', value: String(sessions.length), icon: Calendar, color: 'text-lime' },
@@ -168,6 +182,56 @@ export default function Progress() {
           </div>
         )}
       </div>
+
+      {/* Exercise weight history */}
+      {trackedExercises.length > 0 && (
+        <div className="animate-slide-up [animation-delay:150ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <button
+            onClick={() => setShowExerciseHistory(!showExerciseHistory)}
+            className="w-full flex items-center justify-between"
+          >
+            <div className="flex items-center gap-2">
+              <Dumbbell size={18} className="text-text-secondary" />
+              <p className="font-display font-semibold">Exercise History</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted text-xs">{trackedExercises.length} exercises</span>
+              {showExerciseHistory ? <ChevronUp size={14} className="text-text-muted" /> : <ChevronDown size={14} className="text-text-muted" />}
+            </div>
+          </button>
+
+          {showExerciseHistory && (
+            <div className="mt-4 space-y-3">
+              {trackedExercises.map(([name, entries]) => {
+                const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
+                const latest = sorted[sorted.length - 1]
+                const prev = sorted.length >= 2 ? sorted[sorted.length - 2] : null
+                const diff = prev ? parseFloat(latest.weight) - parseFloat(prev.weight) : null
+                return (
+                  <div key={name} className="rounded-xl bg-bg-elevated p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-display font-semibold text-sm truncate flex-1">{name}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lime font-display font-bold text-sm">{latest.weight} lbs</span>
+                        {diff !== null && diff !== 0 && (
+                          <span className={`text-[10px] font-medium ${diff > 0 ? 'text-lime' : 'text-warning'}`}>
+                            {diff > 0 ? '+' : ''}{diff}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-text-muted text-[10px]">{sorted.length} entries</span>
+                      <span className="text-text-muted text-[10px]">·</span>
+                      <span className="text-text-muted text-[10px]">Last: {formatDate(latest.date)}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Weekly check-in */}
       <div className="animate-slide-up [animation-delay:200ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">

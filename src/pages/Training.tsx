@@ -25,6 +25,11 @@ export default function Training() {
   const completedDays = completedToday.size
   const currentWeek = user ? getCurrentWeek(user.id, program.weeks) : 1
 
+  const totalProgramSessions = program.weeks * days.length
+  const programProgress = totalProgramSessions > 0
+    ? Math.min((sessions.length / totalProgramSessions) * 100, 100)
+    : 0
+
   const allNotes = user ? getExerciseNotes(user.id) : []
   const pastSessions = [...sessions]
     .reverse()
@@ -41,8 +46,25 @@ export default function Training() {
         <p className="text-text-muted text-sm mt-1">Week {currentWeek} of {program.weeks}</p>
       </div>
 
-      {/* Week progress */}
-      <div className="animate-slide-up flex gap-1.5 mb-6">
+      {/* Overall program progress */}
+      <div className="animate-slide-up rounded-2xl bg-bg-card border border-border p-4 mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-text-secondary text-xs uppercase tracking-wider">Program Progress</p>
+          <p className="text-lime font-display font-bold text-sm">{Math.round(programProgress)}%</p>
+        </div>
+        <div className="h-2 bg-bg-elevated rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-lime rounded-full transition-all duration-700 ease-out"
+            style={{ width: `${programProgress}%` }}
+          />
+        </div>
+        <p className="text-text-muted text-xs">
+          {sessions.length} of {totalProgramSessions} sessions completed
+        </p>
+      </div>
+
+      {/* Today's progress */}
+      <div className="animate-slide-up [animation-delay:50ms] opacity-0 flex gap-1.5 mb-4">
         {days.map((_, i) => (
           <div
             key={i}
