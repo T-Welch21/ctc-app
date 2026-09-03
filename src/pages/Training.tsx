@@ -12,9 +12,9 @@ function formatDate(dateStr: string) {
 }
 
 const categoryColors: Record<string, { text: string; bg: string; accent: string }> = {
-  strength: { text: 'text-red-400', bg: 'bg-red-400/10', accent: 'from-red-400/20 to-transparent' },
-  hybrid: { text: 'text-[#818cf8]', bg: 'bg-[#818cf8]/10', accent: 'from-[#818cf8]/20 to-transparent' },
-  conditioning: { text: 'text-warning', bg: 'bg-warning/10', accent: 'from-warning/20 to-transparent' },
+  strength: { text: 'text-blue-400', bg: 'bg-blue-400/10', accent: 'from-blue-400/20 to-transparent' },
+  hybrid: { text: 'text-teal-400', bg: 'bg-teal-400/10', accent: 'from-teal-400/20 to-transparent' },
+  conditioning: { text: 'text-sky-400', bg: 'bg-sky-400/10', accent: 'from-sky-400/20 to-transparent' },
   functional: { text: 'text-lime', bg: 'bg-lime/10', accent: 'from-lime/20 to-transparent' },
   running: { text: 'text-cyan-400', bg: 'bg-cyan-400/10', accent: 'from-cyan-400/20 to-transparent' },
 }

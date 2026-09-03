@@ -494,7 +494,7 @@ export default function TrainingDay() {
                 <>
                   <div className="w-px h-10 bg-border" />
                   <div>
-                    <p className="font-display font-bold text-3xl text-[#818cf8]">{newPRs.length}</p>
+                    <p className="font-display font-bold text-3xl text-blue-400">{newPRs.length}</p>
                     <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">New PRs</p>
                   </div>
                 </>
@@ -502,10 +502,10 @@ export default function TrainingDay() {
             </div>
 
             {newPRs.length > 0 && (
-              <div className="my-4 rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4">
+              <div className="my-4 rounded-2xl bg-blue-400/10 border border-blue-400/30 p-4">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <Award size={16} className="text-[#818cf8]" />
-                  <p className="text-[#818cf8] font-display font-bold text-[10px] uppercase tracking-[0.2em]">
+                  <Award size={16} className="text-blue-400" />
+                  <p className="text-blue-400 font-display font-bold text-[10px] uppercase tracking-[0.2em]">
                     Personal Records
                   </p>
                 </div>

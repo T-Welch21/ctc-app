@@ -44,8 +44,8 @@ export default function Progress() {
 
   const stats = [
     { label: 'Sessions', value: String(sessions.length), icon: Calendar, color: 'text-lime' },
-    { label: 'Streak', value: String(streak), icon: TrendingUp, color: 'text-warning' },
-    { label: 'PRs Set', value: String(prCount), icon: Award, color: 'text-[#818cf8]' },
+    { label: 'Streak', value: String(streak), icon: TrendingUp, color: 'text-cyan-400' },
+    { label: 'PRs Set', value: String(prCount), icon: Award, color: 'text-blue-400' },
   ]
 
   const handleLogWeight = () => {
@@ -120,7 +120,7 @@ export default function Progress() {
                   const diff = latestWeight.weight - weights[weights.length - 2].weight
                   if (diff === 0) return null
                   return (
-                    <span className={`text-xs font-medium ${diff < 0 ? 'text-lime' : 'text-warning'}`}>
+                    <span className={`text-xs font-medium ${diff < 0 ? 'text-lime' : 'text-sky-400'}`}>
                       {diff > 0 ? '+' : ''}{diff.toFixed(1)}
                     </span>
                   )
@@ -214,7 +214,7 @@ export default function Progress() {
                       <div className="flex items-center gap-2">
                         <span className="text-lime font-display font-bold text-sm">{latest.weight} lbs</span>
                         {diff !== null && diff !== 0 && (
-                          <span className={`text-[10px] font-medium ${diff > 0 ? 'text-lime' : 'text-warning'}`}>
+                          <span className={`text-[10px] font-medium ${diff > 0 ? 'text-lime' : 'text-sky-400'}`}>
                             {diff > 0 ? '+' : ''}{diff}
                           </span>
                         )}

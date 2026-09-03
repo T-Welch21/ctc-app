@@ -144,7 +144,7 @@ export default function Shop() {
       {/* Merch */}
       <div className="animate-slide-up [animation-delay:200ms] opacity-0">
         <div className="flex items-center gap-2 mb-3">
-          <Shirt size={18} className="text-warning" />
+          <Shirt size={18} className="text-sky-400" />
           <p className="font-display font-semibold">CTC Merch</p>
         </div>
         <div className="space-y-3">

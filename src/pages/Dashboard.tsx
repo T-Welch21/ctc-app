@@ -170,7 +170,7 @@ export default function Dashboard() {
             >
               <Bell size={20} />
               {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
-                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#818cf8]" />
+                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-400" />
               )}
             </button>
             <button
@@ -259,14 +259,14 @@ export default function Dashboard() {
       {/* Coach Broadcast */}
       {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
         <div className="animate-slide-up px-5 mb-4">
-          <div className="rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4">
+          <div className="rounded-2xl bg-blue-400/10 border border-blue-400/30 p-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl bg-[#818cf8]/20 shrink-0">
-                <Megaphone size={16} className="text-[#818cf8]" />
+              <div className="p-2 rounded-xl bg-blue-400/20 shrink-0">
+                <Megaphone size={16} className="text-blue-400" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-[#818cf8] text-[10px] font-semibold uppercase tracking-wider">Coach Tyler</p>
+                  <p className="text-blue-400 text-[10px] font-semibold uppercase tracking-wider">Coach Tyler</p>
                   <button
                     onClick={() => dismissBroadcast(latestBroadcast.id)}
                     className="p-1 rounded-lg hover:bg-bg-elevated transition-colors"
@@ -332,13 +332,13 @@ export default function Dashboard() {
             : 'bg-bg-card border-border'
         }`}>
           <div className="flex items-start gap-3">
-            <div className={`p-2 rounded-xl shrink-0 ${challengeAccepted ? 'bg-lime/15' : 'bg-warning/10'}`}>
-              <Swords size={18} className={challengeAccepted ? 'text-lime' : 'text-warning'} />
+            <div className={`p-2 rounded-xl shrink-0 ${challengeAccepted ? 'bg-lime/15' : 'bg-cyan-400/10'}`}>
+              <Swords size={18} className={challengeAccepted ? 'text-lime' : 'text-cyan-400'} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5">
                 <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                  challengeAccepted ? 'text-lime' : 'text-warning'
+                  challengeAccepted ? 'text-lime' : 'text-cyan-400'
                 }`}>Daily Challenge</p>
                 <span className="text-[9px] text-text-muted bg-bg-elevated px-1.5 py-0.5 rounded-full uppercase tracking-wider">
                   {challenge.tag}
@@ -350,7 +350,7 @@ export default function Dashboard() {
               {!challengeAccepted ? (
                 <button
                   onClick={acceptChallenge}
-                  className="mt-3 bg-warning/10 border border-warning/30 text-warning font-display font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg hover:bg-warning/20 transition-colors active:scale-[0.97]"
+                  className="mt-3 bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 font-display font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg hover:bg-cyan-400/20 transition-colors active:scale-[0.97]"
                 >
                   I Accept
                 </button>
@@ -383,12 +383,12 @@ export default function Dashboard() {
             onClick={() => navigate('/journal')}
             className={`w-full rounded-2xl border p-4 text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
               isMorning
-                ? 'bg-warning/5 border-warning/20 hover:border-warning/40'
-                : 'bg-[#818cf8]/5 border-[#818cf8]/20 hover:border-[#818cf8]/40'
+                ? 'bg-cyan-400/5 border-cyan-400/20 hover:border-cyan-400/40'
+                : 'bg-blue-400/5 border-blue-400/20 hover:border-blue-400/40'
             }`}
           >
-            <div className={`p-2.5 rounded-xl ${isMorning ? 'bg-warning/10' : 'bg-[#818cf8]/10'}`}>
-              <BookOpen size={20} className={isMorning ? 'text-warning' : 'text-[#818cf8]'} />
+            <div className={`p-2.5 rounded-xl ${isMorning ? 'bg-cyan-400/10' : 'bg-blue-400/10'}`}>
+              <BookOpen size={20} className={isMorning ? 'text-cyan-400' : 'text-blue-400'} />
             </div>
             <div className="flex-1">
               <p className="font-display font-semibold text-sm">

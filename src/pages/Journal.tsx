@@ -117,7 +117,7 @@ export default function Journal() {
         <button
           onClick={() => setTimeOfDay('evening')}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-            timeOfDay === 'evening' ? 'bg-[#818cf8]/15 text-[#818cf8]' : 'text-text-muted'
+            timeOfDay === 'evening' ? 'bg-blue-400/15 text-blue-400' : 'text-text-muted'
           }`}
         >
           <Moon size={16} /> Evening
@@ -175,7 +175,7 @@ export default function Journal() {
           {/* Today's #1 target */}
           <div className="animate-slide-up [animation-delay:240ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
             <div className="flex items-center gap-2 mb-3">
-              <Target size={16} className="text-warning" />
+              <Target size={16} className="text-cyan-400" />
               <p className="text-text-secondary text-xs uppercase tracking-wider">Today's #1 Target</p>
             </div>
             <input
@@ -190,7 +190,7 @@ export default function Journal() {
           {/* Visualization */}
           <div className="animate-slide-up [animation-delay:320ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
             <div className="flex items-center gap-2 mb-2">
-              <Eye size={16} className="text-[#818cf8]" />
+              <Eye size={16} className="text-blue-400" />
               <p className="text-text-secondary text-xs uppercase tracking-wider">Visualize It</p>
             </div>
             <p className="text-text-muted text-xs mb-3">Close your eyes. See the end of today. What did you accomplish?</p>
@@ -230,7 +230,7 @@ export default function Journal() {
           <div className="animate-slide-up [animation-delay:480ms] opacity-0 grid grid-cols-2 gap-3 mb-4">
             <div className="rounded-2xl bg-bg-card border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Zap size={16} className="text-warning" />
+                <Zap size={16} className="text-cyan-400" />
                 <span className="text-sm font-medium">Energy</span>
               </div>
               <input
@@ -245,7 +245,7 @@ export default function Journal() {
             </div>
             <div className="rounded-2xl bg-bg-card border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Brain size={16} className="text-[#818cf8]" />
+                <Brain size={16} className="text-blue-400" />
                 <span className="text-sm font-medium">Mind</span>
               </div>
               <input
@@ -265,7 +265,7 @@ export default function Journal() {
           {/* Rate your day */}
           <div className="animate-slide-up [animation-delay:80ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
             <div className="flex items-center gap-2 mb-3">
-              <Star size={16} className="text-warning" />
+              <Star size={16} className="text-cyan-400" />
               <p className="text-text-secondary text-xs uppercase tracking-wider">Rate Your Day</p>
             </div>
             <input
@@ -297,7 +297,7 @@ export default function Journal() {
           {/* What to improve */}
           <div className="animate-slide-up [animation-delay:240ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
             <div className="flex items-center gap-2 mb-3">
-              <ArrowUp size={16} className="text-warning" />
+              <ArrowUp size={16} className="text-cyan-400" />
               <p className="text-text-secondary text-xs uppercase tracking-wider">Level Up Tomorrow</p>
             </div>
             <textarea
@@ -312,7 +312,7 @@ export default function Journal() {
           {/* Gratitude */}
           <div className="animate-slide-up [animation-delay:320ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
             <div className="flex items-center gap-2 mb-3">
-              <Heart size={16} className="text-red-400" />
+              <Heart size={16} className="text-teal-400" />
               <p className="text-text-secondary text-xs uppercase tracking-wider">Grateful For</p>
             </div>
             <input
@@ -328,7 +328,7 @@ export default function Journal() {
           <div className="animate-slide-up [animation-delay:400ms] opacity-0 grid grid-cols-2 gap-3 mb-4">
             <div className="rounded-2xl bg-bg-card border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Zap size={16} className="text-warning" />
+                <Zap size={16} className="text-cyan-400" />
                 <span className="text-sm font-medium">Energy</span>
               </div>
               <input
@@ -343,7 +343,7 @@ export default function Journal() {
             </div>
             <div className="rounded-2xl bg-bg-card border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Brain size={16} className="text-[#818cf8]" />
+                <Brain size={16} className="text-blue-400" />
                 <span className="text-sm font-medium">Mind</span>
               </div>
               <input
@@ -420,9 +420,9 @@ function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {isMorning ? (
-            <Sun size={14} className="text-warning" />
+            <Sun size={14} className="text-cyan-400" />
           ) : (
-            <Moon size={14} className="text-[#818cf8]" />
+            <Moon size={14} className="text-blue-400" />
           )}
           <span className="font-display font-semibold text-sm">
             {formatDayName(entry.date)}, {formatDate(entry.date)}
@@ -433,12 +433,12 @@ function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
 
       <div className="grid grid-cols-2 gap-2 mb-2">
         <div className="flex items-center gap-1.5">
-          <Zap size={12} className="text-warning" />
+          <Zap size={12} className="text-cyan-400" />
           <span className="text-text-secondary text-xs">Energy: </span>
           <span className="text-lime font-display font-semibold text-xs">{entry.energy}/10</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Brain size={12} className="text-[#818cf8]" />
+          <Brain size={12} className="text-blue-400" />
           <span className="text-text-secondary text-xs">Mind: </span>
           <span className="text-lime font-display font-semibold text-xs">{entry.mind}/10</span>
         </div>
@@ -455,7 +455,7 @@ function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
 
       {isMorning && entry.topGoal && (
         <p className="text-text-secondary text-xs mb-1 truncate">
-          <span className="text-warning">Target:</span> {entry.topGoal}
+          <span className="text-cyan-400">Target:</span> {entry.topGoal}
         </p>
       )}
 
@@ -471,7 +471,7 @@ function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
 
       {!isMorning && entry.dayRating !== undefined && (
         <div className="flex items-center gap-1 mb-1">
-          <Star size={12} className="text-warning" />
+          <Star size={12} className="text-cyan-400" />
           <span className="text-text-muted text-xs">Day: </span>
           <span className="text-lime font-display font-semibold text-xs">{entry.dayRating}/10</span>
         </div>

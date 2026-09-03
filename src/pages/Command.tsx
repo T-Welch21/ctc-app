@@ -45,7 +45,7 @@ const quickActions = [
     desc: 'Send Google review link to a client',
     icon: Star,
     href: 'sms:?&body=Hey! I would love if you could leave a quick Google review for Called to Compete. It really helps: https://g.page/r/calledtocompete/review',
-    color: 'text-warning',
+    color: 'text-cyan-400',
   },
   {
     label: 'Send Broadcast',
@@ -53,7 +53,7 @@ const quickActions = [
     icon: Send,
     href: null,
     action: 'broadcast',
-    color: 'text-[#818cf8]',
+    color: 'text-blue-400',
   },
 ]
 
@@ -176,12 +176,12 @@ export default function Command() {
           <p className="text-text-muted text-[10px]">Athletes</p>
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
-          <Dumbbell size={18} className="text-warning mx-auto mb-1" />
+          <Dumbbell size={18} className="text-cyan-400 mx-auto mb-1" />
           <p className="font-display font-bold text-xl">2</p>
           <p className="text-text-muted text-[10px]">Programs</p>
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
-          <BarChart3 size={18} className="text-[#818cf8] mx-auto mb-1" />
+          <BarChart3 size={18} className="text-blue-400 mx-auto mb-1" />
           <p className="font-display font-bold text-xl">$0</p>
           <p className="text-text-muted text-[10px]">MRR</p>
         </div>
@@ -248,7 +248,7 @@ export default function Command() {
       {broadcasts.length > 0 && (
         <div className="animate-slide-up [animation-delay:250ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <Megaphone size={16} className="text-[#818cf8]" />
+            <Megaphone size={16} className="text-blue-400" />
             <p className="font-display font-semibold">Recent Broadcasts</p>
           </div>
           <div className="space-y-2">
@@ -311,7 +311,7 @@ export default function Command() {
                     className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
                       athlete.onboarded
                         ? 'bg-lime/10 text-lime'
-                        : 'bg-warning/10 text-warning'
+                        : 'bg-cyan-400/10 text-cyan-400'
                     }`}
                   >
                     {athlete.onboarded ? 'Active' : 'New'}
@@ -361,7 +361,7 @@ export default function Command() {
               </div>
               <div className="rounded-xl bg-bg-elevated p-3 text-center">
                 <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Status</p>
-                <p className={`font-display font-semibold text-sm ${selectedAthlete.onboarded ? 'text-lime' : 'text-warning'}`}>
+                <p className={`font-display font-semibold text-sm ${selectedAthlete.onboarded ? 'text-lime' : 'text-cyan-400'}`}>
                   {selectedAthlete.onboarded ? 'Active' : 'New'}
                 </p>
               </div>
@@ -411,7 +411,7 @@ export default function Command() {
           <div className="relative w-full max-w-lg bg-bg-card border border-border rounded-2xl p-6 animate-slide-up">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Megaphone size={20} className="text-[#818cf8]" />
+                <Megaphone size={20} className="text-blue-400" />
                 <h2 className="font-display font-bold text-lg">Send Broadcast</h2>
               </div>
               <button
@@ -450,7 +450,7 @@ export default function Command() {
                 <button
                   onClick={sendBroadcast}
                   disabled={!broadcastMsg.trim() || sending}
-                  className="w-full py-3.5 rounded-xl font-display font-bold text-sm bg-[#818cf8] text-white disabled:opacity-40 transition-all active:scale-[0.98]"
+                  className="w-full py-3.5 rounded-xl font-display font-bold text-sm bg-blue-400 text-white disabled:opacity-40 transition-all active:scale-[0.98]"
                 >
                   {sending ? 'Sending...' : 'Send to All Athletes'}
                 </button>

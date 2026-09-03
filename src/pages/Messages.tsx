@@ -60,12 +60,12 @@ export default function Messages() {
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-[#818cf8]/20 shrink-0 mt-0.5">
-                  <Megaphone size={16} className="text-[#818cf8]" />
+                <div className="p-2 rounded-xl bg-blue-400/20 shrink-0 mt-0.5">
+                  <Megaphone size={16} className="text-blue-400" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-[#818cf8] text-xs font-semibold uppercase tracking-wider">Coach Tyler</p>
+                    <p className="text-blue-400 text-xs font-semibold uppercase tracking-wider">Coach Tyler</p>
                     <div className="flex items-center gap-1">
                       <Clock size={10} className="text-text-muted" />
                       <p className="text-text-muted text-[10px]">
