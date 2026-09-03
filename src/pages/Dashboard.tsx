@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X, Bell } from 'lucide-react'
+import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X, Bell, ShoppingBag } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getStreak, getCompletedSessions } from '../lib/storage'
 import { getProgram } from '../lib/programs'
@@ -242,6 +242,21 @@ export default function Dashboard() {
           <p className="text-text-muted text-xs mt-1">Text Tyler directly</p>
         </a>
       </div>
+
+      {/* Shop CTA */}
+      <button
+        onClick={() => navigate('/shop')}
+        className="animate-slide-up [animation-delay:400ms] opacity-0 w-full mt-3 rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-lime/30 transition-colors flex items-center gap-3"
+      >
+        <div className="p-2.5 rounded-xl bg-lime/10">
+          <ShoppingBag size={20} className="text-lime" />
+        </div>
+        <div className="flex-1">
+          <p className="font-display font-semibold text-sm">CTC Shop</p>
+          <p className="text-text-muted text-xs mt-0.5">Supplements & merch</p>
+        </div>
+        <ChevronRight size={16} className="text-text-muted" />
+      </button>
     </div>
   )
 }
