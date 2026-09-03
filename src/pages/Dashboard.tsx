@@ -107,8 +107,28 @@ export default function Dashboard() {
   const checkIns = user ? getCheckIns(user.id) : []
   const hasWeeklyCheckIn = checkIns.some((c) => c.date >= weekStart)
 
+  const milestones = [7, 14, 30, 60, 100]
+  const currentMilestone = milestones.find((m) => streak === m)
+
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
+      {/* Streak milestone celebration */}
+      {currentMilestone && (
+        <div className="animate-fade-in fixed top-4 left-4 right-4 z-50 max-w-lg mx-auto">
+          <div className="rounded-2xl bg-lime/10 border border-lime/30 p-4 shadow-lg backdrop-blur-xl">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-lime/20">
+                <TrendingUp size={20} className="text-lime" />
+              </div>
+              <div>
+                <p className="font-display font-bold text-lime text-sm">{currentMilestone}-Day Streak!</p>
+                <p className="text-text-secondary text-xs">You're locked in. Keep competing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="animate-fade-in mb-6 flex items-start justify-between">
         <div>
