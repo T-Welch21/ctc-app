@@ -146,11 +146,13 @@ export default function Login() {
             <br />
             <span className="text-lime">COMPETE</span>
           </h1>
-          <p className="text-text-muted text-xs uppercase tracking-[0.2em] mt-3">
-            Compete Harder · Train Smarter · Feel Better
+          <p className="text-text-muted text-[10px] uppercase tracking-[0.25em] mt-3">
+            Discipline · Purpose · Leadership · Excellence
           </p>
-          <p className="text-text-secondary text-sm mt-4">
-            {mode === 'login' ? 'Welcome back. Time to work.' : 'You were created to lead.'}
+          <p className="text-text-secondary text-sm mt-5 leading-relaxed max-w-[260px] mx-auto">
+            {mode === 'login'
+              ? 'Welcome back. The work doesn\'t stop.'
+              : 'Built for those who refuse to settle. Your training starts here.'}
           </p>
         </div>
 
@@ -200,7 +202,7 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-50 glow-lime"
           >
-            {loading ? '...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+            {loading ? '...' : mode === 'login' ? 'Let\'s Go' : 'Join the Team'}
           </button>
         </form>
 
@@ -214,7 +216,7 @@ export default function Login() {
         )}
 
         <p className="text-center text-text-secondary text-sm mt-4">
-          {mode === 'login' ? "Don't have an account? " : 'Already competing? '}
+          {mode === 'login' ? "Ready to compete? " : 'Already on the team? '}
           <button
             onClick={() => {
               setMode(mode === 'login' ? 'signup' : 'login')

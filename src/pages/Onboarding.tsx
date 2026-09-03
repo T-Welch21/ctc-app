@@ -1,22 +1,22 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Flame, Briefcase, Crown, Palette, Shapes } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Flame, Briefcase, Crown, Palette, Shapes, Shield, Target, Zap, Heart, TrendingUp } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 
 const identities = [
-  { id: 'athlete', label: 'Athlete', icon: Flame, desc: 'I compete in sport' },
-  { id: 'entrepreneur', label: 'Entrepreneur', icon: Briefcase, desc: 'I build businesses' },
-  { id: 'executive', label: 'Executive', icon: Crown, desc: 'I lead organizations' },
-  { id: 'creator', label: 'Creator', icon: Palette, desc: 'I create and perform' },
-  { id: 'other', label: 'Other', icon: Shapes, desc: 'I compete in my own way' },
+  { id: 'athlete', label: 'Athlete', icon: Flame, desc: 'I compete in sport. The field is my proving ground.' },
+  { id: 'entrepreneur', label: 'Entrepreneur', icon: Briefcase, desc: 'I build things. Discipline fuels the hustle.' },
+  { id: 'executive', label: 'Executive', icon: Crown, desc: 'I lead people. Performance starts with me.' },
+  { id: 'creator', label: 'Creator', icon: Palette, desc: 'I create and perform. My craft demands my best.' },
+  { id: 'other', label: 'Competitor', icon: Shapes, desc: 'I compete in my own way. Every day.' },
 ]
 
 const goals = [
-  'Build strength & power',
-  'Improve conditioning',
-  'Sharpen mental discipline',
-  'Level up overall performance',
-  'Recover & stay healthy',
+  { text: 'Build strength & power', icon: Shield, desc: 'Get stronger, move heavier weight' },
+  { text: 'Improve conditioning', icon: Zap, desc: 'Better endurance, faster recovery' },
+  { text: 'Sharpen mental discipline', icon: Target, desc: 'Unbreakable mindset, daily habits' },
+  { text: 'Level up overall performance', icon: TrendingUp, desc: 'Everything — body, mind, life' },
+  { text: 'Recover & stay healthy', icon: Heart, desc: 'Move better, feel better, last longer' },
 ]
 
 export default function Onboarding() {
@@ -44,53 +44,51 @@ export default function Onboarding() {
         </button>
       )}
 
-      {/* Progress dots */}
-      <div className="flex justify-center gap-2 mb-12">
-        {[0, 1].map((i) => (
-          <div
-            key={i}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === step ? 'w-8 bg-lime' : i < step ? 'w-4 bg-lime/40' : 'w-4 bg-border'
-            }`}
-          />
-        ))}
+      {/* Progress bar */}
+      <div className="flex gap-2 mb-10">
+        <div className={`flex-1 h-1 rounded-full transition-all duration-500 ${step >= 0 ? 'bg-lime' : 'bg-border'}`} />
+        <div className={`flex-1 h-1 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-lime' : 'bg-border'}`} />
       </div>
 
       {step === 0 && (
         <div className="animate-fade-in flex-1 flex flex-col max-w-sm mx-auto w-full">
           <div className="mb-8">
-            <h1 className="font-display text-2xl font-bold mb-2">
-              How do you <span className="text-lime">compete</span>?
+            <p className="text-lime text-[10px] font-bold uppercase tracking-widest mb-2">Step 1 — Identity</p>
+            <h1 className="font-display text-3xl font-bold leading-tight mb-2">
+              Who are you<span className="text-lime">?</span>
             </h1>
-            <p className="text-text-secondary text-sm">
-              {isReOnboarding
-                ? 'Switch your training track anytime.'
-                : 'This shapes your training track. You can always change it later.'}
+            <p className="text-text-muted text-sm">
+              This isn't a label. It's how you show up every day.
             </p>
           </div>
 
-          <div className="space-y-3 flex-1">
+          <div className="space-y-2.5 flex-1">
             {identities.map((item) => {
               const active = selectedIdentity === item.id
               return (
                 <button
                   key={item.id}
                   onClick={() => setSelectedIdentity(item.id)}
-                  className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 text-left ${
+                  className={`w-full flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] ${
                     active
-                      ? 'border-lime/50 bg-lime-glow glow-lime'
+                      ? 'border-lime/50 bg-lime/5'
                       : 'border-border bg-bg-card hover:border-border-light'
                   }`}
                 >
-                  <div className={`p-2.5 rounded-xl ${active ? 'bg-lime/20' : 'bg-bg-elevated'}`}>
-                    <item.icon size={22} className={active ? 'text-lime' : 'text-text-secondary'} />
+                  <div className={`p-2.5 rounded-xl transition-colors ${active ? 'bg-lime/20' : 'bg-bg-elevated'}`}>
+                    <item.icon size={20} className={active ? 'text-lime' : 'text-text-muted'} />
                   </div>
-                  <div>
-                    <p className={`font-display font-semibold ${active ? 'text-text' : 'text-text'}`}>
+                  <div className="flex-1 min-w-0">
+                    <p className={`font-display font-bold text-sm ${active ? 'text-lime' : 'text-text'}`}>
                       {item.label}
                     </p>
-                    <p className="text-text-secondary text-sm">{item.desc}</p>
+                    <p className="text-text-muted text-xs mt-0.5">{item.desc}</p>
                   </div>
+                  {active && (
+                    <div className="w-5 h-5 rounded-full bg-lime flex items-center justify-center shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-bg" />
+                    </div>
+                  )}
                 </button>
               )
             })}
@@ -99,9 +97,9 @@ export default function Onboarding() {
           <button
             onClick={() => setStep(1)}
             disabled={!selectedIdentity}
-            className="mt-8 w-full bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 glow-lime"
+            className="mt-8 w-full bg-lime text-bg font-display font-bold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Continue <ArrowRight size={20} />
+            Next <ArrowRight size={20} />
           </button>
         </div>
       )}
@@ -109,28 +107,42 @@ export default function Onboarding() {
       {step === 1 && (
         <div className="animate-fade-in flex-1 flex flex-col max-w-sm mx-auto w-full">
           <div className="mb-8">
-            <h1 className="font-display text-2xl font-bold mb-2">
-              What's your <span className="text-lime">goal</span>?
+            <p className="text-lime text-[10px] font-bold uppercase tracking-widest mb-2">Step 2 — Mission</p>
+            <h1 className="font-display text-3xl font-bold leading-tight mb-2">
+              What are you<br />chasing<span className="text-lime">?</span>
             </h1>
-            <p className="text-text-secondary text-sm">
-              Pick your primary focus. We'll build your path around it.
+            <p className="text-text-muted text-sm">
+              Pick the goal that keeps you up at night.
             </p>
           </div>
 
-          <div className="space-y-3 flex-1">
+          <div className="space-y-2.5 flex-1">
             {goals.map((goal) => {
-              const active = selectedGoal === goal
+              const active = selectedGoal === goal.text
               return (
                 <button
-                  key={goal}
-                  onClick={() => setSelectedGoal(goal)}
-                  className={`w-full p-4 rounded-2xl border transition-all duration-200 text-left font-medium ${
+                  key={goal.text}
+                  onClick={() => setSelectedGoal(goal.text)}
+                  className={`w-full flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] ${
                     active
-                      ? 'border-lime/50 bg-lime-glow text-text glow-lime'
-                      : 'border-border bg-bg-card hover:border-border-light text-text-secondary'
+                      ? 'border-lime/50 bg-lime/5'
+                      : 'border-border bg-bg-card hover:border-border-light'
                   }`}
                 >
-                  {goal}
+                  <div className={`p-2.5 rounded-xl transition-colors ${active ? 'bg-lime/20' : 'bg-bg-elevated'}`}>
+                    <goal.icon size={20} className={active ? 'text-lime' : 'text-text-muted'} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`font-display font-bold text-sm ${active ? 'text-lime' : 'text-text'}`}>
+                      {goal.text}
+                    </p>
+                    <p className="text-text-muted text-xs mt-0.5">{goal.desc}</p>
+                  </div>
+                  {active && (
+                    <div className="w-5 h-5 rounded-full bg-lime flex items-center justify-center shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-bg" />
+                    </div>
+                  )}
                 </button>
               )
             })}
@@ -139,16 +151,16 @@ export default function Onboarding() {
           <div className="mt-8 flex gap-3">
             <button
               onClick={() => setStep(0)}
-              className="flex-1 border border-border text-text-secondary font-display font-semibold py-3.5 rounded-xl hover:bg-bg-card transition-colors"
+              className="flex-1 border border-border text-text-secondary font-display font-semibold py-4 rounded-2xl hover:bg-bg-card transition-colors"
             >
               Back
             </button>
             <button
               onClick={handleFinish}
               disabled={!selectedGoal}
-              className="flex-[2] bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed glow-lime"
+              className="flex-[2] bg-lime text-bg font-display font-bold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-20 disabled:cursor-not-allowed"
             >
-              {isReOnboarding ? 'Save Changes' : "Let's Go"}
+              {isReOnboarding ? 'Save Changes' : "Let's Compete"}
             </button>
           </div>
         </div>
