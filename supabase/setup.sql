@@ -120,6 +120,24 @@ create policy "Users can manage own PRs"
   on public.personal_records for all
   using (auth.uid() = user_id);
 
+-- Broadcasts (coach messages to all athletes)
+create table if not exists public.broadcasts (
+  id uuid default gen_random_uuid() primary key,
+  coach_id uuid references public.profiles(id) on delete cascade not null,
+  message text not null,
+  created_at timestamptz default now()
+);
+
+alter table public.broadcasts enable row level security;
+
+create policy "Anyone can read broadcasts"
+  on public.broadcasts for select
+  using (auth.role() = 'authenticated');
+
+create policy "Coach can insert broadcasts"
+  on public.broadcasts for insert
+  with check (auth.uid() = coach_id);
+
 -- Auto-create profile on signup
 create or replace function public.handle_new_user()
 returns trigger as $$

@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote, Settings, Play, Check } from 'lucide-react'
+import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getStreak, getCompletedSessions } from '../lib/storage'
 import { getProgram } from '../lib/programs'
+import { supabase } from '../lib/supabase'
 
 const devotionals = [
   { text: "You were not created to settle. You were created to lead.", author: "Coach Tyler" },
@@ -33,13 +35,40 @@ function getDevotional() {
   return devotionals[day % devotionals.length]
 }
 
+type Broadcast = {
+  id: string
+  message: string
+  created_at: string
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [latestBroadcast, setLatestBroadcast] = useState<Broadcast | null>(null)
+  const [dismissedBroadcast, setDismissedBroadcast] = useState<string | null>(null)
   const firstName = user?.name?.split(' ')[0] || 'Competitor'
   const devotional = getDevotional()
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('ctc_dismissed_broadcast')
+    setDismissedBroadcast(dismissed)
+    supabase
+      .from('broadcasts')
+      .select('id, message, created_at')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .then(({ data }) => {
+        if (data && data.length > 0) setLatestBroadcast(data[0])
+      })
+      .catch(() => {})
+  }, [])
+
+  const dismissBroadcast = (id: string) => {
+    localStorage.setItem('ctc_dismissed_broadcast', id)
+    setDismissedBroadcast(id)
+  }
 
   const streak = user ? getStreak(user.id) : 0
   const sessions = user ? getCompletedSessions(user.id) : []
@@ -88,6 +117,32 @@ export default function Dashboard() {
           <Settings size={22} />
         </button>
       </div>
+
+      {/* Coach Broadcast */}
+      {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
+        <div className="animate-slide-up rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-[#818cf8]/20 shrink-0">
+              <Megaphone size={16} className="text-[#818cf8]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-[#818cf8] text-xs font-semibold uppercase tracking-wider">From Coach Tyler</p>
+                <button
+                  onClick={() => dismissBroadcast(latestBroadcast.id)}
+                  className="p-1 rounded-lg hover:bg-bg-elevated transition-colors"
+                >
+                  <X size={14} className="text-text-muted" />
+                </button>
+              </div>
+              <p className="text-sm leading-relaxed">{latestBroadcast.message}</p>
+              <p className="text-text-muted text-[10px] mt-2">
+                {new Date(latestBroadcast.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Streak card */}
       <div className={`animate-slide-up rounded-2xl bg-bg-card border border-border p-5 mb-4 ${streak > 0 ? 'gradient-border' : ''}`}>
