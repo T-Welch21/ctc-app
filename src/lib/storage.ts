@@ -8,6 +8,12 @@ export type JournalEntry = {
   checkedItems: number[]
   gratitude: string
   affirmation: string
+  topGoal?: string
+  visualization?: string
+  winOfDay?: string
+  improvement?: string
+  eveningGratitude?: string
+  dayRating?: number
 }
 
 export type WeightEntry = {
