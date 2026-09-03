@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X, Bell, ShoppingBag } from 'lucide-react'
+import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X, Bell, ShoppingBag, Calendar, TrendingUp } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { getStreak, getCompletedSessions } from '../lib/storage'
+import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns } from '../lib/storage'
 import { getProgram } from '../lib/programs'
 import { supabase } from '../lib/supabase'
 
@@ -99,6 +99,13 @@ export default function Dashboard() {
       isToday: i === 6,
     }
   })
+
+  const weekStart = new Date(Date.now() - 6 * 86400000).toISOString().split('T')[0]
+  const weekSessions = sessions.filter((s) => s.date >= weekStart).length
+  const journalEntries = user ? getJournalEntries(user.id) : []
+  const weekJournals = journalEntries.filter((e) => e.date >= weekStart).length
+  const checkIns = user ? getCheckIns(user.id) : []
+  const hasWeeklyCheckIn = checkIns.some((c) => c.date >= weekStart)
 
   return (
     <div className="min-h-screen pb-24 px-5 pt-14">
@@ -225,8 +232,32 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Weekly summary */}
+      <div className="animate-slide-up [animation-delay:300ms] opacity-0 rounded-2xl bg-bg-card border border-border p-4 mb-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Calendar size={16} className="text-text-secondary" />
+          <p className="font-display font-semibold text-sm">This Week</p>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-xl bg-bg-elevated p-3 text-center">
+            <p className="font-display font-bold text-xl text-lime">{weekSessions}</p>
+            <p className="text-text-muted text-[10px] mt-0.5">Sessions</p>
+          </div>
+          <div className="rounded-xl bg-bg-elevated p-3 text-center">
+            <p className="font-display font-bold text-xl text-warning">{weekJournals}</p>
+            <p className="text-text-muted text-[10px] mt-0.5">Journals</p>
+          </div>
+          <div className="rounded-xl bg-bg-elevated p-3 text-center">
+            <p className={`font-display font-bold text-xl ${hasWeeklyCheckIn ? 'text-lime' : 'text-text-muted'}`}>
+              {hasWeeklyCheckIn ? <Check size={20} className="mx-auto" /> : '—'}
+            </p>
+            <p className="text-text-muted text-[10px] mt-0.5">Check-in</p>
+          </div>
+        </div>
+      </div>
+
       {/* Quick actions */}
-      <div className="animate-slide-up [animation-delay:300ms] opacity-0 grid grid-cols-2 gap-3">
+      <div className="animate-slide-up [animation-delay:400ms] opacity-0 grid grid-cols-2 gap-3">
         <button
           onClick={() => navigate('/check-in')}
           className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors"
@@ -246,7 +277,7 @@ export default function Dashboard() {
       {/* Shop CTA */}
       <button
         onClick={() => navigate('/shop')}
-        className="animate-slide-up [animation-delay:400ms] opacity-0 w-full mt-3 rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-lime/30 transition-colors flex items-center gap-3"
+        className="animate-slide-up [animation-delay:500ms] opacity-0 w-full mt-3 rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-lime/30 transition-colors flex items-center gap-3"
       >
         <div className="p-2.5 rounded-xl bg-lime/10">
           <ShoppingBag size={20} className="text-lime" />
