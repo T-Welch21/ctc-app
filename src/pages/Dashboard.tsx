@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X, Bell, ShoppingBag, Calendar, TrendingUp } from 'lucide-react'
+import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, ShoppingBag, MessageCircle, Swords, Zap } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns } from '../lib/storage'
 import { getProgram } from '../lib/programs'
@@ -9,30 +9,53 @@ import { supabase } from '../lib/supabase'
 const devotionals = [
   { text: "You were not created to settle. You were created to lead.", author: "Coach Tyler" },
   { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
-  { text: "The only way to prove you are a good sport is to lose.", author: "Ernie Banks" },
   { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke" },
   { text: "Champions keep playing until they get it right.", author: "Billie Jean King" },
   { text: "The body achieves what the mind believes.", author: "Napoleon Hill" },
-  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
   { text: "Pain is temporary. Quitting lasts forever.", author: "Lance Armstrong" },
-  { text: "The difference between the impossible and the possible lies in determination.", author: "Tommy Lasorda" },
   { text: "Don't count the days. Make the days count.", author: "Muhammad Ali" },
   { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
   { text: "It's not whether you get knocked down, it's whether you get up.", author: "Vince Lombardi" },
   { text: "The harder the battle, the sweeter the victory.", author: "Les Brown" },
   { text: "Compete harder. Train smarter. Feel better.", author: "Called to Compete" },
-  { text: "Excellence is not a singular act, but a habit. You are what you repeatedly do.", author: "Shaquille O'Neal" },
-  { text: "If you want something you've never had, you must be willing to do something you've never done.", author: "Thomas Jefferson" },
-  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
-  { text: "Sweat is just fat crying.", author: "Unknown" },
   { text: "Today I will do what others won't, so tomorrow I can accomplish what others can't.", author: "Jerry Rice" },
   { text: "Your body can stand almost anything. It's your mind you have to convince.", author: "Unknown" },
   { text: "Be stronger than your excuses.", author: "Coach Tyler" },
+  { text: "You don't have to be extreme, just consistent.", author: "Coach Tyler" },
+]
+
+const dailyChallenges = [
+  { text: "No complaining today. Zero. About anything.", tag: "Mindset" },
+  { text: "10 minutes of silence. No phone. No music. Just you.", tag: "Discipline" },
+  { text: "Cold shower for 30 seconds at the end.", tag: "Grit" },
+  { text: "Text someone and tell them you appreciate them.", tag: "Leadership" },
+  { text: "Write down 3 things you're afraid of. Then do one.", tag: "Courage" },
+  { text: "No social media until your workout is done.", tag: "Focus" },
+  { text: "100 pushups before midnight. Break them up however you want.", tag: "Challenge" },
+  { text: "Drink a gallon of water today. Every. Single. Drop.", tag: "Discipline" },
+  { text: "Read for 20 minutes. No excuses.", tag: "Growth" },
+  { text: "Walk for 15 minutes. No phone. Think about where you're going.", tag: "Clarity" },
+  { text: "Say no to one thing that doesn't serve your goals.", tag: "Purpose" },
+  { text: "Hold a 2-minute plank. Don't quit when it burns.", tag: "Grit" },
+  { text: "Give someone a genuine compliment. Mean it.", tag: "Leadership" },
+  { text: "No processed food today. Fuel clean.", tag: "Discipline" },
+  { text: "Set a timer for 25 minutes. Deep work. No distractions.", tag: "Focus" },
+  { text: "Stretch for 10 minutes before bed. Your body needs it.", tag: "Recovery" },
+  { text: "Wake up 30 minutes earlier tomorrow. Start winning the morning.", tag: "Discipline" },
+  { text: "Do something that scares you today. Even something small.", tag: "Courage" },
+  { text: "Delete 3 apps that waste your time.", tag: "Focus" },
+  { text: "Cook your own meal today. Own what goes in your body.", tag: "Discipline" },
+  { text: "Make your bed first thing. Start with a win.", tag: "Discipline" },
 ]
 
 function getDevotional() {
   const day = Math.floor(Date.now() / 86400000)
   return devotionals[day % devotionals.length]
+}
+
+function getDailyChallenge() {
+  const day = Math.floor(Date.now() / 86400000)
+  return dailyChallenges[day % dailyChallenges.length]
 }
 
 type Broadcast = {
@@ -46,10 +69,14 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [latestBroadcast, setLatestBroadcast] = useState<Broadcast | null>(null)
   const [dismissedBroadcast, setDismissedBroadcast] = useState<string | null>(null)
+  const [challengeAccepted, setChallengeAccepted] = useState(() => {
+    const today = new Date().toISOString().split('T')[0]
+    return localStorage.getItem('ctc_challenge_accepted') === today
+  })
   const firstName = user?.name?.split(' ')[0] || 'Competitor'
   const devotional = getDevotional()
+  const challenge = getDailyChallenge()
   const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
   useEffect(() => {
     const dismissed = localStorage.getItem('ctc_dismissed_broadcast')
@@ -70,13 +97,19 @@ export default function Dashboard() {
     setDismissedBroadcast(id)
   }
 
+  const acceptChallenge = () => {
+    const today = new Date().toISOString().split('T')[0]
+    localStorage.setItem('ctc_challenge_accepted', today)
+    setChallengeAccepted(true)
+    if (navigator.vibrate) navigator.vibrate(100)
+  }
+
   const streak = user ? getStreak(user.id) : 0
   const sessions = user ? getCompletedSessions(user.id) : []
   const todayStr = new Date().toISOString().split('T')[0]
   const trainedToday = sessions.some((s) => s.date === todayStr)
 
   const program = getProgram(user?.identity || '')
-  const trackName = program.name
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
   const todaySessions = sessions.filter((s) => s.date === todayStr)
@@ -100,214 +133,303 @@ export default function Dashboard() {
     }
   })
 
-  const weekStart = new Date(Date.now() - 6 * 86400000).toISOString().split('T')[0]
-  const weekSessions = sessions.filter((s) => s.date >= weekStart).length
   const journalEntries = user ? getJournalEntries(user.id) : []
-  const weekJournals = journalEntries.filter((e) => e.date >= weekStart).length
+  const journaledToday = journalEntries.some((e) => e.date === todayStr)
   const checkIns = user ? getCheckIns(user.id) : []
+  const weekStart = new Date(Date.now() - 6 * 86400000).toISOString().split('T')[0]
   const hasWeeklyCheckIn = checkIns.some((c) => c.date >= weekStart)
+  const isMorning = hour < 12
+  const isEvening = hour >= 18
 
-  const milestones = [7, 14, 30, 60, 100]
-  const currentMilestone = milestones.find((m) => streak === m)
+  // Accountability score: how many daily actions completed
+  const dailyActions = [trainedToday, journaledToday, challengeAccepted]
+  const completedActions = dailyActions.filter(Boolean).length
+  const accountabilityPct = Math.round((completedActions / dailyActions.length) * 100)
+
+  // Accountability ring SVG values
+  const ringRadius = 38
+  const ringCircumference = 2 * Math.PI * ringRadius
+  const ringOffset = ringCircumference - (accountabilityPct / 100) * ringCircumference
 
   return (
-    <div className="min-h-screen pb-24 px-5 pt-14">
-      {/* Streak milestone celebration */}
-      {currentMilestone && (
-        <div className="animate-fade-in fixed top-4 left-4 right-4 z-50 max-w-lg mx-auto">
-          <div className="rounded-2xl bg-lime/10 border border-lime/30 p-4 shadow-lg backdrop-blur-xl">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-lime/20">
-                <TrendingUp size={20} className="text-lime" />
+    <div className="min-h-screen pb-24">
+      {/* Hero */}
+      <div className="animate-fade-in px-5 pt-14 pb-2">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h1 className="font-display text-3xl font-bold tracking-tight">
+              {firstName}<span className="text-lime">.</span>
+            </h1>
+            <p className="text-text-muted text-xs mt-0.5 uppercase tracking-widest">Called to Compete</p>
+          </div>
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={() => navigate('/messages')}
+              className="p-2.5 rounded-xl hover:bg-bg-card transition-colors text-text-muted hover:text-text relative"
+            >
+              <Bell size={20} />
+              {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
+                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#818cf8]" />
+              )}
+            </button>
+            <button
+              onClick={() => navigate('/settings')}
+              className="p-2.5 rounded-xl hover:bg-bg-card transition-colors text-text-muted hover:text-text"
+            >
+              <Settings size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Accountability ring + streak + 7-day */}
+      <div className="animate-slide-up px-5 mb-5">
+        <div className="rounded-2xl bg-bg-card border border-border p-4 flex items-center gap-4">
+          {/* Ring */}
+          <div className="relative w-[92px] h-[92px] shrink-0">
+            <svg viewBox="0 0 92 92" className="w-full h-full -rotate-90">
+              <circle cx="46" cy="46" r={ringRadius} fill="none" stroke="#1E1E1E" strokeWidth="6" />
+              <circle
+                cx="46" cy="46" r={ringRadius}
+                fill="none"
+                stroke={accountabilityPct === 100 ? '#B3FF1D' : accountabilityPct > 0 ? '#B3FF1D' : '#2A2A2A'}
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeDasharray={ringCircumference}
+                strokeDashoffset={ringOffset}
+                className="transition-all duration-700 ease-out"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="font-display font-bold text-xl leading-none">{accountabilityPct}%</span>
+              <span className="text-text-muted text-[8px] uppercase tracking-wider mt-0.5">Today</span>
+            </div>
+          </div>
+
+          {/* Streak + dots */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-3">
+              <Flame size={18} className={streak > 0 ? 'text-lime' : 'text-text-muted'} />
+              {streak > 0 ? (
+                <p className="font-display font-bold text-sm">
+                  <span className="text-lime">{streak}</span> day streak
+                </p>
+              ) : (
+                <p className="font-display font-semibold text-sm text-text-muted">Build your streak</p>
+              )}
+            </div>
+            <div className="flex gap-1">
+              {last7.map((day, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                  <div className={`w-full h-2 rounded-full transition-colors ${
+                    day.trained ? 'bg-lime' : day.isToday ? 'bg-border-light' : 'bg-bg-elevated'
+                  }`} />
+                  <span className={`text-[8px] ${day.isToday ? 'text-text font-semibold' : 'text-text-muted'}`}>
+                    {day.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {/* Action chips */}
+            <div className="flex items-center gap-1.5 mt-2.5">
+              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
+                trainedToday ? 'bg-lime/15 text-lime' : 'bg-bg-elevated text-text-muted'
+              }`}>
+                {trainedToday ? <Check size={10} /> : <Zap size={10} />}
+                Train
               </div>
-              <div>
-                <p className="font-display font-bold text-lime text-sm">{currentMilestone}-Day Streak!</p>
-                <p className="text-text-secondary text-xs">You're locked in. Keep competing.</p>
+              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
+                journaledToday ? 'bg-lime/15 text-lime' : 'bg-bg-elevated text-text-muted'
+              }`}>
+                {journaledToday ? <Check size={10} /> : <BookOpen size={10} />}
+                Journal
+              </div>
+              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
+                challengeAccepted ? 'bg-lime/15 text-lime' : 'bg-bg-elevated text-text-muted'
+              }`}>
+                {challengeAccepted ? <Check size={10} /> : <Swords size={10} />}
+                Challenge
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="animate-fade-in mb-6 flex items-start justify-between">
-        <div>
-          <p className="text-text-secondary text-sm">{greeting}</p>
-          <h1 className="font-display text-2xl font-bold mt-0.5">
-            {firstName} <span className="text-lime">.</span>
-          </h1>
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => navigate('/messages')}
-            className="p-2 rounded-xl hover:bg-bg-card transition-colors text-text-secondary hover:text-text relative"
-          >
-            <Bell size={22} />
-            {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
-              <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#818cf8]" />
-            )}
-          </button>
-          <button
-            onClick={() => navigate('/settings')}
-            className="p-2 rounded-xl hover:bg-bg-card transition-colors text-text-secondary hover:text-text"
-          >
-            <Settings size={22} />
-          </button>
         </div>
       </div>
 
       {/* Coach Broadcast */}
       {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
-        <div className="animate-slide-up rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4 mb-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-xl bg-[#818cf8]/20 shrink-0">
-              <Megaphone size={16} className="text-[#818cf8]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-[#818cf8] text-xs font-semibold uppercase tracking-wider">From Coach Tyler</p>
-                <button
-                  onClick={() => dismissBroadcast(latestBroadcast.id)}
-                  className="p-1 rounded-lg hover:bg-bg-elevated transition-colors"
-                >
-                  <X size={14} className="text-text-muted" />
-                </button>
+        <div className="animate-slide-up px-5 mb-4">
+          <div className="rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-[#818cf8]/20 shrink-0">
+                <Megaphone size={16} className="text-[#818cf8]" />
               </div>
-              <p className="text-sm leading-relaxed">{latestBroadcast.message}</p>
-              <p className="text-text-muted text-[10px] mt-2">
-                {new Date(latestBroadcast.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-              </p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[#818cf8] text-[10px] font-semibold uppercase tracking-wider">Coach Tyler</p>
+                  <button
+                    onClick={() => dismissBroadcast(latestBroadcast.id)}
+                    className="p-1 rounded-lg hover:bg-bg-elevated transition-colors"
+                  >
+                    <X size={14} className="text-text-muted" />
+                  </button>
+                </div>
+                <p className="text-sm leading-relaxed">{latestBroadcast.message}</p>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Streak card */}
-      <div className={`animate-slide-up rounded-2xl bg-bg-card border border-border p-5 mb-4 ${streak > 0 ? 'gradient-border' : ''}`}>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Flame size={20} className={streak > 0 ? 'text-lime' : 'text-text-muted'} />
-            <span className="font-display font-semibold text-sm">
-              {streak > 0 ? `${streak} Day Streak` : 'Current Streak'}
-            </span>
-          </div>
-          {streak === 0 && <span className="text-text-muted text-xs">Start training to begin</span>}
-        </div>
-        <div className="flex gap-1.5">
-          {last7.map((day, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className={`w-full h-2 rounded-full transition-colors ${
-                day.trained ? 'bg-lime' : day.isToday ? 'bg-border-light' : 'bg-bg-elevated'
-              }`} />
-              <span className={`text-[10px] ${day.isToday ? 'text-text font-medium' : 'text-text-muted'}`}>
-                {day.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Today's Session — smart suggestion */}
-      <button
-        onClick={() => navigate(trainedToday ? '/training' : `/training/${nextDayIndex}`)}
-        className="animate-slide-up [animation-delay:100ms] opacity-0 w-full rounded-2xl bg-bg-card border border-border p-5 mb-4 text-left"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">
-              {trainedToday ? 'Completed Today' : 'Up Next'}
-            </p>
-            <p className="font-display font-semibold">
-              {trainedToday ? nextDay?.title || 'All done today' : nextDay?.title || 'Ready to train'}
-            </p>
-            <p className="text-text-muted text-sm mt-1">
-              {trackName} · {nextDay?.duration || ''}
-            </p>
-          </div>
-          {trainedToday ? (
-            <div className="p-2.5 rounded-xl bg-lime/10">
-              <Check size={20} className="text-lime" />
-            </div>
-          ) : (
-            <div className="p-2.5 rounded-xl bg-lime/10">
-              <Play size={20} className="text-lime" />
-            </div>
-          )}
-        </div>
-      </button>
-
-      {/* Devotional */}
-      <div className="animate-slide-up [animation-delay:200ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-xl bg-lime/10 shrink-0 mt-0.5">
-            <Quote size={18} className="text-lime" />
-          </div>
-          <div>
-            <p className="text-text-secondary text-xs uppercase tracking-wider mb-2">Daily Devotional</p>
-            <p className="font-display font-medium text-[15px] leading-relaxed italic">
-              "{devotional.text}"
-            </p>
-            <p className="text-text-muted text-sm mt-2">— {devotional.author}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Weekly summary */}
-      <div className="animate-slide-up [animation-delay:300ms] opacity-0 rounded-2xl bg-bg-card border border-border p-4 mb-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Calendar size={16} className="text-text-secondary" />
-          <p className="font-display font-semibold text-sm">This Week</p>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-xl bg-bg-elevated p-3 text-center">
-            <p className="font-display font-bold text-xl text-lime">{weekSessions}</p>
-            <p className="text-text-muted text-[10px] mt-0.5">Sessions</p>
-          </div>
-          <div className="rounded-xl bg-bg-elevated p-3 text-center">
-            <p className="font-display font-bold text-xl text-warning">{weekJournals}</p>
-            <p className="text-text-muted text-[10px] mt-0.5">Journals</p>
-          </div>
-          <div className="rounded-xl bg-bg-elevated p-3 text-center">
-            <p className={`font-display font-bold text-xl ${hasWeeklyCheckIn ? 'text-lime' : 'text-text-muted'}`}>
-              {hasWeeklyCheckIn ? <Check size={20} className="mx-auto" /> : '—'}
-            </p>
-            <p className="text-text-muted text-[10px] mt-0.5">Check-in</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick actions */}
-      <div className="animate-slide-up [animation-delay:400ms] opacity-0 grid grid-cols-2 gap-3">
+      {/* Next workout — hero CTA */}
+      <div className="animate-slide-up [animation-delay:100ms] opacity-0 px-5 mb-4">
         <button
-          onClick={() => navigate('/check-in')}
-          className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors"
+          onClick={() => navigate(trainedToday ? '/training' : `/training/${nextDayIndex}`)}
+          className={`w-full rounded-2xl p-5 text-left transition-all active:scale-[0.98] relative overflow-hidden ${
+            trainedToday
+              ? 'bg-lime/5 border border-lime/20'
+              : 'bg-gradient-to-br from-lime/20 via-lime/5 to-transparent border border-lime/40'
+          }`}
         >
-          <p className="font-display font-semibold text-sm">Weekly Check-in</p>
-          <p className="text-text-muted text-xs mt-1">Log your progress</p>
+          {!trainedToday && (
+            <>
+              <div className="absolute -right-8 -top-8 w-36 h-36 bg-lime/8 rounded-full blur-3xl" />
+              <div className="absolute -left-4 -bottom-4 w-20 h-20 bg-lime/5 rounded-full blur-2xl" />
+            </>
+          )}
+          <div className="relative flex items-center justify-between">
+            <div className="flex-1">
+              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1.5 ${
+                trainedToday ? 'text-lime' : 'text-lime'
+              }`}>
+                {trainedToday ? 'Session Done' : 'Time to Work'}
+              </p>
+              <p className="font-display font-bold text-xl mb-1">
+                {nextDay?.title || 'Ready to train'}
+              </p>
+              <div className="flex items-center gap-2 text-text-muted text-xs">
+                <span>{nextDay?.exercises.length} exercises</span>
+                <span>·</span>
+                <span>{nextDay?.duration}</span>
+              </div>
+            </div>
+            <div className={`p-4 rounded-2xl ${trainedToday ? 'bg-lime/10' : 'bg-lime/20 shadow-lg shadow-lime/10'}`}>
+              {trainedToday ? (
+                <Check size={26} className="text-lime" />
+              ) : (
+                <Play size={26} className="text-lime ml-0.5" />
+              )}
+            </div>
+          </div>
         </button>
-        <a
-          href="sms:+12546402697"
-          className="rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-border-light transition-colors block"
-        >
-          <p className="font-display font-semibold text-sm">Message Coach</p>
-          <p className="text-text-muted text-xs mt-1">Text Tyler directly</p>
-        </a>
       </div>
 
-      {/* Shop CTA */}
-      <button
-        onClick={() => navigate('/shop')}
-        className="animate-slide-up [animation-delay:500ms] opacity-0 w-full mt-3 rounded-2xl bg-bg-card border border-border p-4 text-left hover:border-lime/30 transition-colors flex items-center gap-3"
-      >
-        <div className="p-2.5 rounded-xl bg-lime/10">
-          <ShoppingBag size={20} className="text-lime" />
+      {/* Daily Challenge */}
+      <div className="animate-slide-up [animation-delay:200ms] opacity-0 px-5 mb-4">
+        <div className={`rounded-2xl border p-4 transition-all ${
+          challengeAccepted
+            ? 'bg-lime/5 border-lime/20'
+            : 'bg-bg-card border-border'
+        }`}>
+          <div className="flex items-start gap-3">
+            <div className={`p-2 rounded-xl shrink-0 ${challengeAccepted ? 'bg-lime/15' : 'bg-warning/10'}`}>
+              <Swords size={18} className={challengeAccepted ? 'text-lime' : 'text-warning'} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1.5">
+                <p className={`text-[10px] font-bold uppercase tracking-widest ${
+                  challengeAccepted ? 'text-lime' : 'text-warning'
+                }`}>Daily Challenge</p>
+                <span className="text-[9px] text-text-muted bg-bg-elevated px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                  {challenge.tag}
+                </span>
+              </div>
+              <p className={`text-sm leading-relaxed font-medium ${challengeAccepted ? 'text-text-secondary' : 'text-text'}`}>
+                {challenge.text}
+              </p>
+              {!challengeAccepted ? (
+                <button
+                  onClick={acceptChallenge}
+                  className="mt-3 bg-warning/10 border border-warning/30 text-warning font-display font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg hover:bg-warning/20 transition-colors active:scale-[0.97]"
+                >
+                  I Accept
+                </button>
+              ) : (
+                <p className="mt-2 text-lime text-xs font-display font-semibold flex items-center gap-1.5">
+                  <Check size={12} /> Challenge accepted. Now go do it.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="flex-1">
-          <p className="font-display font-semibold text-sm">CTC Shop</p>
-          <p className="text-text-muted text-xs mt-0.5">Supplements & merch</p>
+      </div>
+
+      {/* Daily Word */}
+      <div className="animate-slide-up [animation-delay:300ms] opacity-0 px-5 mb-4">
+        <div className="rounded-2xl bg-bg-card border border-border p-5 relative overflow-hidden">
+          <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-lime/3 rounded-full blur-2xl" />
+          <p className="text-text-muted text-[10px] uppercase tracking-widest mb-3">Daily Word</p>
+          <p className="font-display font-medium text-[15px] leading-relaxed italic relative">
+            "{devotional.text}"
+          </p>
+          <p className="text-text-muted text-xs mt-3">— {devotional.author}</p>
         </div>
-        <ChevronRight size={16} className="text-text-muted" />
-      </button>
+      </div>
+
+      {/* Smart nudge */}
+      {!journaledToday && (isMorning || isEvening) && (
+        <div className="animate-slide-up [animation-delay:400ms] opacity-0 px-5 mb-4">
+          <button
+            onClick={() => navigate('/journal')}
+            className={`w-full rounded-2xl border p-4 text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
+              isMorning
+                ? 'bg-warning/5 border-warning/20 hover:border-warning/40'
+                : 'bg-[#818cf8]/5 border-[#818cf8]/20 hover:border-[#818cf8]/40'
+            }`}
+          >
+            <div className={`p-2.5 rounded-xl ${isMorning ? 'bg-warning/10' : 'bg-[#818cf8]/10'}`}>
+              <BookOpen size={20} className={isMorning ? 'text-warning' : 'text-[#818cf8]'} />
+            </div>
+            <div className="flex-1">
+              <p className="font-display font-semibold text-sm">
+                {isMorning ? 'Set Your Mind Right' : 'Close Out the Day'}
+              </p>
+              <p className="text-text-muted text-xs mt-0.5">
+                {isMorning ? 'Morning visualization — 2 min' : 'Evening reflection — 2 min'}
+              </p>
+            </div>
+            <ChevronRight size={16} className="text-text-muted" />
+          </button>
+        </div>
+      )}
+
+      {/* Quick links */}
+      <div className="animate-slide-up [animation-delay:500ms] opacity-0 px-5 mb-4">
+        <div className="flex gap-2">
+          {!hasWeeklyCheckIn && (
+            <button
+              onClick={() => navigate('/check-in')}
+              className="flex-1 rounded-xl bg-bg-card border border-border p-3.5 text-center hover:border-border-light transition-colors active:scale-[0.98]"
+            >
+              <ClipboardCheck size={20} className="text-text-secondary mx-auto mb-1.5" />
+              <p className="font-display font-semibold text-[11px]">Check-in</p>
+            </button>
+          )}
+          <button
+            onClick={() => navigate('/shop')}
+            className="flex-1 rounded-xl bg-bg-card border border-border p-3.5 text-center hover:border-border-light transition-colors active:scale-[0.98]"
+          >
+            <ShoppingBag size={20} className="text-text-secondary mx-auto mb-1.5" />
+            <p className="font-display font-semibold text-[11px]">Shop</p>
+          </button>
+          <a
+            href="sms:+12546402697"
+            className="flex-1 rounded-xl bg-bg-card border border-border p-3.5 text-center hover:border-border-light transition-colors active:scale-[0.98] block"
+          >
+            <MessageCircle size={20} className="text-text-secondary mx-auto mb-1.5" />
+            <p className="font-display font-semibold text-[11px]">Coach</p>
+          </a>
+        </div>
+      </div>
     </div>
   )
 }
