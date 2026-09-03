@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X } from 'lucide-react'
+import { Flame, ChevronRight, Quote, Settings, Play, Check, Megaphone, X, Bell } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getStreak, getCompletedSessions } from '../lib/storage'
 import { getProgram } from '../lib/programs'
@@ -110,12 +110,23 @@ export default function Dashboard() {
             {firstName} <span className="text-lime">.</span>
           </h1>
         </div>
-        <button
-          onClick={() => navigate('/settings')}
-          className="p-2 rounded-xl hover:bg-bg-card transition-colors text-text-secondary hover:text-text"
-        >
-          <Settings size={22} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => navigate('/messages')}
+            className="p-2 rounded-xl hover:bg-bg-card transition-colors text-text-secondary hover:text-text relative"
+          >
+            <Bell size={22} />
+            {latestBroadcast && dismissedBroadcast !== latestBroadcast.id && (
+              <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#818cf8]" />
+            )}
+          </button>
+          <button
+            onClick={() => navigate('/settings')}
+            className="p-2 rounded-xl hover:bg-bg-card transition-colors text-text-secondary hover:text-text"
+          >
+            <Settings size={22} />
+          </button>
+        </div>
       </div>
 
       {/* Coach Broadcast */}

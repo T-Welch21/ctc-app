@@ -78,6 +78,8 @@ export default function Command() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([])
+  const [selectedAthlete, setSelectedAthlete] = useState<AthleteProfile | null>(null)
+  const [athleteStats, setAthleteStats] = useState<{ sessions: number; lastActive: string | null; checkIns: number }>({ sessions: 0, lastActive: null, checkIns: 0 })
 
   const loadAthletes = async () => {
     setLoading(true)
@@ -125,6 +127,31 @@ export default function Command() {
       // table may not exist yet
     }
     setSending(false)
+  }
+
+  const openAthleteDetail = async (athlete: AthleteProfile) => {
+    setSelectedAthlete(athlete)
+    setAthleteStats({ sessions: 0, lastActive: null, checkIns: 0 })
+    try {
+      const [sessionsRes, checkInsRes] = await Promise.all([
+        supabase
+          .from('completed_sessions')
+          .select('date')
+          .eq('user_id', athlete.id)
+          .order('date', { ascending: false }),
+        supabase
+          .from('check_ins')
+          .select('date')
+          .eq('user_id', athlete.id),
+      ])
+      setAthleteStats({
+        sessions: sessionsRes.data?.length || 0,
+        lastActive: sessionsRes.data?.[0]?.date || null,
+        checkIns: checkInsRes.data?.length || 0,
+      })
+    } catch {
+      // tables may not exist yet
+    }
   }
 
   useEffect(() => {
@@ -263,9 +290,10 @@ export default function Command() {
         ) : (
           <div className="space-y-2">
             {athletes.map((athlete) => (
-              <div
+              <button
                 key={athlete.id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-bg-elevated"
+                onClick={() => openAthleteDetail(athlete)}
+                className="w-full flex items-center gap-3 p-3 rounded-xl bg-bg-elevated hover:bg-bg-elevated/80 transition-colors text-left"
               >
                 <div className="w-9 h-9 rounded-xl bg-lime/10 flex items-center justify-center shrink-0">
                   <span className="font-display text-lime text-sm font-bold">
@@ -292,11 +320,86 @@ export default function Command() {
                     {formatDate(athlete.created_at)}
                   </p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
       </div>
+
+      {/* Athlete Detail Modal */}
+      {selectedAthlete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-5">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedAthlete(null)}
+          />
+          <div className="relative w-full max-w-lg bg-bg-card border border-border rounded-2xl p-6 animate-slide-up max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-lime/10 flex items-center justify-center">
+                  <span className="font-display text-lime text-lg font-bold">
+                    {(selectedAthlete.name || selectedAthlete.email).charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="font-display font-bold text-lg">{selectedAthlete.name || 'No name'}</h2>
+                  <p className="text-text-muted text-xs">{selectedAthlete.email}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedAthlete(null)}
+                className="p-2 rounded-xl hover:bg-bg-elevated transition-colors"
+              >
+                <X size={18} className="text-text-muted" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="rounded-xl bg-bg-elevated p-3 text-center">
+                <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Identity</p>
+                <p className="font-display font-semibold text-sm capitalize">{selectedAthlete.identity || 'Not set'}</p>
+              </div>
+              <div className="rounded-xl bg-bg-elevated p-3 text-center">
+                <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Status</p>
+                <p className={`font-display font-semibold text-sm ${selectedAthlete.onboarded ? 'text-lime' : 'text-warning'}`}>
+                  {selectedAthlete.onboarded ? 'Active' : 'New'}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mb-5">
+              <div className="rounded-xl bg-bg-elevated p-3 text-center">
+                <p className="font-display font-bold text-xl">{athleteStats.sessions}</p>
+                <p className="text-text-muted text-[10px]">Sessions</p>
+              </div>
+              <div className="rounded-xl bg-bg-elevated p-3 text-center">
+                <p className="font-display font-bold text-xl">{athleteStats.checkIns}</p>
+                <p className="text-text-muted text-[10px]">Check-ins</p>
+              </div>
+              <div className="rounded-xl bg-bg-elevated p-3 text-center">
+                <p className="font-display font-bold text-xl text-sm">
+                  {athleteStats.lastActive
+                    ? new Date(athleteStats.lastActive + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                    : '—'}
+                </p>
+                <p className="text-text-muted text-[10px]">Last Active</p>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-bg-elevated p-3">
+              <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Joined</p>
+              <p className="text-sm">{new Date(selectedAthlete.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            </div>
+
+            <a
+              href={`sms:${selectedAthlete.email}`}
+              className="mt-4 w-full py-3 rounded-xl font-display font-bold text-sm bg-lime/10 text-lime text-center block hover:bg-lime/20 transition-colors"
+            >
+              Message Athlete
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Broadcast Modal */}
       {showBroadcast && (
