@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X } from 'lucide-react'
+import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X, Lock, Mail, Info } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+import { supabase } from '../lib/supabase'
 
 const identityLabels: Record<string, string> = {
   athlete: 'Athlete',
@@ -17,6 +18,11 @@ export default function Settings() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput] = useState(user?.name || '')
+  const [showPasswordChange, setShowPasswordChange] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
 
   const handleLogout = async () => {
     await logout()
@@ -28,6 +34,30 @@ export default function Settings() {
       await updateProfile({ name: nameInput.trim() })
     }
     setEditingName(false)
+  }
+
+  const handlePasswordChange = async () => {
+    setPasswordError('')
+    if (newPassword.length < 6) {
+      setPasswordError('Password must be at least 6 characters')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match')
+      return
+    }
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) {
+      setPasswordError(error.message)
+      return
+    }
+    setPasswordSuccess(true)
+    setNewPassword('')
+    setConfirmPassword('')
+    setTimeout(() => {
+      setShowPasswordChange(false)
+      setPasswordSuccess(false)
+    }, 2000)
   }
 
   return (
@@ -122,6 +152,66 @@ export default function Settings() {
           </button>
 
           <button
+            onClick={() => setShowPasswordChange(!showPasswordChange)}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors"
+          >
+            <div className="p-2 rounded-xl bg-bg-elevated">
+              <Lock size={18} className="text-text-secondary" />
+            </div>
+            <div className="flex-1">
+              <p className="font-display font-semibold text-sm">Change Password</p>
+              <p className="text-text-muted text-xs">Update your login password</p>
+            </div>
+            <ChevronRight size={18} className="text-text-muted" />
+          </button>
+
+          {showPasswordChange && (
+            <div className="animate-fade-in rounded-2xl bg-bg-card border border-border p-5 space-y-3">
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New password"
+                className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors text-sm"
+              />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password"
+                className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors text-sm"
+              />
+              {passwordError && (
+                <p className="text-red-400 text-xs">{passwordError}</p>
+              )}
+              <button
+                onClick={handlePasswordChange}
+                className={`w-full font-display font-semibold py-3 rounded-xl transition-all active:scale-[0.98] text-sm ${
+                  passwordSuccess
+                    ? 'bg-success text-bg'
+                    : 'bg-lime text-bg hover:brightness-110'
+                }`}
+              >
+                {passwordSuccess ? 'Password Updated' : 'Update Password'}
+              </button>
+            </div>
+          )}
+
+          <a
+            href="sms:+12546402697"
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors block"
+          >
+            <div className="p-2 rounded-xl bg-bg-elevated">
+              <Mail size={18} className="text-text-secondary" />
+            </div>
+            <div className="flex-1">
+              <p className="font-display font-semibold text-sm">Contact Coach</p>
+              <p className="text-text-muted text-xs">Text Coach Tyler directly</p>
+            </div>
+            <ChevronRight size={18} className="text-text-muted" />
+          </a>
+
+          <button
             onClick={() => navigate('/command')}
             className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors"
           >
@@ -134,6 +224,18 @@ export default function Settings() {
             </div>
             <ChevronRight size={18} className="text-text-muted" />
           </button>
+        </div>
+
+        {/* App info */}
+        <div className="animate-slide-up [animation-delay:50ms] opacity-0 rounded-2xl bg-bg-card border border-border p-4 mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <Info size={14} className="text-text-muted" />
+            <p className="font-display font-semibold text-xs text-text-muted">About</p>
+          </div>
+          <p className="text-text-muted text-xs leading-relaxed">
+            Called to Compete is a training platform by Coach Tyler Welch in San Antonio, TX.
+            Compete Harder · Train Smarter · Feel Better
+          </p>
         </div>
 
         {/* Logout */}
