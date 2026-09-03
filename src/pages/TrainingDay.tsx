@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw } from 'lucide-react'
+import { ArrowLeft, Clock, Dumbbell, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { getProgram } from '../lib/programs'
-import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise } from '../lib/storage'
+import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs } from '../lib/storage'
 
 function parseRestSeconds(rest: string): number {
   if (!rest || rest === '-') return 0
@@ -33,6 +33,9 @@ export default function TrainingDay() {
   const [showCelebration, setShowCelebration] = useState(false)
   const [exerciseWeights, setExerciseWeights] = useState<Record<string, string>>({})
   const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>({})
+  const [newPRs, setNewPRs] = useState<string[]>([])
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const [timerSeconds, setTimerSeconds] = useState(0)
   const [timerRunning, setTimerRunning] = useState(false)
@@ -77,6 +80,27 @@ export default function TrainingDay() {
     }
   }, [])
 
+  // Pre-fill weights from last session
+  useEffect(() => {
+    if (!user || !day) return
+    const prefilled: Record<string, string> = {}
+    for (const exercise of day.exercises) {
+      const last = getLastNoteForExercise(user.id, exercise.name)
+      if (last?.weight) prefilled[exercise.name] = last.weight
+    }
+    if (Object.keys(prefilled).length > 0) setExerciseWeights(prefilled)
+  }, [user, day])
+
+  // Elapsed workout timer
+  useEffect(() => {
+    if (sessionStarted && !showCelebration) {
+      elapsedRef.current = setInterval(() => setElapsedSeconds((s) => s + 1), 1000)
+    }
+    return () => {
+      if (elapsedRef.current) clearInterval(elapsedRef.current)
+    }
+  }, [sessionStarted, showCelebration])
+
   if (!day) {
     navigate('/training', { replace: true })
     return null
@@ -118,10 +142,17 @@ export default function TrainingDay() {
               <p className="text-text-secondary text-xs">{day.day}</p>
               <h1 className="font-display text-lg font-bold">{day.title}</h1>
             </div>
-            <div className="flex items-center gap-1.5 text-text-muted text-sm">
-              <Clock size={14} />
-              {day.duration}
-            </div>
+            {sessionStarted && !showCelebration ? (
+              <div className="flex items-center gap-1.5 text-lime text-sm font-display font-semibold tabular-nums">
+                <Timer size={14} />
+                {formatTimer(elapsedSeconds)}
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-text-muted text-sm">
+                <Clock size={14} />
+                {day.duration}
+              </div>
+            )}
           </div>
           {/* Progress bar */}
           {sessionStarted && (
@@ -388,6 +419,11 @@ export default function TrainingDay() {
                   programId: program.id,
                   completedSets: setsData,
                 })
+
+                const detectedPRs: string[] = []
+                const allNotes = getExerciseNotes(user.id)
+                const existingPRs = getPRs(user.id)
+
                 for (const exercise of day.exercises) {
                   const w = exerciseWeights[exercise.name]
                   const n = exerciseNotes[exercise.name]
@@ -400,7 +436,25 @@ export default function TrainingDay() {
                       notes: n || '',
                     })
                   }
+                  if (w) {
+                    const currentWeight = parseFloat(w)
+                    if (!isNaN(currentWeight) && currentWeight > 0) {
+                      const pastWeights = allNotes
+                        .filter((note) => note.exerciseName === exercise.name && note.weight)
+                        .map((note) => parseFloat(note.weight))
+                        .filter((v) => !isNaN(v))
+                      const existingPR = existingPRs.find((p) => p.lift === exercise.name)
+                      const existingMax = existingPR ? parseFloat(existingPR.value) : 0
+                      const pastMax = pastWeights.length > 0 ? Math.max(...pastWeights) : 0
+                      const previousBest = Math.max(pastMax, existingMax)
+                      if (currentWeight > previousBest && previousBest > 0) {
+                        detectedPRs.push(exercise.name)
+                        savePR(user.id, { lift: exercise.name, value: w, date: today })
+                      }
+                    }
+                  }
                 }
+                setNewPRs(detectedPRs)
               }
               setShowCelebration(true)
             }}
@@ -420,12 +474,52 @@ export default function TrainingDay() {
             </div>
             <h1 className="font-display text-3xl font-bold mb-2">Session Complete</h1>
             <p className="text-text-secondary mb-2">{day.title}</p>
-            <p className="text-lime font-display font-semibold text-lg mb-8">
-              {totalSets} sets crushed
-            </p>
+
+            <div className="flex items-center justify-center gap-6 my-4">
+              <div>
+                <p className="font-display font-bold text-2xl text-lime">{totalSets}</p>
+                <p className="text-text-muted text-xs">Sets</p>
+              </div>
+              <div className="w-px h-8 bg-border" />
+              <div>
+                <p className="font-display font-bold text-2xl text-text">{formatTimer(elapsedSeconds)}</p>
+                <p className="text-text-muted text-xs">Duration</p>
+              </div>
+              {newPRs.length > 0 && (
+                <>
+                  <div className="w-px h-8 bg-border" />
+                  <div>
+                    <p className="font-display font-bold text-2xl text-[#818cf8]">{newPRs.length}</p>
+                    <p className="text-text-muted text-xs">New PRs</p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {newPRs.length > 0 && (
+              <div className="my-4 rounded-2xl bg-[#818cf8]/10 border border-[#818cf8]/30 p-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Award size={18} className="text-[#818cf8]" />
+                  <p className="text-[#818cf8] font-display font-bold text-sm uppercase tracking-wider">
+                    Personal Records
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  {newPRs.map((name) => (
+                    <div key={name} className="flex items-center justify-center gap-2">
+                      <span className="text-text text-sm font-medium">{name}</span>
+                      <span className="text-lime font-display font-bold text-sm">
+                        {exerciseWeights[name]} lbs
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <button
               onClick={() => navigate('/training')}
-              className="bg-lime text-bg font-display font-semibold text-lg py-4 px-12 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime"
+              className="bg-lime text-bg font-display font-semibold text-lg py-4 px-12 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime mt-4"
             >
               Done
             </button>
