@@ -48,14 +48,14 @@ export default function CheckIn() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <div className="animate-fade-in text-center">
-          <div className="inline-flex p-4 rounded-2xl bg-lime/10 mb-6">
+          <div className="inline-flex p-5 rounded-2xl bg-lime/10 mb-6">
             <CheckCircle size={48} className="text-lime" />
           </div>
-          <h1 className="font-display text-2xl font-bold mb-2">Check-in submitted</h1>
-          <p className="text-text-secondary mb-8">Coach Tyler will review your progress.</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight mb-2">Check-in submitted</h1>
+          <p className="text-text-muted text-sm mb-8">Coach Tyler will review your progress.</p>
           <button
             onClick={() => navigate('/progress')}
-            className="bg-lime text-bg font-display font-semibold text-lg py-3.5 px-12 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime"
+            className="bg-lime text-bg font-display font-bold text-sm py-4 px-12 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime uppercase tracking-wider"
           >
             Done
           </button>
@@ -70,27 +70,27 @@ export default function CheckIn() {
         <div className="max-w-lg mx-auto px-5 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate('/progress')}
-            className="text-text-secondary hover:text-text transition-colors"
+            className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors"
           >
-            <ArrowLeft size={22} />
+            <ArrowLeft size={18} />
           </button>
-          <h1 className="font-display text-lg font-bold">Weekly Check-in</h1>
+          <h1 className="font-display text-lg font-bold tracking-tight">Weekly Check-in</h1>
         </div>
       </div>
 
       <div className="max-w-lg mx-auto px-5 pt-6">
-        <p className="animate-fade-in text-text-secondary text-sm mb-6">
-          Take 2 minutes to reflect on your week. This helps Coach Tyler tailor your program.
+        <p className="animate-fade-in text-text-muted text-xs uppercase tracking-[0.2em] mb-6">
+          2 minutes to reflect — helps Coach Tyler tailor your program
         </p>
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           {questions.map((q, i) => (
             <div
               key={q.key}
               className="animate-slide-up opacity-0 rounded-2xl bg-bg-card border border-border p-5"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              <label className="font-display font-semibold text-sm block mb-3">{q.label}</label>
+              <label className="font-display font-bold text-sm tracking-tight block mb-3">{q.label}</label>
 
               {q.type === 'number' && (
                 <input
@@ -99,7 +99,7 @@ export default function CheckIn() {
                   value={answers[q.key] || ''}
                   onChange={(e) => update(q.key, e.target.value)}
                   placeholder={q.placeholder}
-                  className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text text-center font-display font-bold text-xl placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+                  className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3.5 text-text text-center font-display font-bold text-2xl placeholder:text-text-muted/40 focus:outline-none focus:border-lime/40 transition-colors"
                 />
               )}
 
@@ -111,14 +111,14 @@ export default function CheckIn() {
                     max="10"
                     value={Number(answers[q.key]) || 5}
                     onChange={(e) => update(q.key, Number(e.target.value))}
-                    className="w-full"
+                    className="w-full accent-lime"
                   />
                   <div className="flex justify-between mt-1">
-                    <span className="text-text-muted text-xs">Poor</span>
-                    <span className="text-lime font-display font-bold">
+                    <span className="text-text-muted text-[10px] uppercase tracking-wider">Poor</span>
+                    <span className="text-lime font-display font-bold text-lg">
                       {answers[q.key] || 5}
                     </span>
-                    <span className="text-text-muted text-xs">Excellent</span>
+                    <span className="text-text-muted text-[10px] uppercase tracking-wider">Excellent</span>
                   </div>
                 </div>
               )}
@@ -129,7 +129,7 @@ export default function CheckIn() {
                   onChange={(e) => update(q.key, e.target.value)}
                   placeholder={q.placeholder}
                   rows={2}
-                  className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors resize-none text-sm"
+                  className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted/40 focus:outline-none focus:border-lime/40 transition-colors resize-none text-sm"
                 />
               )}
             </div>
@@ -138,7 +138,7 @@ export default function CheckIn() {
 
         <button
           onClick={handleSubmit}
-          className="animate-slide-up [animation-delay:500ms] opacity-0 w-full bg-lime text-bg font-display font-semibold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime mt-6"
+          className="animate-slide-up [animation-delay:500ms] opacity-0 w-full bg-lime text-bg font-display font-bold text-sm py-4 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime mt-6 uppercase tracking-wider"
         >
           Submit Check-in
         </button>

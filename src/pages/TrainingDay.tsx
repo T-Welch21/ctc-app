@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Clock, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer, Zap } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+import { isSubscribed } from '../lib/subscription'
 import { getProgramById, getProgram } from '../lib/programs'
 import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs, getSelectedProgramId } from '../lib/storage'
 
@@ -23,6 +24,7 @@ export default function TrainingDay() {
   const { dayIndex } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+
   const savedId = user ? getSelectedProgramId(user.id) : null
   const program = (savedId && getProgramById(savedId)) || getProgram(user?.identity || '')
   const idx = parseInt(dayIndex || '0')
@@ -129,6 +131,10 @@ export default function TrainingDay() {
   const allDone = completedTotal === totalSets && totalSets > 0
 
   const timerProgress = timerTotal > 0 ? ((timerTotal - timerSeconds) / timerTotal) * 100 : 0
+
+  if (user && !isSubscribed(user)) {
+    return <Navigate to="/subscribe" replace />
+  }
 
   return (
     <div className="min-h-screen pb-24 bg-bg">

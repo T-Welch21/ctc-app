@@ -72,16 +72,22 @@ src/
     Journal.tsx        # Morning/evening journal with sliders, checklist, history
     Progress.tsx       # Stats, weight chart, check-in history, PRs
     CheckIn.tsx        # Weekly check-in form
+    Nutrition.tsx      # Food tracking, smart search, macro calculator, barcode scan
+    Community.tsx      # Real-time post feed with win highlighting
+    Shop.tsx           # 1st Phorm supplements + CTC merch
+    Subscribe.tsx      # Stripe subscription checkout
+    Messages.tsx       # Coach messages / broadcasts
     Command.tsx        # Coach view — live roster, stats, quick actions
-    Settings.tsx       # Profile, identity, logout
+    Settings.tsx       # Profile, identity, nutrition, logout
   components/
-    BottomNav.tsx      # 5-tab nav: Home, Training, Journal, Progress, Command
+    BottomNav.tsx      # 6-tab nav: Home, Training, Nutrition, Shop, Journal, Command
   lib/
     auth.tsx           # Supabase auth context + profile sync
     supabase.ts        # Supabase client init
     storage.ts         # All data types + localStorage read/write + Supabase sync calls
     sync.ts            # Supabase sync functions (graceful failure when tables missing)
-    programs.ts        # Athletic Performance + Executive Performance training programs
+    subscription.ts    # Stripe subscription helpers
+    programs.ts        # 7 training programs (Athletic, Executive, Functional, Hybrid, Strength, Hyrox, Running)
 public/
   sw.js               # Service worker (network-first with cache fallback)
   manifest.json       # PWA manifest
@@ -117,6 +123,15 @@ Two training tracks based on identity selection during onboarding:
 - PWA (service worker, manifest, icons)
 - Dual storage layer (localStorage + Supabase sync)
 - Branded login with tagline + ambient glow
+- Community feed (real-time Supabase posts, win highlighting, filters)
+- Nutrition tracking (smart food search, 40+ foods, macro calculator, barcode scanning, camera capture)
+- Smart macro calculator (Mifflin-St Jeor, activity multipliers, goal-based splits)
+- Shop page (1st Phorm supplements with prices/links, CTC merch coming soon)
+- Water/hydration tracking on Dashboard (8 cups/day goal)
+- Nutrition stats on Progress page (daily totals, 7-day average, mini bar chart)
+- Daily challenges with acceptance tracking
+- Subscription page with Stripe integration (Subscribe.tsx)
+- Broadcast messages from Command Center
 - Branded loading screen
 
 ---
@@ -130,11 +145,12 @@ Two training tracks based on identity selection during onboarding:
 
 ## Roadmap (Not Yet Built)
 
-- Stripe subscription integration
 - Push notifications
 - Video library (exercise demos)
-- Broadcast messages from Command Center
 - Welcome email sequence
+- AI food recognition from photos (needs API key)
+- Stripe webhook completion (Tyler needs to add signing secret)
+- App deployment to Vercel/Netlify with custom domain
 
 ---
 

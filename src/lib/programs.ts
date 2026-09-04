@@ -25,6 +25,7 @@ export type Program = {
   frequency: string
   description: string
   category: 'strength' | 'hybrid' | 'conditioning' | 'functional' | 'running'
+  image?: string
 }
 
 export const athleticProgram: Program = {
@@ -34,6 +35,7 @@ export const athleticProgram: Program = {
   frequency: '5x / week',
   description: 'Sport-ready power, speed, and conditioning for competitive athletes.',
   category: 'hybrid',
+  image: '/programs/athletic.jpg',
   days: [
     {
       day: 'Day 1',
@@ -310,6 +312,7 @@ export const executiveProgram: Program = {
   frequency: '4x / week',
   description: 'Efficient training for busy professionals who refuse to let the body slide.',
   category: 'functional',
+  image: '/programs/executive.jpg',
   days: [
     {
       day: 'Day 1',
@@ -519,6 +522,7 @@ export const functionalFitnessProgram: Program = {
   frequency: '3x / week',
   description: 'Full-body training 3 days a week. Maximum results, minimum time commitment.',
   category: 'functional',
+  image: '/programs/functional.jpg',
   days: [
     {
       day: 'Day 1',
@@ -692,6 +696,7 @@ export const hybridProgram: Program = {
   frequency: '6x / week',
   description: 'The best of both worlds — build muscle, build engine. No weakness.',
   category: 'hybrid',
+  image: '/programs/hybrid.jpg',
   days: [
     {
       day: 'Day 1',
@@ -997,6 +1002,7 @@ export const strengthProgram: Program = {
   frequency: '6x / week',
   description: 'Push. Pull. Legs. Repeat. Build serious strength and size.',
   category: 'strength',
+  image: '/programs/strength.jpg',
   days: [
     {
       day: 'Day 1',
@@ -1315,6 +1321,7 @@ export const hyroxProgram: Program = {
   frequency: '6x / week',
   description: 'Train for Hyrox. Running, rowing, sled, wall balls — race-ready conditioning.',
   category: 'conditioning',
+  image: '/programs/hyrox.jpg',
   days: [
     {
       day: 'Day 1',
@@ -1625,6 +1632,7 @@ export const runningProgram: Program = {
   frequency: '3x / week',
   description: 'Built for Hyrox and half marathon. 1km repeats, threshold work, and progressive long runs.',
   category: 'running',
+  image: '/programs/running.jpg',
   days: [
     {
       day: 'Day 1',

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X, Lock, Mail, Info } from 'lucide-react'
+import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X, Lock, Mail, Info, CreditCard, Crown, Utensils, RotateCcw } from 'lucide-react'
 import { useAuth } from '../lib/auth'
+import { isSubscribed } from '../lib/subscription'
 import { supabase } from '../lib/supabase'
 
 const identityLabels: Record<string, string> = {
@@ -67,11 +68,11 @@ export default function Settings() {
         <div className="max-w-lg mx-auto px-5 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="text-text-secondary hover:text-text transition-colors"
+            className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors"
           >
-            <ArrowLeft size={22} />
+            <ArrowLeft size={18} />
           </button>
-          <h1 className="font-display text-lg font-bold">Settings</h1>
+          <h1 className="font-display text-lg font-bold tracking-tight">Settings</h1>
         </div>
       </div>
 
@@ -92,101 +93,136 @@ export default function Settings() {
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     autoFocus
-                    className="bg-bg-elevated border border-border rounded-lg px-3 py-1.5 text-text font-display font-bold text-lg focus:outline-none focus:border-lime/50 w-full"
+                    className="bg-bg-elevated border border-border rounded-xl px-3 py-1.5 text-text font-display font-bold text-lg focus:outline-none focus:border-lime/40 w-full transition-colors"
                   />
-                  <button onClick={handleSaveName} className="text-lime p-1">
-                    <Check size={18} />
+                  <button onClick={handleSaveName} className="w-8 h-8 rounded-lg bg-lime/10 flex items-center justify-center text-lime">
+                    <Check size={16} />
                   </button>
-                  <button onClick={() => { setEditingName(false); setNameInput(user?.name || '') }} className="text-text-muted p-1">
-                    <X size={18} />
+                  <button onClick={() => { setEditingName(false); setNameInput(user?.name || '') }} className="w-8 h-8 rounded-lg bg-bg-elevated flex items-center justify-center text-text-muted">
+                    <X size={16} />
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h2 className="font-display font-bold text-lg">{user?.name || 'Competitor'}</h2>
-                  <button onClick={() => setEditingName(true)} className="text-text-muted hover:text-text-secondary transition-colors">
-                    <Pencil size={14} />
+                  <h2 className="font-display font-bold text-lg tracking-tight">{user?.name || 'Competitor'}</h2>
+                  <button onClick={() => setEditingName(true)} className="w-7 h-7 rounded-lg bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors">
+                    <Pencil size={12} />
                   </button>
                 </div>
               )}
-              <p className="text-text-secondary text-sm">{user?.email}</p>
+              <p className="text-text-muted text-xs mt-0.5">{user?.email}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-bg-elevated p-3">
-              <div className="flex items-center gap-1.5 mb-1">
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="rounded-xl bg-bg-elevated p-3.5">
+              <div className="flex items-center gap-1.5 mb-1.5">
                 <User size={12} className="text-lime" />
-                <p className="text-[10px] uppercase tracking-wider text-text-muted">Identity</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-medium">Identity</p>
               </div>
-              <p className="font-display font-semibold text-sm">
+              <p className="font-display font-bold text-sm tracking-tight">
                 {identityLabels[user?.identity || ''] || 'Not set'}
               </p>
             </div>
-            <div className="rounded-xl bg-bg-elevated p-3">
-              <div className="flex items-center gap-1.5 mb-1">
+            <div className="rounded-xl bg-bg-elevated p-3.5">
+              <div className="flex items-center gap-1.5 mb-1.5">
                 <Target size={12} className="text-lime" />
-                <p className="text-[10px] uppercase tracking-wider text-text-muted">Goal</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-text-muted font-medium">Goal</p>
               </div>
-              <p className="font-display font-semibold text-sm truncate">
+              <p className="font-display font-bold text-sm tracking-tight truncate">
                 {user?.goal || 'Not set'}
               </p>
             </div>
           </div>
         </div>
 
+        {/* Subscription */}
+        {user && (
+          <div className="animate-slide-up rounded-2xl bg-bg-card border border-border p-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isSubscribed(user) ? 'bg-lime/10' : 'bg-bg-elevated'}`}>
+                {isSubscribed(user) ? <Crown size={18} className="text-lime" /> : <CreditCard size={18} className="text-text-muted" />}
+              </div>
+              <div className="flex-1">
+                <p className="font-display font-bold text-sm tracking-tight">
+                  {isSubscribed(user) ? 'Premium Active' : 'Free Account'}
+                </p>
+                <p className="text-text-muted text-[11px]">
+                  {isSubscribed(user)
+                    ? user.subscription_status === 'trialing' ? '7-day free trial' : '$29/mo · Cancel anytime'
+                    : 'Upgrade to unlock training'}
+                </p>
+              </div>
+              {!isSubscribed(user) && (
+                <button
+                  onClick={() => navigate('/subscribe')}
+                  className="bg-lime text-black font-display font-bold text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg"
+                >
+                  Upgrade
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Menu items */}
         <div className="animate-slide-up space-y-2 mb-8">
           <button
             onClick={() => navigate('/onboarding')}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors"
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
           >
-            <div className="p-2 rounded-xl bg-bg-elevated">
+            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Target size={18} className="text-text-secondary" />
             </div>
             <div className="flex-1">
-              <p className="font-display font-semibold text-sm">Change Track</p>
-              <p className="text-text-muted text-xs">Switch identity or goal</p>
+              <p className="font-display font-bold text-sm tracking-tight">Change Track</p>
+              <p className="text-text-muted text-[11px]">Switch identity or goal</p>
             </div>
-            <ChevronRight size={18} className="text-text-muted" />
+            <ChevronRight size={16} className="text-text-muted" />
           </button>
 
           <button
             onClick={() => setShowPasswordChange(!showPasswordChange)}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors"
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
           >
-            <div className="p-2 rounded-xl bg-bg-elevated">
+            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Lock size={18} className="text-text-secondary" />
             </div>
             <div className="flex-1">
-              <p className="font-display font-semibold text-sm">Change Password</p>
-              <p className="text-text-muted text-xs">Update your login password</p>
+              <p className="font-display font-bold text-sm tracking-tight">Change Password</p>
+              <p className="text-text-muted text-[11px]">Update your login password</p>
             </div>
-            <ChevronRight size={18} className="text-text-muted" />
+            <ChevronRight size={16} className="text-text-muted" />
           </button>
 
           {showPasswordChange && (
             <div className="animate-fade-in rounded-2xl bg-bg-card border border-border p-5 space-y-3">
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="New password"
-                className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors text-sm"
-              />
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm password"
-                className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors text-sm"
-              />
+              <div>
+                <label className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-1.5 block">New Password</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Min 6 characters"
+                  className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted/40 focus:outline-none focus:border-lime/40 transition-colors text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-1.5 block">Confirm Password</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm password"
+                  className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text placeholder:text-text-muted/40 focus:outline-none focus:border-lime/40 transition-colors text-sm"
+                />
+              </div>
               {passwordError && (
                 <p className="text-red-400 text-xs">{passwordError}</p>
               )}
               <button
                 onClick={handlePasswordChange}
-                className={`w-full font-display font-semibold py-3 rounded-xl transition-all active:scale-[0.98] text-sm ${
+                className={`w-full font-display font-bold text-sm py-3.5 rounded-xl transition-all active:scale-[0.98] uppercase tracking-wider ${
                   passwordSuccess
                     ? 'bg-success text-bg'
                     : 'bg-lime text-bg hover:brightness-110'
@@ -199,38 +235,54 @@ export default function Settings() {
 
           <a
             href="sms:+12546402697"
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors block"
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors block"
           >
-            <div className="p-2 rounded-xl bg-bg-elevated">
+            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Mail size={18} className="text-text-secondary" />
             </div>
             <div className="flex-1">
-              <p className="font-display font-semibold text-sm">Contact Coach</p>
-              <p className="text-text-muted text-xs">Text Coach Tyler directly</p>
+              <p className="font-display font-bold text-sm tracking-tight">Contact Coach</p>
+              <p className="text-text-muted text-[11px]">Text Coach Tyler directly</p>
             </div>
-            <ChevronRight size={18} className="text-text-muted" />
+            <ChevronRight size={16} className="text-text-muted" />
           </a>
 
           <button
-            onClick={() => navigate('/command')}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-border-light transition-colors"
+            onClick={() => navigate('/nutrition')}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
           >
-            <div className="p-2 rounded-xl bg-bg-elevated">
+            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
+              <Utensils size={18} className="text-text-secondary" />
+            </div>
+            <div className="flex-1">
+              <p className="font-display font-bold text-sm tracking-tight">Nutrition Settings</p>
+              <p className="text-text-muted text-[11px]">Recalculate macros or update goals</p>
+            </div>
+            <ChevronRight size={16} className="text-text-muted" />
+          </button>
+
+          <button
+            onClick={() => navigate('/command')}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Shield size={18} className="text-text-secondary" />
             </div>
             <div className="flex-1">
-              <p className="font-display font-semibold text-sm">Command Center</p>
-              <p className="text-text-muted text-xs">Coach dashboard</p>
+              <p className="font-display font-bold text-sm tracking-tight">Command Center</p>
+              <p className="text-text-muted text-[11px]">Coach dashboard</p>
             </div>
-            <ChevronRight size={18} className="text-text-muted" />
+            <ChevronRight size={16} className="text-text-muted" />
           </button>
         </div>
 
         {/* App info */}
         <div className="animate-slide-up [animation-delay:50ms] opacity-0 rounded-2xl bg-bg-card border border-border p-4 mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <Info size={14} className="text-text-muted" />
-            <p className="font-display font-semibold text-xs text-text-muted">About</p>
+            <div className="w-6 h-6 rounded-md bg-bg-elevated flex items-center justify-center">
+              <Info size={12} className="text-text-muted" />
+            </div>
+            <p className="font-display font-bold text-[10px] uppercase tracking-[0.2em] text-text-muted">About</p>
           </div>
           <p className="text-text-muted text-xs leading-relaxed">
             Called to Compete is a training platform by Coach Tyler Welch in San Antonio, TX.
@@ -244,27 +296,27 @@ export default function Settings() {
             onClick={() => setShowLogoutConfirm(true)}
             className="animate-slide-up [animation-delay:100ms] opacity-0 w-full flex items-center gap-3 p-4 rounded-2xl border border-red-500/20 text-left hover:bg-red-500/5 transition-colors"
           >
-            <div className="p-2 rounded-xl bg-red-500/10">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
               <LogOut size={18} className="text-red-400" />
             </div>
-            <p className="font-display font-semibold text-sm text-red-400">Sign Out</p>
+            <p className="font-display font-bold text-sm text-red-400 tracking-tight">Sign Out</p>
           </button>
         ) : (
           <div className="animate-fade-in rounded-2xl border border-red-500/30 bg-red-500/5 p-5">
-            <p className="font-display font-semibold text-sm mb-1">Sign out?</p>
-            <p className="text-text-secondary text-sm mb-4">
+            <p className="font-display font-bold text-sm tracking-tight mb-1">Sign out?</p>
+            <p className="text-text-muted text-xs mb-4">
               Your training data is saved to your account.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 py-3 rounded-xl border border-border font-display font-semibold text-sm hover:bg-bg-card transition-colors"
+                className="flex-1 py-3 rounded-xl border border-border font-display font-bold text-sm hover:bg-bg-card transition-colors uppercase tracking-wider"
               >
                 Cancel
               </button>
               <button
                 onClick={handleLogout}
-                className="flex-1 py-3 rounded-xl bg-red-500 text-white font-display font-semibold text-sm hover:bg-red-600 transition-colors"
+                className="flex-1 py-3 rounded-xl bg-red-500 text-white font-display font-bold text-sm hover:bg-red-600 transition-colors uppercase tracking-wider"
               >
                 Sign Out
               </button>
@@ -273,7 +325,7 @@ export default function Settings() {
         )}
 
         {/* Version */}
-        <p className="text-center text-text-muted text-xs mt-8">
+        <p className="text-center text-text-muted text-[10px] uppercase tracking-[0.2em] mt-8">
           Called to Compete v1.0.0
         </p>
       </div>

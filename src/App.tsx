@@ -13,6 +13,9 @@ import Settings from './pages/Settings'
 import CheckIn from './pages/CheckIn'
 import Messages from './pages/Messages'
 import Shop from './pages/Shop'
+import Community from './pages/Community'
+import Subscribe from './pages/Subscribe'
+import Nutrition from './pages/Nutrition'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -50,7 +53,7 @@ function AppRoutes() {
   }
 
   const showNav =
-    !['/onboarding', '/settings', '/check-in', '/messages'].includes(location.pathname) &&
+    !['/onboarding', '/settings', '/check-in', '/messages', '/subscribe'].includes(location.pathname) &&
     !location.pathname.match(/^\/training\/\d/)
 
   return (
@@ -64,6 +67,9 @@ function AppRoutes() {
         <Route path="/progress" element={<Progress />} />
         <Route path="/check-in" element={<CheckIn />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/subscribe" element={<Subscribe />} />
+        <Route path="/nutrition" element={<Nutrition />} />
+        <Route path="/community" element={<Community />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/command" element={<Command />} />
         <Route path="/settings" element={<Settings />} />

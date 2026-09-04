@@ -31,12 +31,12 @@ export default function Messages() {
     <div className="min-h-screen pb-24 px-5 pt-14">
       <div className="animate-fade-in mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <button onClick={() => navigate(-1)} className="text-text-secondary hover:text-text transition-colors">
-            <ArrowLeft size={22} />
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors">
+            <ArrowLeft size={18} />
           </button>
           <div>
-            <p className="text-text-secondary text-xs uppercase tracking-wider">Inbox</p>
-            <h1 className="font-display text-2xl font-bold">Coach Messages</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight">Coach Messages</h1>
+            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em]">Inbox</p>
           </div>
         </div>
       </div>
@@ -47,12 +47,14 @@ export default function Messages() {
         </div>
       ) : broadcasts.length === 0 ? (
         <div className="py-16 text-center">
-          <Megaphone size={40} className="text-text-muted mx-auto mb-3" />
-          <p className="font-display font-semibold text-lg mb-1">No messages yet</p>
+          <div className="w-16 h-16 rounded-2xl bg-bg-card border border-border flex items-center justify-center mx-auto mb-4">
+            <Megaphone size={28} className="text-text-muted" />
+          </div>
+          <p className="font-display font-bold text-lg tracking-tight mb-1">No messages yet</p>
           <p className="text-text-muted text-sm">Coach messages will appear here</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {broadcasts.map((b, i) => (
             <div
               key={b.id}
@@ -60,12 +62,12 @@ export default function Messages() {
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-blue-400/20 shrink-0 mt-0.5">
-                  <Megaphone size={16} className="text-blue-400" />
+                <div className="w-10 h-10 rounded-xl bg-blue-400/10 flex items-center justify-center shrink-0">
+                  <Megaphone size={18} className="text-blue-400" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-blue-400 text-xs font-semibold uppercase tracking-wider">Coach Tyler</p>
+                    <p className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.15em]">Coach Tyler</p>
                     <div className="flex items-center gap-1">
                       <Clock size={10} className="text-text-muted" />
                       <p className="text-text-muted text-[10px]">

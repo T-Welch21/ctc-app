@@ -235,6 +235,121 @@ export function getCurrentWeek(userId: string, totalWeeks: number): number {
   return Math.min(week, totalWeeks)
 }
 
+export type FoodEntry = {
+  id: string
+  date: string
+  time: string
+  name: string
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+}
+
+export function getFoodEntries(userId: string, date?: string): FoodEntry[] {
+  try {
+    const key = getKey(userId, 'food')
+    const raw = localStorage.getItem(key)
+    const entries: FoodEntry[] = raw ? JSON.parse(raw) : []
+    if (date) return entries.filter((e) => e.date === date)
+    return entries
+  } catch {
+    return []
+  }
+}
+
+export function saveFoodEntry(userId: string, entry: Omit<FoodEntry, 'id'>) {
+  const key = getKey(userId, 'food')
+  const entries = getFoodEntries(userId)
+  entries.push({ ...entry, id: crypto.randomUUID() })
+  localStorage.setItem(key, JSON.stringify(entries))
+}
+
+export function deleteFoodEntry(userId: string, entryId: string) {
+  const key = getKey(userId, 'food')
+  const entries = getFoodEntries(userId).filter((e) => e.id !== entryId)
+  localStorage.setItem(key, JSON.stringify(entries))
+}
+
+export function getMacroGoals(userId: string) {
+  try {
+    const raw = localStorage.getItem(getKey(userId, 'macro_goals'))
+    return raw ? JSON.parse(raw) : { calories: 2500, protein: 180, carbs: 280, fat: 80 }
+  } catch {
+    return { calories: 2500, protein: 180, carbs: 280, fat: 80 }
+  }
+}
+
+export function saveMacroGoals(userId: string, goals: { calories: number; protein: number; carbs: number; fat: number }) {
+  localStorage.setItem(getKey(userId, 'macro_goals'), JSON.stringify(goals))
+}
+
+export type BodyStats = {
+  age: number
+  gender: 'male' | 'female'
+  heightFt: number
+  heightIn: number
+  weightLbs: number
+  activity: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active'
+  nutritionGoal: 'lose' | 'gain' | 'maintain'
+}
+
+export function getBodyStats(userId: string): BodyStats | null {
+  try {
+    const raw = localStorage.getItem(getKey(userId, 'body_stats'))
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+export function saveBodyStats(userId: string, stats: BodyStats) {
+  localStorage.setItem(getKey(userId, 'body_stats'), JSON.stringify(stats))
+}
+
+export function calculateMacros(stats: BodyStats) {
+  const weightKg = stats.weightLbs * 0.453592
+  const heightCm = (stats.heightFt * 12 + stats.heightIn) * 2.54
+  const bmr = stats.gender === 'male'
+    ? 10 * weightKg + 6.25 * heightCm - 5 * stats.age + 5
+    : 10 * weightKg + 6.25 * heightCm - 5 * stats.age - 161
+  const multipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9 }
+  const tdee = Math.round(bmr * multipliers[stats.activity])
+  let calories: number
+  let proteinPct: number, carbsPct: number, fatPct: number
+  if (stats.nutritionGoal === 'lose') {
+    calories = tdee - 500
+    proteinPct = 0.40; carbsPct = 0.30; fatPct = 0.30
+  } else if (stats.nutritionGoal === 'gain') {
+    calories = tdee + 400
+    proteinPct = 0.30; carbsPct = 0.45; fatPct = 0.25
+  } else {
+    calories = tdee
+    proteinPct = 0.30; carbsPct = 0.40; fatPct = 0.30
+  }
+  return {
+    calories: Math.round(calories),
+    protein: Math.round((calories * proteinPct) / 4),
+    carbs: Math.round((calories * carbsPct) / 4),
+    fat: Math.round((calories * fatPct) / 9),
+  }
+}
+
+export function getWaterIntake(userId: string, date?: string): number {
+  try {
+    const d = date || new Date().toISOString().split('T')[0]
+    const raw = localStorage.getItem(getKey(userId, `water_${d}`))
+    return raw ? parseInt(raw) : 0
+  } catch {
+    return 0
+  }
+}
+
+export function saveWaterIntake(userId: string, cups: number, date?: string) {
+  const d = date || new Date().toISOString().split('T')[0]
+  localStorage.setItem(getKey(userId, `water_${d}`), cups.toString())
+}
+
 export function getSelectedProgramId(userId: string): string | null {
   return localStorage.getItem(`ctc_selected_program_${userId}`)
 }

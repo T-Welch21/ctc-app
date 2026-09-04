@@ -9,6 +9,8 @@ type User = {
   identity?: string
   goal?: string
   onboarded?: boolean
+  subscription_status?: string | null
+  stripe_customer_id?: string | null
 }
 
 type AuthContextType = {
@@ -44,7 +46,7 @@ async function fetchProfile(id: string): Promise<Partial<User> | null> {
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('name, identity, goal, onboarded')
+      .select('name, identity, goal, onboarded, subscription_status, stripe_customer_id')
       .eq('id', id)
       .single()
     if (error || !data) return null

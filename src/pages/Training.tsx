@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell, ArrowRight, ChevronLeft, Flame, Zap } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { isSubscribed, pollSubscriptionStatus } from '../lib/subscription'
 import { allPrograms, getProgramById, getProgram } from '../lib/programs'
 import type { Program } from '../lib/programs'
 import { getCompletedSessions, getCurrentWeek, getExerciseNotes, getSelectedProgramId, setSelectedProgramId } from '../lib/storage'
@@ -19,6 +20,21 @@ const categoryColors: Record<string, { text: string; bg: string; accent: string 
   running: { text: 'text-cyan-400', bg: 'bg-cyan-400/10', accent: 'from-cyan-400/20 to-transparent' },
 }
 
+function ProgramImage({ src, alt }: { src?: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false)
+  const [error, setError] = useState(false)
+  if (!src || error) return null
+  return (
+    <img
+      src={src}
+      alt={alt}
+      onLoad={() => setLoaded(true)}
+      onError={() => setError(true)}
+      className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+    />
+  )
+}
+
 function useSelectedProgram(userId: string | undefined, identity: string) {
   const savedId = userId ? getSelectedProgramId(userId) : null
   if (savedId) {
@@ -31,13 +47,40 @@ function useSelectedProgram(userId: string | undefined, identity: string) {
 export default function Training() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showProgramPicker, setShowProgramPicker] = useState(false)
   const currentProgram = useSelectedProgram(user?.id, user?.identity || '')
   const [selectedProgram, setSelectedProgram] = useState<Program>(currentProgram)
+  const [showHistory, setShowHistory] = useState(false)
+  const [checkoutPending, setCheckoutPending] = useState(searchParams.get('checkout') === 'success')
+
+  useEffect(() => {
+    if (!checkoutPending || !user) return
+    searchParams.delete('checkout')
+    setSearchParams(searchParams, { replace: true })
+    pollSubscriptionStatus(user.id).then((subscribed) => {
+      if (subscribed) window.location.reload()
+      else setCheckoutPending(false)
+    })
+  }, [checkoutPending, user])
+
+  if (checkoutPending) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-5">
+        <div className="w-12 h-12 border-2 border-lime border-t-transparent rounded-full animate-spin" />
+        <p className="font-display font-bold text-lg">Confirming subscription...</p>
+        <p className="text-text-muted text-sm text-center">This may take a few seconds</p>
+      </div>
+    )
+  }
+
+  if (user && !isSubscribed(user)) {
+    return <Navigate to="/subscribe" replace />
+  }
+
   const days = selectedProgram.days
   const sessions = user ? getCompletedSessions(user.id) : []
   const todayStr = new Date().toISOString().split('T')[0]
-  const [showHistory, setShowHistory] = useState(false)
 
   const completedToday = new Set(
     sessions.filter((s) => s.date === todayStr && s.programId === selectedProgram.id).map((s) => s.dayIndex)
@@ -89,20 +132,31 @@ export default function Training() {
               <button
                 key={program.id}
                 onClick={() => switchProgram(program)}
-                className={`animate-slide-up opacity-0 w-full rounded-2xl border p-5 text-left transition-all duration-200 active:scale-[0.98] relative overflow-hidden ${
+                className={`animate-slide-up opacity-0 w-full rounded-2xl border text-left transition-all duration-200 active:scale-[0.98] relative overflow-hidden ${
                   isActive
                     ? 'bg-bg-card border-lime/40'
                     : 'bg-bg-card border-border hover:border-border-light'
                 }`}
                 style={{ animationDelay: `${i * 60}ms` }}
               >
-                {isActive && (
+                {program.image && (
+                  <div className="relative h-32 w-full overflow-hidden">
+                    <ProgramImage src={program.image} alt={program.name} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-bg-card via-bg-card/60 to-transparent" />
+                    {isActive && (
+                      <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-lime flex items-center justify-center">
+                        <Check size={14} className="text-bg" strokeWidth={3} />
+                      </div>
+                    )}
+                  </div>
+                )}
+                {!program.image && isActive && (
                   <div className={`absolute inset-0 bg-gradient-to-br ${pCat.accent} pointer-events-none`} />
                 )}
-                <div className="relative">
+                <div className="relative p-5 pt-3">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <p className={`font-display font-bold text-lg tracking-tight ${isActive ? 'text-text' : 'text-text'}`}>
+                      <p className="font-display font-bold text-lg tracking-tight">
                         {program.name}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
@@ -114,7 +168,7 @@ export default function Training() {
                         <span className="text-text-muted text-xs">{program.weeks} weeks</span>
                       </div>
                     </div>
-                    {isActive && (
+                    {isActive && !program.image && (
                       <div className="w-7 h-7 rounded-full bg-lime flex items-center justify-center shrink-0 mt-0.5">
                         <Check size={14} className="text-bg" strokeWidth={3} />
                       </div>
@@ -146,12 +200,22 @@ export default function Training() {
       <div className="animate-fade-in mb-6">
         <button
           onClick={() => setShowProgramPicker(true)}
-          className="w-full rounded-2xl bg-bg-card border border-border p-5 text-left transition-all hover:border-border-light active:scale-[0.99] relative overflow-hidden group"
+          className="w-full rounded-2xl bg-bg-card border border-border text-left transition-all hover:border-border-light active:scale-[0.99] relative overflow-hidden group"
         >
-          <div className={`absolute inset-0 bg-gradient-to-br ${cat.accent} opacity-60 pointer-events-none`} />
-          <div className="relative flex items-center justify-between">
+          {selectedProgram.image && (
+            <div className="relative h-36 w-full overflow-hidden">
+              <ProgramImage src={selectedProgram.image} alt={selectedProgram.name} />
+              <div className="absolute inset-0 bg-gradient-to-t from-bg-card via-bg-card/70 to-bg-card/20" />
+            </div>
+          )}
+          {!selectedProgram.image && (
+            <div className={`absolute inset-0 bg-gradient-to-br ${cat.accent} opacity-60 pointer-events-none`} />
+          )}
+          <div className={`relative flex items-center justify-between ${selectedProgram.image ? 'px-5 pb-5 -mt-8' : 'p-5'}`}>
             <div>
-              <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-1.5">Current Program</p>
+              {!selectedProgram.image && (
+                <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-1.5">Current Program</p>
+              )}
               <p className="font-display text-2xl font-bold tracking-tight">{selectedProgram.name}</p>
               <div className="flex items-center gap-2.5 mt-2">
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${cat.text} ${cat.bg}`}>

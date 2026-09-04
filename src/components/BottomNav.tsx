@@ -1,12 +1,12 @@
-import { Home, Dumbbell, BookOpen, TrendingUp, ShoppingBag, LayoutDashboard } from 'lucide-react'
+import { Home, Dumbbell, Utensils, ShoppingBag, BookOpen, LayoutDashboard } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const tabs = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/training', icon: Dumbbell, label: 'Training' },
-  { path: '/journal', icon: BookOpen, label: 'Journal' },
-  { path: '/progress', icon: TrendingUp, label: 'Progress' },
+  { path: '/nutrition', icon: Utensils, label: 'Nutrition' },
   { path: '/shop', icon: ShoppingBag, label: 'Shop' },
+  { path: '/journal', icon: BookOpen, label: 'Journal' },
   { path: '/command', icon: LayoutDashboard, label: 'Command' },
 ]
 
