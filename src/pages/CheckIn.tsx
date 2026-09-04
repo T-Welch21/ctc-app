@@ -87,7 +87,7 @@ export default function CheckIn() {
           {questions.map((q, i) => (
             <div
               key={q.key}
-              className="animate-slide-up opacity-0 rounded-2xl bg-bg-card border border-border p-5"
+              className="animate-slide-up opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 relative overflow-hidden"
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <label className="font-display font-bold text-sm tracking-tight block mb-3">{q.label}</label>

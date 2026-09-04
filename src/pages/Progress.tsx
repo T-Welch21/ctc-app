@@ -94,7 +94,7 @@ export default function Progress() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl bg-bg-card border border-border p-4 text-center relative overflow-hidden"
+            className="card-shine rounded-2xl bg-bg-card/80 border border-border p-4 text-center relative overflow-hidden"
           >
             <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center mx-auto mb-2.5`}>
               <stat.icon size={18} className={stat.color} />

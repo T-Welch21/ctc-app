@@ -36,40 +36,41 @@ export default function Subscribe() {
   }
 
   return (
-    <div className="min-h-screen pb-28 px-5 pt-14">
+    <div className="min-h-screen pb-28 px-5 pt-14 mesh-bg">
       {/* Header */}
-      <div className="animate-fade-in mb-6">
+      <div className="animate-fade-in mb-6 relative z-10">
         <div className="flex items-center gap-3 mb-1">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors"
+            className="w-9 h-9 rounded-xl bg-white/[0.04] flex items-center justify-center text-text-muted hover:text-text transition-colors"
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight">Go Premium</h1>
-            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em]">Unlock Full Access</p>
+            <h1 className="font-display text-[26px] font-bold tracking-tight">Go Premium</h1>
+            <p className="text-text-muted text-[9px] uppercase tracking-[0.25em]">Unlock Full Access</p>
           </div>
         </div>
       </div>
 
       {/* Hero */}
-      <div className="animate-slide-up mb-6 text-center">
+      <div className="animate-slide-up mb-6 text-center relative z-10">
         <div className="w-16 h-16 rounded-2xl bg-lime/10 flex items-center justify-center mx-auto mb-4 relative">
-          <Crown size={32} className="text-lime" />
-          <div className="absolute -inset-2 rounded-3xl bg-lime/5 blur-xl -z-10" />
+          <Crown size={32} className="text-lime drop-shadow-[0_0_12px_rgba(189,255,58,0.3)]" />
+          <div className="absolute -inset-3 rounded-3xl bg-lime/5 blur-xl -z-10" />
         </div>
-        <h2 className="font-display text-3xl font-bold tracking-tight mb-2">
+        <h2 className="font-display text-[32px] font-bold tracking-tight leading-[0.95] mb-3">
           Train Like You<br />Mean It<span className="text-lime">.</span>
         </h2>
-        <p className="text-text-secondary text-sm leading-relaxed max-w-[280px] mx-auto">
+        <p className="text-text-secondary text-[15px] leading-relaxed max-w-[280px] mx-auto font-light">
           Full access to every program, tool, and resource in the CTC system.
         </p>
       </div>
 
       {/* Plan card */}
-      <div className="animate-slide-up [animation-delay:100ms] opacity-0 mb-6">
-        <div className="rounded-2xl bg-gradient-to-br from-lime/10 via-bg-card to-bg-card border border-lime/30 p-5 relative overflow-hidden">
+      <div className="animate-slide-up [animation-delay:100ms] opacity-0 mb-6 relative z-10">
+        <div className="card-shine rounded-2xl bg-gradient-to-br from-lime/[0.06] via-bg-card/80 to-bg-card/80 border border-lime/30 p-5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
           <div className="absolute -right-8 -top-8 w-32 h-32 bg-lime/8 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -left-4 -bottom-4 w-20 h-20 bg-lime/5 rounded-full blur-2xl pointer-events-none" />
 
@@ -116,7 +117,7 @@ export default function Subscribe() {
         <button
           onClick={handleSubscribe}
           disabled={loading}
-          className="w-full py-4 rounded-2xl bg-lime text-black font-display font-bold text-lg uppercase tracking-wider transition-all active:scale-[0.98] disabled:opacity-50 relative overflow-hidden"
+          className="w-full py-4 rounded-2xl bg-lime text-black font-display font-bold text-lg uppercase tracking-wider transition-all active:scale-[0.98] disabled:opacity-50 relative overflow-hidden glow-lime-strong"
         >
           {loading ? (
             <div className="flex items-center justify-center gap-2">

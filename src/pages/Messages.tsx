@@ -58,16 +58,17 @@ export default function Messages() {
           {broadcasts.map((b, i) => (
             <div
               key={b.id}
-              className="animate-slide-up opacity-0 rounded-2xl bg-bg-card border border-border p-4"
+              className="animate-slide-up opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden"
               style={{ animationDelay: `${i * 50}ms` }}
             >
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-cyan-400/20 via-cyan-400/5 to-transparent" />
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-400/10 flex items-center justify-center shrink-0">
-                  <Megaphone size={18} className="text-blue-400" />
+                <div className="w-10 h-10 rounded-xl bg-cyan-400/10 flex items-center justify-center shrink-0">
+                  <Megaphone size={18} className="text-cyan-400" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.15em]">Coach Tyler</p>
+                    <p className="text-cyan-400 text-[10px] font-bold uppercase tracking-[0.15em]">Coach Tyler</p>
                     <div className="flex items-center gap-1">
                       <Clock size={10} className="text-text-muted" />
                       <p className="text-text-muted text-[10px]">

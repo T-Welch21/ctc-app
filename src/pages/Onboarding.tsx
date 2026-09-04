@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Flame, Briefcase, Crown, Palette, Shapes, Shield, Target, Zap, Heart, TrendingUp } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Flame, Briefcase, Crown, Palette, Shapes, Shield, Target, Zap, Heart, TrendingUp, Check } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 
 const identities = [
@@ -33,28 +33,27 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col px-6 py-12">
-      {/* Back button for re-onboarding */}
+    <div className="min-h-screen flex flex-col px-6 py-12 mesh-bg">
       {isReOnboarding && step === 0 && (
         <button
           onClick={() => navigate(-1)}
-          className="animate-fade-in flex items-center gap-1.5 text-text-secondary hover:text-text text-sm mb-4 transition-colors"
+          className="animate-fade-in flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-4 transition-colors relative z-10"
         >
           <ArrowLeft size={16} /> Back
         </button>
       )}
 
       {/* Progress bar */}
-      <div className="flex gap-2 mb-10">
-        <div className={`flex-1 h-1 rounded-full transition-all duration-500 ${step >= 0 ? 'bg-lime' : 'bg-border'}`} />
-        <div className={`flex-1 h-1 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-lime' : 'bg-border'}`} />
+      <div className="flex gap-2 mb-10 relative z-10">
+        <div className={`flex-1 h-[3px] rounded-full transition-all duration-700 ${step >= 0 ? 'bg-gradient-to-r from-lime to-cyan-400' : 'bg-border'}`} />
+        <div className={`flex-1 h-[3px] rounded-full transition-all duration-700 ${step >= 1 ? 'bg-gradient-to-r from-lime to-cyan-400' : 'bg-border'}`} />
       </div>
 
       {step === 0 && (
-        <div className="animate-fade-in flex-1 flex flex-col max-w-sm mx-auto w-full">
+        <div className="animate-fade-in flex-1 flex flex-col max-w-sm mx-auto w-full relative z-10">
           <div className="mb-8">
-            <p className="text-lime text-[10px] font-bold uppercase tracking-widest mb-2">Step 1 — Identity</p>
-            <h1 className="font-display text-3xl font-bold leading-tight mb-2">
+            <p className="text-lime text-[9px] font-bold uppercase tracking-[0.3em] mb-2">Step 1 — Identity</p>
+            <h1 className="font-display text-[32px] font-bold leading-[0.95] tracking-tight mb-3">
               Who are you<span className="text-lime">?</span>
             </h1>
             <p className="text-text-muted text-sm">
@@ -69,24 +68,27 @@ export default function Onboarding() {
                 <button
                   key={item.id}
                   onClick={() => setSelectedIdentity(item.id)}
-                  className={`w-full flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] ${
+                  className={`card-shine w-full flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
                     active
-                      ? 'border-lime/50 bg-lime/5'
-                      : 'border-border bg-bg-card hover:border-border-light'
+                      ? 'border-lime/40 bg-lime/[0.05]'
+                      : 'border-border bg-bg-card/80 hover:border-white/[0.06]'
                   }`}
                 >
-                  <div className={`p-2.5 rounded-xl transition-colors ${active ? 'bg-lime/20' : 'bg-bg-elevated'}`}>
+                  {active && (
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
+                  )}
+                  <div className={`w-11 h-11 rounded-xl transition-colors flex items-center justify-center ${active ? 'bg-lime/15' : 'bg-white/[0.04]'}`}>
                     <item.icon size={20} className={active ? 'text-lime' : 'text-text-muted'} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`font-display font-bold text-sm ${active ? 'text-lime' : 'text-text'}`}>
+                    <p className={`font-display font-bold text-[15px] ${active ? 'text-lime' : 'text-text'}`}>
                       {item.label}
                     </p>
                     <p className="text-text-muted text-xs mt-0.5">{item.desc}</p>
                   </div>
                   {active && (
-                    <div className="w-5 h-5 rounded-full bg-lime flex items-center justify-center shrink-0">
-                      <div className="w-2 h-2 rounded-full bg-bg" />
+                    <div className="w-6 h-6 rounded-full bg-lime flex items-center justify-center shrink-0">
+                      <Check size={13} className="text-bg" strokeWidth={3} />
                     </div>
                   )}
                 </button>
@@ -97,18 +99,18 @@ export default function Onboarding() {
           <button
             onClick={() => setStep(1)}
             disabled={!selectedIdentity}
-            className="mt-8 w-full bg-lime text-bg font-display font-bold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="mt-8 w-full bg-lime text-bg font-display font-bold text-[16px] py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center gap-2 glow-lime"
           >
-            Next <ArrowRight size={20} />
+            Next <ArrowRight size={18} />
           </button>
         </div>
       )}
 
       {step === 1 && (
-        <div className="animate-fade-in flex-1 flex flex-col max-w-sm mx-auto w-full">
+        <div className="animate-fade-in flex-1 flex flex-col max-w-sm mx-auto w-full relative z-10">
           <div className="mb-8">
-            <p className="text-lime text-[10px] font-bold uppercase tracking-widest mb-2">Step 2 — Mission</p>
-            <h1 className="font-display text-3xl font-bold leading-tight mb-2">
+            <p className="text-lime text-[9px] font-bold uppercase tracking-[0.3em] mb-2">Step 2 — Mission</p>
+            <h1 className="font-display text-[32px] font-bold leading-[0.95] tracking-tight mb-3">
               What are you<br />chasing<span className="text-lime">?</span>
             </h1>
             <p className="text-text-muted text-sm">
@@ -123,24 +125,27 @@ export default function Onboarding() {
                 <button
                   key={goal.text}
                   onClick={() => setSelectedGoal(goal.text)}
-                  className={`w-full flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] ${
+                  className={`card-shine w-full flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
                     active
-                      ? 'border-lime/50 bg-lime/5'
-                      : 'border-border bg-bg-card hover:border-border-light'
+                      ? 'border-lime/40 bg-lime/[0.05]'
+                      : 'border-border bg-bg-card/80 hover:border-white/[0.06]'
                   }`}
                 >
-                  <div className={`p-2.5 rounded-xl transition-colors ${active ? 'bg-lime/20' : 'bg-bg-elevated'}`}>
+                  {active && (
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
+                  )}
+                  <div className={`w-11 h-11 rounded-xl transition-colors flex items-center justify-center ${active ? 'bg-lime/15' : 'bg-white/[0.04]'}`}>
                     <goal.icon size={20} className={active ? 'text-lime' : 'text-text-muted'} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`font-display font-bold text-sm ${active ? 'text-lime' : 'text-text'}`}>
+                    <p className={`font-display font-bold text-[15px] ${active ? 'text-lime' : 'text-text'}`}>
                       {goal.text}
                     </p>
                     <p className="text-text-muted text-xs mt-0.5">{goal.desc}</p>
                   </div>
                   {active && (
-                    <div className="w-5 h-5 rounded-full bg-lime flex items-center justify-center shrink-0">
-                      <div className="w-2 h-2 rounded-full bg-bg" />
+                    <div className="w-6 h-6 rounded-full bg-lime flex items-center justify-center shrink-0">
+                      <Check size={13} className="text-bg" strokeWidth={3} />
                     </div>
                   )}
                 </button>
@@ -151,14 +156,14 @@ export default function Onboarding() {
           <div className="mt-8 flex gap-3">
             <button
               onClick={() => setStep(0)}
-              className="flex-1 border border-border text-text-secondary font-display font-semibold py-4 rounded-2xl hover:bg-bg-card transition-colors"
+              className="flex-1 border border-border text-text-muted font-display font-bold py-4 rounded-2xl hover:bg-white/[0.02] transition-colors"
             >
               Back
             </button>
             <button
               onClick={handleFinish}
               disabled={!selectedGoal}
-              className="flex-[2] bg-lime text-bg font-display font-bold text-lg py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-20 disabled:cursor-not-allowed"
+              className="flex-[2] bg-lime text-bg font-display font-bold text-[16px] py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed glow-lime"
             >
               {isReOnboarding ? 'Save Changes' : "Let's Compete"}
             </button>

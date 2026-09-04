@@ -127,7 +127,7 @@ export default function Journal() {
       {timeOfDay === 'morning' ? (
         <>
           {/* Daily affirmation card */}
-          <div className="animate-slide-up [animation-delay:80ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4 relative overflow-hidden">
+          <div className="animate-slide-up [animation-delay:80ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-lime/5 to-transparent pointer-events-none" />
             <div className="relative">
               <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-2">Today's Word</p>
@@ -138,7 +138,7 @@ export default function Journal() {
           </div>
 
           {/* I Am affirmations */}
-          <div className="animate-slide-up [animation-delay:160ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:160ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-1">Speak It Into Existence</p>
             <p className="text-text-muted text-xs mb-4">Write who you are. Read it out loud.</p>
             <div className="space-y-3">
@@ -162,7 +162,7 @@ export default function Journal() {
           </div>
 
           {/* Today's #1 target */}
-          <div className="animate-slide-up [animation-delay:240ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:240ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-cyan-400/10 flex items-center justify-center">
                 <Target size={16} className="text-cyan-400" />
@@ -179,7 +179,7 @@ export default function Journal() {
           </div>
 
           {/* Visualization */}
-          <div className="animate-slide-up [animation-delay:320ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:320ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="flex items-center gap-2.5 mb-2">
               <div className="w-8 h-8 rounded-lg bg-blue-400/10 flex items-center justify-center">
                 <Eye size={16} className="text-blue-400" />
@@ -197,7 +197,7 @@ export default function Journal() {
           </div>
 
           {/* Needle Movers */}
-          <div className="animate-slide-up [animation-delay:400ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:400ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-3">Needle Movers</p>
             <div className="space-y-2.5">
               {needleMovers.map((item, i) => (
@@ -223,7 +223,7 @@ export default function Journal() {
 
           {/* Energy & Mind */}
           <div className="animate-slide-up [animation-delay:480ms] opacity-0 grid grid-cols-2 gap-2.5 mb-4">
-            <div className="rounded-2xl bg-bg-card border border-border p-4">
+            <div className="card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg bg-cyan-400/10 flex items-center justify-center">
                   <Zap size={14} className="text-cyan-400" />
@@ -240,7 +240,7 @@ export default function Journal() {
               />
               <p className="text-center text-lime font-display font-bold text-2xl mt-1">{energy}</p>
             </div>
-            <div className="rounded-2xl bg-bg-card border border-border p-4">
+            <div className="card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg bg-blue-400/10 flex items-center justify-center">
                   <Brain size={14} className="text-blue-400" />
@@ -262,7 +262,7 @@ export default function Journal() {
       ) : (
         <>
           {/* Rate your day */}
-          <div className="animate-slide-up [animation-delay:80ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:80ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-cyan-400/10 flex items-center justify-center">
                 <Star size={16} className="text-cyan-400" />
@@ -281,7 +281,7 @@ export default function Journal() {
           </div>
 
           {/* Win of the day */}
-          <div className="animate-slide-up [animation-delay:160ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:160ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-lime/10 flex items-center justify-center">
                 <Trophy size={16} className="text-lime" />
@@ -298,7 +298,7 @@ export default function Journal() {
           </div>
 
           {/* What to improve */}
-          <div className="animate-slide-up [animation-delay:240ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:240ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-cyan-400/10 flex items-center justify-center">
                 <ArrowUp size={16} className="text-cyan-400" />
@@ -315,7 +315,7 @@ export default function Journal() {
           </div>
 
           {/* Gratitude */}
-          <div className="animate-slide-up [animation-delay:320ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+          <div className="animate-slide-up [animation-delay:320ms] opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-5 mb-4 relative overflow-hidden">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-teal-400/10 flex items-center justify-center">
                 <Heart size={16} className="text-teal-400" />
@@ -333,7 +333,7 @@ export default function Journal() {
 
           {/* Evening energy & mind */}
           <div className="animate-slide-up [animation-delay:400ms] opacity-0 grid grid-cols-2 gap-2.5 mb-4">
-            <div className="rounded-2xl bg-bg-card border border-border p-4">
+            <div className="card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg bg-cyan-400/10 flex items-center justify-center">
                   <Zap size={14} className="text-cyan-400" />
@@ -350,7 +350,7 @@ export default function Journal() {
               />
               <p className="text-center text-lime font-display font-bold text-2xl mt-1">{energy}</p>
             </div>
-            <div className="rounded-2xl bg-bg-card border border-border p-4">
+            <div className="card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg bg-blue-400/10 flex items-center justify-center">
                   <Brain size={14} className="text-blue-400" />
@@ -427,7 +427,7 @@ function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
   const isMorning = entry.timeOfDay === 'morning'
   return (
     <div
-      className="animate-slide-up opacity-0 rounded-2xl bg-bg-card border border-border p-4"
+      className="animate-slide-up opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       <div className="flex items-center justify-between mb-3">

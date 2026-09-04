@@ -78,7 +78,8 @@ export default function Settings() {
 
       <div className="max-w-lg mx-auto px-5 pt-6">
         {/* Profile card */}
-        <div className="animate-fade-in rounded-2xl bg-bg-card border border-border p-5 mb-6">
+        <div className="animate-fade-in rounded-2xl bg-bg-card/80 border border-border p-5 mb-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/20 via-lime/5 to-transparent" />
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-lime/10 flex items-center justify-center">
               <span className="font-display text-lime text-xl font-bold">
@@ -169,7 +170,7 @@ export default function Settings() {
         <div className="animate-slide-up space-y-2 mb-8">
           <button
             onClick={() => navigate('/onboarding')}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
+            className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
             <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Target size={18} className="text-text-secondary" />
@@ -183,7 +184,7 @@ export default function Settings() {
 
           <button
             onClick={() => setShowPasswordChange(!showPasswordChange)}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
+            className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
             <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Lock size={18} className="text-text-secondary" />
@@ -249,7 +250,7 @@ export default function Settings() {
 
           <button
             onClick={() => navigate('/nutrition')}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
+            className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
             <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Utensils size={18} className="text-text-secondary" />
@@ -263,7 +264,7 @@ export default function Settings() {
 
           <button
             onClick={() => navigate('/command')}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors"
+            className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
             <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
               <Shield size={18} className="text-text-secondary" />

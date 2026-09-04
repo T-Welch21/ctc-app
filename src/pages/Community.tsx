@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Trophy, Send, MessageSquare, Flame } from 'lucide-react'
+import { Trophy, Send, MessageSquare, Flame, Users } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
 
@@ -91,17 +91,17 @@ export default function Community() {
   const firstName = user?.name?.split(' ')[0] || 'Competitor'
 
   return (
-    <div className="min-h-screen pb-40">
+    <div className="min-h-screen pb-48">
       {/* Header */}
       <div className="sticky top-0 glass-heavy z-40 border-b border-border">
-        <div className="px-5 pt-12 pb-3">
+        <div className="px-5 pt-14 pb-3">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="font-display text-2xl font-bold tracking-tight">Community</h1>
-              <p className="text-text-muted text-[10px] uppercase tracking-[0.2em]">CTC Community</p>
+              <h1 className="font-display text-[26px] font-bold tracking-tight">Community</h1>
+              <p className="text-text-muted text-[9px] uppercase tracking-[0.25em]">CTC Athletes</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-lime/10 flex items-center justify-center">
-              <MessageSquare size={20} className="text-lime" />
+              <Users size={18} className="text-lime" />
             </div>
           </div>
 
@@ -109,19 +109,19 @@ export default function Community() {
           <div className="flex gap-1.5">
             <button
               onClick={() => setFilter('all')}
-              className={`px-3.5 py-1.5 rounded-lg font-display font-bold text-xs uppercase tracking-wider transition-all ${
-                filter === 'all' ? 'bg-lime text-black' : 'bg-bg-elevated text-text-muted hover:text-text'
+              className={`px-3.5 py-1.5 rounded-xl font-display font-bold text-[10px] uppercase tracking-wider transition-all ${
+                filter === 'all' ? 'bg-lime text-black' : 'bg-white/[0.04] text-text-muted hover:text-text'
               }`}
             >
               All Posts
             </button>
             <button
               onClick={() => setFilter('wins')}
-              className={`px-3.5 py-1.5 rounded-lg font-display font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 ${
-                filter === 'wins' ? 'bg-lime text-black' : 'bg-bg-elevated text-text-muted hover:text-text'
+              className={`px-3.5 py-1.5 rounded-xl font-display font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                filter === 'wins' ? 'bg-lime text-black' : 'bg-white/[0.04] text-text-muted hover:text-text'
               }`}
             >
-              <Trophy size={12} />
+              <Trophy size={11} />
               Wins
             </button>
           </div>
@@ -129,10 +129,10 @@ export default function Community() {
       </div>
 
       {/* Feed */}
-      <div ref={feedRef} className="px-5 pt-4 space-y-3">
+      <div ref={feedRef} className="px-5 pt-4 space-y-2.5">
         {loading ? (
           <div className="py-12 text-center">
-            <div className="w-8 h-8 border-2 border-lime border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-2 border-lime/30 border-t-lime rounded-full animate-spin mx-auto" />
           </div>
         ) : posts.length === 0 ? (
           <div className="py-16 text-center">
@@ -151,20 +151,27 @@ export default function Community() {
             return (
               <div
                 key={post.id}
-                className={`animate-slide-up opacity-0 rounded-2xl p-4 transition-all ${
+                className={`animate-slide-up opacity-0 card-shine rounded-2xl p-4 transition-all relative overflow-hidden ${
                   isWin
-                    ? 'bg-lime/5 border border-lime/20'
-                    : 'bg-bg-card border border-border'
+                    ? 'bg-lime/[0.04] border border-lime/20'
+                    : 'bg-bg-card/80 border border-border'
                 }`}
                 style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}
               >
+                {isWin && (
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
+                )}
                 <div className="flex items-start gap-3">
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                    isWin ? 'bg-lime/15' : 'bg-bg-elevated'
+                    isWin ? 'bg-lime/15' : 'bg-white/[0.04]'
                   }`}>
-                    <span className={`font-display font-bold text-sm ${isWin ? 'text-lime' : 'text-text-secondary'}`}>
-                      {post.user_name.charAt(0).toUpperCase()}
-                    </span>
+                    {isWin ? (
+                      <Trophy size={15} className="text-lime" />
+                    ) : (
+                      <span className="font-display font-bold text-sm text-text-secondary">
+                        {post.user_name.charAt(0).toUpperCase()}
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -172,8 +179,8 @@ export default function Community() {
                         {isOwn ? 'You' : post.user_name.split(' ')[0]}
                       </p>
                       {isWin && (
-                        <span className="flex items-center gap-0.5 text-lime text-[9px] font-bold uppercase tracking-wider bg-lime/10 px-1.5 py-0.5 rounded-full">
-                          <Trophy size={9} /> Win
+                        <span className="flex items-center gap-0.5 text-lime text-[8px] font-bold uppercase tracking-wider bg-lime/10 px-1.5 py-0.5 rounded-full">
+                          <Flame size={8} /> Win
                         </span>
                       )}
                       <span className="text-text-muted text-[10px] ml-auto">{timeAgo(post.created_at)}</span>
@@ -187,22 +194,22 @@ export default function Community() {
         )}
       </div>
 
-      {/* Compose bar */}
-      <div className="fixed bottom-16 left-0 right-0 bg-bg/95 backdrop-blur-xl border-t border-border z-40">
+      {/* Compose bar — positioned above floating nav */}
+      <div className="fixed bottom-[88px] left-0 right-0 glass-heavy border-t border-border z-40">
         <div className="max-w-lg mx-auto px-4 py-3">
           {/* Post type toggle */}
           <div className="flex items-center gap-1.5 mb-2">
             <button
               onClick={() => setPostType('general')}
-              className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${
-                postType === 'general' ? 'bg-bg-elevated text-text' : 'text-text-muted'
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
+                postType === 'general' ? 'bg-white/[0.06] text-text' : 'text-text-muted'
               }`}
             >
               Post
             </button>
             <button
               onClick={() => setPostType('win')}
-              className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${
                 postType === 'win' ? 'bg-lime/15 text-lime' : 'text-text-muted'
               }`}
             >
@@ -219,7 +226,7 @@ export default function Community() {
                 onKeyDown={handleKeyDown}
                 placeholder={postType === 'win' ? `What's your win today, ${firstName}?` : `What's on your mind, ${firstName}?`}
                 rows={1}
-                className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-3 text-text text-sm placeholder:text-text-muted/40 focus:outline-none focus:border-lime/40 transition-colors resize-none"
+                className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-4 py-3 text-text text-sm placeholder:text-text-muted/40 focus:outline-none focus:border-lime/25 transition-colors resize-none"
                 style={{ minHeight: '44px', maxHeight: '120px' }}
               />
             </div>
@@ -228,8 +235,8 @@ export default function Community() {
               disabled={!message.trim() || sending}
               className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                 message.trim()
-                  ? 'bg-lime text-black active:scale-95'
-                  : 'bg-bg-elevated text-text-muted'
+                  ? 'bg-lime text-black active:scale-95 glow-lime'
+                  : 'bg-white/[0.04] text-text-muted'
               }`}
             >
               {sending ? (
@@ -240,7 +247,6 @@ export default function Community() {
             </button>
           </div>
         </div>
-        <div className="h-[env(safe-area-inset-bottom)]" />
       </div>
     </div>
   )

@@ -132,10 +132,10 @@ export default function Training() {
               <button
                 key={program.id}
                 onClick={() => switchProgram(program)}
-                className={`animate-slide-up opacity-0 w-full rounded-2xl border text-left transition-all duration-200 active:scale-[0.98] relative overflow-hidden ${
+                className={`animate-slide-up opacity-0 card-shine w-full rounded-2xl border text-left transition-all duration-200 active:scale-[0.98] relative overflow-hidden ${
                   isActive
-                    ? 'bg-bg-card border-lime/40'
-                    : 'bg-bg-card border-border hover:border-border-light'
+                    ? 'bg-bg-card/80 border-lime/40'
+                    : 'bg-bg-card/80 border-border hover:border-white/[0.06]'
                 }`}
                 style={{ animationDelay: `${i * 60}ms` }}
               >
@@ -272,15 +272,18 @@ export default function Training() {
             <button
               key={day.day}
               onClick={() => navigate(`/training/${i}`)}
-              className={`animate-slide-up opacity-0 w-full rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
+              className={`animate-slide-up opacity-0 card-shine w-full rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
                 done
-                  ? 'bg-bg-card border-lime/30'
-                  : 'bg-bg-card border-border hover:border-border-light'
+                  ? 'bg-bg-card/80 border-lime/30'
+                  : 'bg-bg-card/80 border-border hover:border-white/[0.06]'
               }`}
               style={{ animationDelay: `${(i + 1) * 70}ms` }}
             >
               {done && (
-                <div className="absolute inset-0 bg-gradient-to-r from-lime/8 to-transparent pointer-events-none" />
+                <>
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-lime/8 to-transparent pointer-events-none" />
+                </>
               )}
               <div className="relative flex items-center p-4 gap-4">
                 <div
