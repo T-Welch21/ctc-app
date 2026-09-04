@@ -94,7 +94,7 @@ export default function Journal() {
   }
 
   return (
-    <div className="min-h-screen pb-24 px-5 pt-14">
+    <div className="min-h-screen pb-28 px-5 pt-14">
       <div className="animate-fade-in mb-6">
         <h1 className="font-display text-3xl font-bold tracking-tight">
           {timeOfDay === 'morning' ? 'Morning Prep' : 'Evening Debrief'}

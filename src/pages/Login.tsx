@@ -76,7 +76,7 @@ export default function Login() {
               setMode('login')
               setPassword('')
             }}
-            className="w-full bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime"
+            className="w-full bg-lime text-bg font-display font-bold text-base py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all"
           >
             Back to Sign In
           </button>
@@ -106,12 +106,12 @@ export default function Login() {
         <div className="animate-fade-in max-w-sm mx-auto w-full">
           <button
             onClick={() => { setForgotPassword(false); setError('') }}
-            className="flex items-center gap-1.5 text-text-secondary hover:text-text text-sm mb-8 transition-colors"
+            className="flex items-center gap-1.5 text-text-muted hover:text-text text-sm mb-8 transition-colors"
           >
-            <ArrowLeft size={16} /> Back to sign in
+            <ArrowLeft size={16} /> Back
           </button>
           <h1 className="font-display text-2xl font-bold mb-2">Reset password</h1>
-          <p className="text-text-secondary text-sm mb-6">
+          <p className="text-text-muted text-sm mb-6">
             Enter your email and we'll send a reset link.
           </p>
           <form onSubmit={handleReset} className="space-y-4">
@@ -121,13 +121,13 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-bg-card border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+              className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-4 py-3.5 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/30 transition-colors"
             />
             {error && <p className="text-red-400 text-sm text-center">{error}</p>}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 glow-lime"
+              className="w-full bg-lime text-bg font-display font-bold text-base py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loading ? '...' : 'Send Reset Link'}
             </button>
@@ -140,30 +140,37 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col justify-center px-6 py-12 login-glow">
       <div className="animate-fade-in max-w-sm mx-auto w-full relative z-10">
-        <div className="text-center mb-10">
-          <h1 className="font-display text-4xl font-bold tracking-tight mb-2">
-            CALLED TO
-            <br />
-            <span className="text-lime">COMPETE</span>
-          </h1>
-          <p className="text-text-muted text-[10px] uppercase tracking-[0.25em] mt-3">
-            Discipline · Purpose · Leadership · Excellence
-          </p>
-          <p className="text-text-secondary text-sm mt-5 leading-relaxed max-w-[260px] mx-auto">
+        <div className="text-center mb-14">
+          <div className="mb-8">
+            <h1 className="font-display text-[52px] font-bold tracking-[-0.04em] leading-[0.85]">
+              CALLED TO
+            </h1>
+            <h1 className="font-display text-[52px] font-bold tracking-[-0.04em] leading-[0.85] text-lime drop-shadow-[0_0_30px_rgba(189,255,58,0.2)]">
+              COMPETE
+            </h1>
+          </div>
+          <div className="flex items-center justify-center gap-4 text-text-muted text-[8px] uppercase tracking-[0.35em]">
+            <span>Discipline</span>
+            <span className="w-1 h-1 rounded-full bg-lime/50" />
+            <span>Purpose</span>
+            <span className="w-1 h-1 rounded-full bg-lime/50" />
+            <span>Leadership</span>
+          </div>
+          <p className="text-text-secondary text-[15px] mt-8 leading-relaxed max-w-[260px] mx-auto font-light">
             {mode === 'login'
               ? 'Welcome back. The work doesn\'t stop.'
-              : 'Built for those who refuse to settle. Your training starts here.'}
+              : 'Built for those who refuse to settle.'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {mode === 'signup' && (
             <input
               type="text"
               placeholder="Your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-bg-card border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+              className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl px-5 py-4 text-text placeholder:text-text-muted text-[15px] focus:outline-none focus:border-lime/25 transition-all"
             />
           )}
 
@@ -173,7 +180,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full bg-bg-card border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+            className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl px-5 py-4 text-text placeholder:text-text-muted text-[15px] focus:outline-none focus:border-lime/25 transition-all"
           />
 
           <div className="relative">
@@ -184,12 +191,12 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-bg-card border border-border rounded-xl px-4 py-3.5 pr-12 text-text placeholder:text-text-muted focus:outline-none focus:border-lime/50 transition-colors"
+              className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl px-5 py-4 pr-12 text-text placeholder:text-text-muted text-[15px] focus:outline-none focus:border-lime/25 transition-all"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -200,7 +207,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-lime text-bg font-display font-semibold text-lg py-3.5 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all duration-150 disabled:opacity-50 glow-lime"
+            className="w-full bg-lime text-bg font-display font-bold text-[16px] py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 glow-lime-strong"
           >
             {loading ? '...' : mode === 'login' ? 'Let\'s Go' : 'Join the Team'}
           </button>
@@ -209,20 +216,20 @@ export default function Login() {
         {mode === 'login' && (
           <button
             onClick={() => { setForgotPassword(true); setError('') }}
-            className="block mx-auto text-text-muted text-sm mt-4 hover:text-text-secondary transition-colors"
+            className="block mx-auto text-text-muted text-sm mt-5 hover:text-text-secondary transition-colors"
           >
             Forgot password?
           </button>
         )}
 
-        <p className="text-center text-text-secondary text-sm mt-4">
+        <p className="text-center text-text-muted text-sm mt-6">
           {mode === 'login' ? "Ready to compete? " : 'Already on the team? '}
           <button
             onClick={() => {
               setMode(mode === 'login' ? 'signup' : 'login')
               setError('')
             }}
-            className="text-lime font-medium hover:underline"
+            className="text-lime font-semibold hover:underline"
           >
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>

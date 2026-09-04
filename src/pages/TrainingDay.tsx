@@ -137,9 +137,9 @@ export default function TrainingDay() {
   }
 
   return (
-    <div className="min-h-screen pb-24 bg-bg">
+    <div className="min-h-screen pb-28 bg-bg">
       {/* Header */}
-      <div className="sticky top-0 bg-bg/90 backdrop-blur-xl z-40 border-b border-border/50">
+      <div className="sticky top-0 glass-heavy z-40 border-b border-border/50">
         <div className="max-w-lg mx-auto px-5 py-4">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate('/training')} className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-secondary hover:text-text transition-colors">

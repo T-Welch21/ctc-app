@@ -62,13 +62,13 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen pb-24 bg-bg">
+    <div className="min-h-screen pb-28 bg-bg">
       {/* Header */}
-      <div className="sticky top-0 bg-bg/90 backdrop-blur-xl z-40 border-b border-border">
+      <div className="sticky top-0 glass-heavy z-40 border-b border-border">
         <div className="max-w-lg mx-auto px-5 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors"
+            className="w-9 h-9 rounded-xl bg-white/[0.04] flex items-center justify-center text-text-muted hover:text-text transition-colors"
           >
             <ArrowLeft size={18} />
           </button>

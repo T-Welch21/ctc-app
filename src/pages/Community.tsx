@@ -93,7 +93,7 @@ export default function Community() {
   return (
     <div className="min-h-screen pb-40">
       {/* Header */}
-      <div className="sticky top-0 bg-bg/90 backdrop-blur-xl z-40 border-b border-border">
+      <div className="sticky top-0 glass-heavy z-40 border-b border-border">
         <div className="px-5 pt-12 pb-3">
           <div className="flex items-center justify-between mb-3">
             <div>

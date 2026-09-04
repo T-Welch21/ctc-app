@@ -112,7 +112,7 @@ export default function Training() {
 
   if (showProgramPicker) {
     return (
-      <div className="min-h-screen pb-24 px-5 pt-14">
+      <div className="min-h-screen pb-28 px-5 pt-14">
         <div className="animate-fade-in mb-8">
           <button
             onClick={() => setShowProgramPicker(false)}
@@ -195,12 +195,12 @@ export default function Training() {
   }
 
   return (
-    <div className="min-h-screen pb-24 px-5 pt-14">
+    <div className="min-h-screen pb-28 px-5 pt-14">
       {/* Program header */}
       <div className="animate-fade-in mb-6">
         <button
           onClick={() => setShowProgramPicker(true)}
-          className="w-full rounded-2xl bg-bg-card border border-border text-left transition-all hover:border-border-light active:scale-[0.99] relative overflow-hidden group"
+          className="w-full rounded-2xl bg-bg-card border border-border text-left transition-all hover:border-white/[0.06] active:scale-[0.99] relative overflow-hidden group"
         >
           {selectedProgram.image && (
             <div className="relative h-36 w-full overflow-hidden">

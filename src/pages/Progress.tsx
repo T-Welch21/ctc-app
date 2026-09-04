@@ -83,7 +83,7 @@ export default function Progress() {
   }
 
   return (
-    <div className="min-h-screen pb-24 px-5 pt-14">
+    <div className="min-h-screen pb-28 px-5 pt-14">
       <div className="animate-fade-in mb-6">
         <h1 className="font-display text-3xl font-bold tracking-tight">Progress</h1>
         <p className="text-text-muted text-xs mt-1 uppercase tracking-[0.2em]">Track your growth over time</p>

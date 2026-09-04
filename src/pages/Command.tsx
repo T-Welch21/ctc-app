@@ -162,7 +162,7 @@ export default function Command() {
   const athleteCount = athletes.filter((a) => a.onboarded).length
 
   return (
-    <div className="min-h-screen pb-24 px-5 pt-14">
+    <div className="min-h-screen pb-28 px-5 pt-14">
       <div className="animate-fade-in mb-6">
         <p className="text-text-secondary text-xs uppercase tracking-wider mb-1">Coach View</p>
         <h1 className="font-display text-2xl font-bold">Command Center</h1>

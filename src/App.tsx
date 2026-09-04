@@ -23,13 +23,15 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
-        <div className="animate-fade-in text-center">
-          <h1 className="font-display text-3xl font-bold tracking-tight">
-            CALLED TO<br />
-            <span className="text-lime">COMPETE</span>
+      <div className="min-h-screen flex flex-col items-center justify-center login-glow">
+        <div className="animate-fade-in text-center relative z-10">
+          <h1 className="font-display text-[44px] font-bold tracking-[-0.04em] leading-[0.85]">
+            CALLED TO
           </h1>
-          <div className="mt-6 w-8 h-8 border-2 border-lime border-t-transparent rounded-full animate-spin mx-auto" />
+          <h1 className="font-display text-[44px] font-bold tracking-[-0.04em] leading-[0.85] text-lime drop-shadow-[0_0_30px_rgba(189,255,58,0.2)] mt-1">
+            COMPETE
+          </h1>
+          <div className="mt-10 w-8 h-8 border-2 border-lime/30 border-t-lime rounded-full animate-spin mx-auto" />
         </div>
       </div>
     )
