@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Zap, Droplets, Plus, Minus } from 'lucide-react'
+import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Zap, Droplets, Plus, Minus, Dumbbell } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
 import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns, getSelectedProgramId, getWaterIntake, saveWaterIntake } from '../lib/storage'
@@ -20,7 +20,7 @@ const devotionals = [
   { text: "The harder the battle, the sweeter the victory.", author: "Les Brown" },
   { text: "Compete harder. Train smarter. Feel better.", author: "Called to Compete" },
   { text: "Today I will do what others won't, so tomorrow I can accomplish what others can't.", author: "Jerry Rice" },
-  { text: "Your body can stand almost anything. It's your mind you have to convince.", author: "Unknown" },
+  { text: "Your body can stand almost anything. It's your mind you have to convince.", author: "Coach Tyler" },
   { text: "Be stronger than your excuses.", author: "Coach Tyler" },
   { text: "You don't have to be extreme, just consistent.", author: "Coach Tyler" },
   { text: "Success isn't owned. It's leased, and rent is due every day.", author: "J.J. Watt" },
@@ -164,7 +164,7 @@ export default function Dashboard() {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div className="min-h-screen pb-28">
+    <div className="min-h-[100dvh] flex flex-col">
       {/* ── Hero with mesh background ── */}
       <div className="mesh-bg">
         <div className="animate-fade-in px-5 pt-14 pb-3 relative z-10">
@@ -233,7 +233,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Streak bar ── */}
-      <div className="animate-slide-up px-5 mb-5">
+      <div className="animate-slide-up px-5 mb-6">
         <div className="rounded-2xl bg-bg-card/80 border border-border p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -246,16 +246,16 @@ export default function Dashboard() {
                 <p className="font-display font-bold text-sm text-text-muted">Build your streak</p>
               )}
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               {[
                 { done: trainedToday, icon: Zap, label: 'Train' },
                 { done: journaledToday, icon: BookOpen, label: 'Journal' },
-                { done: challengeAccepted, icon: Swords, label: 'Challenge' },
+                { done: challengeAccepted, icon: Swords, label: 'Compete' },
               ].map((a) => (
-                <div key={a.label} className={`flex items-center gap-1 px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-wider transition-all ${
+                <div key={a.label} className={`flex items-center gap-0.5 px-1.5 py-1 rounded-full text-[7px] font-bold uppercase tracking-wide transition-all ${
                   a.done ? 'bg-lime/[0.12] text-lime' : 'bg-white/[0.03] text-text-muted'
                 }`}>
-                  {a.done ? <Check size={8} /> : <a.icon size={8} />}
+                  {a.done ? <Check size={7} /> : <a.icon size={7} />}
                   {a.label}
                 </div>
               ))}
@@ -305,7 +305,7 @@ export default function Dashboard() {
       )}
 
       {/* ── Next Workout CTA ── */}
-      <div className="animate-slide-up [animation-delay:80ms] opacity-0 px-5 mb-4">
+      <div className="animate-slide-up [animation-delay:80ms] opacity-0 px-5 mb-5">
         <button
           onClick={() => {
             if (user && !isSubscribed(user)) { navigate('/subscribe'); return }
@@ -362,7 +362,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Daily Challenge ── */}
-      <div className="animate-slide-up [animation-delay:140ms] opacity-0 px-5 mb-4">
+      <div className="animate-slide-up [animation-delay:140ms] opacity-0 px-5 mb-5">
         <div className={`rounded-2xl border p-4 transition-all relative overflow-hidden ${
           challengeAccepted
             ? 'bg-lime/[0.03] border-lime/15'
@@ -407,7 +407,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Water + Community row ── */}
-      <div className="animate-slide-up [animation-delay:200ms] opacity-0 px-5 mb-4 grid grid-cols-2 gap-3">
+      <div className="animate-slide-up [animation-delay:200ms] opacity-0 px-5 mb-5 grid grid-cols-2 gap-3">
         {/* Water tracker */}
         <div className="rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/15 to-transparent" />
@@ -467,13 +467,13 @@ export default function Dashboard() {
             <MessageSquare size={18} className="text-lime" />
           </div>
           <p className="font-display font-bold text-sm tracking-tight mb-1">Community</p>
-          <p className="text-text-muted text-[11px] leading-relaxed">Share wins with the team</p>
+          <p className="text-text-muted text-[11px] leading-relaxed">Post up. Talk trash.</p>
           <ChevronRight size={14} className="text-text-muted/40 absolute bottom-4 right-4 group-hover:text-lime/40 transition-colors" />
         </button>
       </div>
 
       {/* ── Daily Word ── */}
-      <div className="animate-slide-up [animation-delay:260ms] opacity-0 px-5 mb-4">
+      <div className="animate-slide-up [animation-delay:260ms] opacity-0 px-5 mb-5">
         <div className="rounded-2xl bg-bg-card/80 border border-border p-5 relative overflow-hidden">
           <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-lime/[0.03] rounded-full blur-[60px] pointer-events-none" />
           <div className="absolute -right-6 -top-6 w-28 h-28 bg-cyan-400/[0.02] rounded-full blur-[40px] pointer-events-none" />
@@ -510,41 +510,88 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* ── Your Program ── */}
+      <div className="animate-slide-up [animation-delay:340ms] opacity-0 px-5 mb-5">
+        <button
+          onClick={() => navigate('/training')}
+          className="w-full rounded-2xl bg-bg-card/80 border border-border p-5 text-left transition-all active:scale-[0.98] hover:border-white/[0.06] relative overflow-hidden group"
+        >
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/15 via-transparent to-cyan-400/15" />
+          <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-lime/[0.03] rounded-full blur-[50px] pointer-events-none" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-14 h-14 rounded-xl bg-lime/[0.08] flex items-center justify-center shrink-0">
+              <Dumbbell size={22} className="text-lime" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-text-muted mb-1.5">Your Program</p>
+              <p className="font-display font-bold text-[17px] tracking-tight truncate">{program.name}</p>
+              <p className="text-text-muted text-[11px] mt-1">{program.frequency} · {program.days.length} sessions</p>
+            </div>
+            <ChevronRight size={16} className="text-text-muted/40 group-hover:text-lime/40 transition-colors shrink-0" />
+          </div>
+        </button>
+      </div>
+
       {/* ── Quick links ── */}
-      <div className="animate-slide-up [animation-delay:380ms] opacity-0 px-5 mb-4">
-        <div className="flex gap-2.5">
-          {!hasWeeklyCheckIn && (
+      <div className="animate-slide-up [animation-delay:400ms] opacity-0 px-5 mb-5">
+        <div className="grid grid-cols-3 gap-2.5">
+          {!hasWeeklyCheckIn ? (
             <button
               onClick={() => navigate('/check-in')}
-              className="flex-1 rounded-2xl bg-bg-card/80 border border-border p-4 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
+              className="rounded-2xl bg-bg-card/80 border border-border p-5 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime/15 to-transparent" />
-              <div className="w-9 h-9 rounded-xl bg-lime/[0.08] flex items-center justify-center mx-auto mb-2">
-                <ClipboardCheck size={17} className="text-lime/70" />
+              <div className="w-10 h-10 rounded-xl bg-lime/[0.08] flex items-center justify-center mx-auto mb-2.5">
+                <ClipboardCheck size={18} className="text-lime/70" />
               </div>
               <p className="font-display font-bold text-[11px]">Check-in</p>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/nutrition')}
+              className="rounded-2xl bg-bg-card/80 border border-border p-5 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime/15 to-transparent" />
+              <div className="w-10 h-10 rounded-xl bg-lime/[0.08] flex items-center justify-center mx-auto mb-2.5">
+                <Droplets size={18} className="text-lime/70" />
+              </div>
+              <p className="font-display font-bold text-[11px]">Nutrition</p>
             </button>
           )}
           <button
             onClick={() => navigate('/progress')}
-            className="flex-1 rounded-2xl bg-bg-card/80 border border-border p-4 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
+            className="rounded-2xl bg-bg-card/80 border border-border p-5 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/15 to-transparent" />
-            <div className="w-9 h-9 rounded-xl bg-cyan-400/[0.08] flex items-center justify-center mx-auto mb-2">
-              <TrendingUp size={17} className="text-cyan-400/70" />
+            <div className="w-10 h-10 rounded-xl bg-cyan-400/[0.08] flex items-center justify-center mx-auto mb-2.5">
+              <TrendingUp size={18} className="text-cyan-400/70" />
             </div>
             <p className="font-display font-bold text-[11px]">Progress</p>
           </button>
           <a
             href="sms:+12546402697"
-            className="flex-1 rounded-2xl bg-bg-card/80 border border-border p-4 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] block relative overflow-hidden"
+            className="rounded-2xl bg-bg-card/80 border border-border p-5 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] block relative overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-400/15 to-transparent" />
-            <div className="w-9 h-9 rounded-xl bg-blue-400/[0.08] flex items-center justify-center mx-auto mb-2">
-              <MessageCircle size={17} className="text-blue-400/70" />
+            <div className="w-10 h-10 rounded-xl bg-blue-400/[0.08] flex items-center justify-center mx-auto mb-2.5">
+              <MessageCircle size={18} className="text-blue-400/70" />
             </div>
             <p className="font-display font-bold text-[11px]">Coach</p>
           </a>
+        </div>
+      </div>
+
+      {/* ── Branded footer ── */}
+      <div className="flex-1 flex flex-col justify-end relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-white/[0.02]" />
+        <div className="text-center relative" style={{ paddingBottom: '100px' }}>
+          <img src="/logo-circle.png" alt="CTC" className="w-10 h-10 rounded-full mx-auto mb-3 opacity-30" />
+          <p className="text-text-muted/30 text-[8px] uppercase tracking-[0.35em]">
+            Compete Harder · Train Smarter · Feel Better
+          </p>
+          <p className="text-text-muted/20 text-[7px] uppercase tracking-[0.3em] mt-2">
+            San Antonio, TX
+          </p>
         </div>
       </div>
     </div>

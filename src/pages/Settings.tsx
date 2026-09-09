@@ -152,7 +152,7 @@ export default function Settings() {
                 <p className="text-text-muted text-[11px]">
                   {isSubscribed(user)
                     ? user.subscription_status === 'trialing' ? '7-day free trial' : '$29/mo · Cancel anytime'
-                    : 'Upgrade to unlock training'}
+                    : 'Upgrade to start training'}
                 </p>
               </div>
               {!isSubscribed(user) && (
@@ -287,7 +287,7 @@ export default function Settings() {
             <p className="font-display font-bold text-[10px] uppercase tracking-[0.2em] text-text-muted">About</p>
           </div>
           <p className="text-text-muted text-xs leading-relaxed">
-            Called to Compete is a training platform by Coach Tyler Welch in San Antonio, TX.
+            Called to Compete. Built by Coach Tyler Welch. San Antonio, TX.
             Compete Harder · Train Smarter · Feel Better
           </p>
         </div>

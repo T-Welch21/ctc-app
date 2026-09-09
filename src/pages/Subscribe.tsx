@@ -5,10 +5,10 @@ import { useAuth } from '../lib/auth'
 import { createCheckoutSession, isSubscribed } from '../lib/subscription'
 
 const features = [
-  { icon: Dumbbell, text: '7 training programs', sub: 'Strength, conditioning, Hyrox, running & more' },
-  { icon: BookOpen, text: 'Daily journal system', sub: 'Morning & evening guided reflection' },
-  { icon: TrendingUp, text: 'Progress tracking', sub: 'Weight, PRs, and performance metrics' },
-  { icon: Zap, text: 'Daily challenges', sub: 'Coach-curated mental & physical tasks' },
+  { icon: Dumbbell, text: '6 training programs', sub: 'Strength, conditioning, running & more' },
+  { icon: BookOpen, text: 'Daily journal system', sub: 'Morning prep & evening debrief' },
+  { icon: TrendingUp, text: 'Progress tracking', sub: 'Weight, PRs, and the numbers that matter' },
+  { icon: Zap, text: 'Daily challenges', sub: 'Mental and physical challenges from Coach Tyler' },
   { icon: Shield, text: 'Coach accountability', sub: 'Direct access to Coach Tyler' },
 ]
 
@@ -48,7 +48,7 @@ export default function Subscribe() {
           </button>
           <div>
             <h1 className="font-display text-[26px] font-bold tracking-tight">Go Premium</h1>
-            <p className="text-text-muted text-[9px] uppercase tracking-[0.25em]">Unlock Full Access</p>
+            <p className="text-text-muted text-[9px] uppercase tracking-[0.25em]">Full CTC Access</p>
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function Subscribe() {
           Train Like You<br />Mean It<span className="text-lime">.</span>
         </h2>
         <p className="text-text-secondary text-[15px] leading-relaxed max-w-[280px] mx-auto font-light">
-          Full access to every program, tool, and resource in the CTC system.
+          Every program. Every tool. Everything Coach Tyler builds — it's yours.
         </p>
       </div>
 
@@ -77,7 +77,7 @@ export default function Subscribe() {
           <div className="relative">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-lime text-[10px] font-bold uppercase tracking-[0.2em] bg-lime/10 px-2 py-0.5 rounded-full">
-                Most Popular
+                CTC Premium
               </span>
             </div>
             <div className="flex items-baseline gap-1 mb-1 mt-3">

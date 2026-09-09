@@ -269,8 +269,8 @@ export default function Nutrition() {
     { label: 'Fat', value: totals.fat, goal: goals.fat, color: 'bg-lime', textColor: 'text-lime', unit: 'g' },
   ]
 
-  const activityLabels = { sedentary: 'Sedentary', light: 'Lightly Active', moderate: 'Moderately Active', active: 'Very Active', very_active: 'Extremely Active' }
-  const goalLabels = { lose: 'Lose Weight', gain: 'Build Muscle', maintain: 'Maintain' }
+  const activityLabels = { sedentary: 'Sedentary', light: 'Light', moderate: 'Moderate', active: 'Very Active', very_active: 'Extreme' }
+  const goalLabels = { lose: 'Cut', gain: 'Build', maintain: 'Maintain' }
 
   return (
     <div className="min-h-screen pb-28">
@@ -300,7 +300,7 @@ export default function Nutrition() {
           {isFirstVisit && (
             <div className="rounded-2xl bg-lime/5 border border-lime/20 p-4 mb-3">
               <p className="font-display font-bold text-sm text-lime mb-1">Set Up Your Nutrition</p>
-              <p className="text-text-secondary text-xs leading-relaxed">Enter your stats below and we'll calculate your personalized macro targets based on your goal.</p>
+              <p className="text-text-secondary text-xs leading-relaxed">Drop your stats and we'll set your macros. Simple.</p>
             </div>
           )}
           <div className="rounded-2xl bg-bg-card border border-lime/20 overflow-hidden">

@@ -100,7 +100,7 @@ export default function Journal() {
           {timeOfDay === 'morning' ? 'Morning Prep' : 'Evening Debrief'}
         </h1>
         <p className="text-text-muted text-xs mt-1 uppercase tracking-[0.2em]">
-          {timeOfDay === 'morning' ? 'Set your mind right' : 'Reflect & recharge'}
+          {timeOfDay === 'morning' ? 'Set your mind right' : 'How\'d you show up today?'}
         </p>
       </div>
 

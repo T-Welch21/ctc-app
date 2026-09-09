@@ -80,7 +80,7 @@ export default function CheckIn() {
 
       <div className="max-w-lg mx-auto px-5 pt-6">
         <p className="animate-fade-in text-text-muted text-xs uppercase tracking-[0.2em] mb-6">
-          2 minutes to reflect — helps Coach Tyler tailor your program
+          2 minutes. Be honest — Coach Tyler reads every one.
         </p>
 
         <div className="space-y-4">

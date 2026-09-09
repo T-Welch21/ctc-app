@@ -423,7 +423,7 @@ export default function Command() {
             </div>
 
             <p className="text-text-secondary text-sm mb-4">
-              This message will appear on every athlete's dashboard.
+              Goes to every athlete's home screen.
             </p>
 
             {sent ? (

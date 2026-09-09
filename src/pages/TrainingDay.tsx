@@ -727,9 +727,9 @@ export default function TrainingDay() {
             <p className="text-lime/80 text-xs italic font-medium">
               {[
                 'You showed up when it mattered.',
-                'One more session closer to the best version of you.',
+                'One more in the bank. Nobody can take that from you.',
                 'Discipline is doing it when you don\'t feel like it.',
-                'The work you put in today pays dividends tomorrow.',
+                'Today\'s work is tomorrow\'s results.',
                 'Champions are built in the sessions nobody sees.',
                 'You didn\'t come this far to only come this far.',
                 'Compete with who you were yesterday.',

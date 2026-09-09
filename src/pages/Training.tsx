@@ -210,7 +210,7 @@ export default function Training() {
   }
 
   return (
-    <div className="min-h-screen pb-28 px-5 pt-14">
+    <div className="min-h-screen pb-28 px-5 pt-14 flex flex-col">
       {/* Program header */}
       <div className="animate-fade-in mb-6">
         <button
