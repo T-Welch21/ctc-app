@@ -23,15 +23,17 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center login-glow">
+      <div className="min-h-screen flex flex-col items-center justify-center login-glow relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(179,255,29,0.06)_0%,transparent_70%)]" />
         <div className="animate-fade-in text-center relative z-10">
-          <h1 className="font-display text-[44px] font-bold tracking-[-0.04em] leading-[0.85]">
-            CALLED TO
-          </h1>
-          <h1 className="font-display text-[44px] font-bold tracking-[-0.04em] leading-[0.85] text-lime drop-shadow-[0_0_30px_rgba(189,255,58,0.2)] mt-1">
-            COMPETE
-          </h1>
-          <div className="mt-10 w-8 h-8 border-2 border-lime/30 border-t-lime rounded-full animate-spin mx-auto" />
+          <div className="flex justify-center mb-6">
+            <div className="relative w-28 h-28">
+              <div className="absolute -inset-4 rounded-full bg-lime/8 blur-2xl animate-pulse" />
+              <img src="/logo-circle.png" alt="CTC" className="w-28 h-28 rounded-full relative drop-shadow-[0_0_40px_rgba(179,255,29,0.3)]" />
+            </div>
+          </div>
+          <div className="mt-8 w-8 h-8 border-2 border-lime/30 border-t-lime rounded-full animate-spin mx-auto" />
+          <p className="text-text-muted text-[9px] uppercase tracking-[0.35em] mt-4">Loading your training</p>
         </div>
       </div>
     )

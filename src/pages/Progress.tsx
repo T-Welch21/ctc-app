@@ -4,7 +4,7 @@ import { TrendingUp, Scale, Calendar, Award, X, ChevronRight, ChevronDown, Chevr
 import { useAuth } from '../lib/auth'
 import { getWeights, saveWeight, getCompletedSessions, getStreak, getCheckIns, getPRs, savePR, getExerciseNotes, getFoodEntries, getMacroGoals } from '../lib/storage'
 
-const lifts = ['Bench Press', 'Squat', 'Deadlift', '40-Yard Dash']
+const lifts = ['Bench Press', 'Barbell Back Squat', 'Barbell Deadlift', 'Power Clean', 'Overhead Press']
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + 'T12:00:00')
@@ -96,6 +96,7 @@ export default function Progress() {
             key={stat.label}
             className="card-shine rounded-2xl bg-bg-card/80 border border-border p-4 text-center relative overflow-hidden"
           >
+            <div className={`absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent ${stat.color === 'text-lime' ? 'via-lime/20' : stat.color === 'text-cyan-400' ? 'via-cyan-400/20' : 'via-blue-400/20'} to-transparent`} />
             <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center mx-auto mb-2.5`}>
               <stat.icon size={18} className={stat.color} />
             </div>
@@ -460,13 +461,13 @@ export default function Progress() {
             </div>
             <div className="mb-6">
               <label className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-2 block">
-                {showPRModal === '40-Yard Dash' ? 'Time (seconds)' : 'Weight (lbs)'}
+                Weight (lbs)
               </label>
               <input
                 type="text"
                 value={prInput}
                 onChange={(e) => setPrInput(e.target.value)}
-                placeholder={showPRModal === '40-Yard Dash' ? '4.5' : '225'}
+                placeholder="225"
                 autoFocus
                 className="w-full bg-bg-elevated border border-border rounded-xl px-4 py-4 text-text text-3xl font-display font-bold text-center placeholder:text-text-muted/40 focus:outline-none focus:border-lime/40 transition-colors"
               />

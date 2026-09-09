@@ -377,7 +377,7 @@ export default function Command() {
                 <p className="text-text-muted text-[10px]">Check-ins</p>
               </div>
               <div className="rounded-xl bg-bg-elevated p-3 text-center">
-                <p className="font-display font-bold text-xl text-sm">
+                <p className="font-display font-bold text-sm">
                   {athleteStats.lastActive
                     ? new Date(athleteStats.lastActive + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
                     : '—'}
@@ -392,10 +392,10 @@ export default function Command() {
             </div>
 
             <a
-              href={`sms:${selectedAthlete.email}`}
+              href={`mailto:${selectedAthlete.email}`}
               className="mt-4 w-full py-3 rounded-xl font-display font-bold text-sm bg-lime/10 text-lime text-center block hover:bg-lime/20 transition-colors"
             >
-              Message Athlete
+              Email Athlete
             </a>
           </div>
         </div>

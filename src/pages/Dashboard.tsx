@@ -13,7 +13,7 @@ const devotionals = [
   { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke" },
   { text: "Champions keep playing until they get it right.", author: "Billie Jean King" },
   { text: "The body achieves what the mind believes.", author: "Napoleon Hill" },
-  { text: "Pain is temporary. Quitting lasts forever.", author: "Lance Armstrong" },
+  { text: "Pain is temporary. Quitting lasts forever.", author: "Eric Thomas" },
   { text: "Don't count the days. Make the days count.", author: "Muhammad Ali" },
   { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
   { text: "It's not whether you get knocked down, it's whether you get up.", author: "Vince Lombardi" },
@@ -23,6 +23,12 @@ const devotionals = [
   { text: "Your body can stand almost anything. It's your mind you have to convince.", author: "Unknown" },
   { text: "Be stronger than your excuses.", author: "Coach Tyler" },
   { text: "You don't have to be extreme, just consistent.", author: "Coach Tyler" },
+  { text: "Success isn't owned. It's leased, and rent is due every day.", author: "J.J. Watt" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "If it doesn't challenge you, it doesn't change you.", author: "Fred DeVito" },
+  { text: "The iron never lies. Two hundred pounds is always two hundred pounds.", author: "Henry Rollins" },
+  { text: "Motivation gets you going. Discipline keeps you growing.", author: "John Maxwell" },
+  { text: "You were built for this. Now go prove it.", author: "Coach Tyler" },
 ]
 
 const dailyChallenges = [
@@ -116,13 +122,15 @@ export default function Dashboard() {
   const program = (savedProgramId && getProgramById(savedProgramId)) || getProgram(user?.identity || '')
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
-  const todaySessions = sessions.filter((s) => s.date === todayStr)
-  const completedDayIndexes = new Set(todaySessions.map((s) => s.dayIndex))
-  let nextDayIndex = 0
-  for (let i = 0; i < program.days.length; i++) {
-    if (!completedDayIndexes.has(i)) {
-      nextDayIndex = i
-      break
+  const programSessions = sessions.filter((s) => s.programId === program.id)
+  const sortedProgramSessions = [...programSessions].sort((a, b) => b.date.localeCompare(a.date))
+  const lastDayIndex = sortedProgramSessions.length > 0 ? sortedProgramSessions[0].dayIndex : -1
+  let nextDayIndex = (lastDayIndex + 1) % program.days.length
+  const todayCompleted = new Set(programSessions.filter((s) => s.date === todayStr).map((s) => s.dayIndex))
+  if (todayCompleted.has(nextDayIndex)) {
+    for (let i = 1; i < program.days.length; i++) {
+      const candidate = (nextDayIndex + i) % program.days.length
+      if (!todayCompleted.has(candidate)) { nextDayIndex = candidate; break }
     }
   }
   const nextDay = program.days[nextDayIndex]
@@ -303,12 +311,20 @@ export default function Dashboard() {
             if (user && !isSubscribed(user)) { navigate('/subscribe'); return }
             navigate(trainedToday ? '/training' : `/training/${nextDayIndex}`)
           }}
-          className={`card-shine w-full rounded-2xl p-5 text-left transition-all active:scale-[0.98] relative overflow-hidden group ${
+          className={`card-shine w-full rounded-2xl text-left transition-all active:scale-[0.98] relative overflow-hidden group ${
             trainedToday
               ? 'bg-lime/[0.04] border border-lime/15'
-              : 'border border-lime/25 bg-gradient-to-br from-lime/[0.08] via-bg-card to-bg-card'
+              : 'border border-lime/25 bg-bg-card'
           }`}
         >
+          {program.image && !trainedToday && (
+            <>
+              <div className="absolute inset-0">
+                <img src={program.image} alt="" className="w-full h-full object-cover opacity-[0.15]" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-bg-card via-bg-card/90 to-bg-card/70" />
+            </>
+          )}
           {!trainedToday && (
             <>
               <div className="absolute -right-10 -top-10 w-44 h-44 bg-lime/[0.05] rounded-full blur-[60px]" />
@@ -316,7 +332,7 @@ export default function Dashboard() {
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
             </>
           )}
-          <div className="relative flex items-center justify-between">
+          <div className="relative flex items-center justify-between p-5">
             <div className="flex-1">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 text-lime">
                 {trainedToday ? 'Session Complete' : 'Next Session'}
@@ -502,9 +518,9 @@ export default function Dashboard() {
               onClick={() => navigate('/check-in')}
               className="flex-1 rounded-2xl bg-bg-card/80 border border-border p-4 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-              <div className="w-9 h-9 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-2">
-                <ClipboardCheck size={17} className="text-text-muted" />
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime/15 to-transparent" />
+              <div className="w-9 h-9 rounded-xl bg-lime/[0.08] flex items-center justify-center mx-auto mb-2">
+                <ClipboardCheck size={17} className="text-lime/70" />
               </div>
               <p className="font-display font-bold text-[11px]">Check-in</p>
             </button>
@@ -513,9 +529,9 @@ export default function Dashboard() {
             onClick={() => navigate('/progress')}
             className="flex-1 rounded-2xl bg-bg-card/80 border border-border p-4 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] relative overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-            <div className="w-9 h-9 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-2">
-              <TrendingUp size={17} className="text-text-muted" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/15 to-transparent" />
+            <div className="w-9 h-9 rounded-xl bg-cyan-400/[0.08] flex items-center justify-center mx-auto mb-2">
+              <TrendingUp size={17} className="text-cyan-400/70" />
             </div>
             <p className="font-display font-bold text-[11px]">Progress</p>
           </button>
@@ -523,9 +539,9 @@ export default function Dashboard() {
             href="sms:+12546402697"
             className="flex-1 rounded-2xl bg-bg-card/80 border border-border p-4 text-center hover:border-white/[0.06] transition-all active:scale-[0.98] block relative overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-            <div className="w-9 h-9 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-2">
-              <MessageCircle size={17} className="text-text-muted" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-400/15 to-transparent" />
+            <div className="w-9 h-9 rounded-xl bg-blue-400/[0.08] flex items-center justify-center mx-auto mb-2">
+              <MessageCircle size={17} className="text-blue-400/70" />
             </div>
             <p className="font-display font-bold text-[11px]">Coach</p>
           </a>

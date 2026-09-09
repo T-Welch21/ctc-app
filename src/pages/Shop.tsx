@@ -1,4 +1,4 @@
-import { ExternalLink, ShoppingBag, Pill, Shirt, Star, ArrowUpRight } from 'lucide-react'
+import { ShoppingBag, Pill, Shirt, Star, ArrowUpRight } from 'lucide-react'
 
 type Product = {
   name: string

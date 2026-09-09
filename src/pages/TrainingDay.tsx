@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer, Zap } from 'lucide-react'
+import { ArrowLeft, Clock, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer, Zap, Video, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
 import { getProgramById, getProgram } from '../lib/programs'
@@ -38,6 +38,7 @@ export default function TrainingDay() {
   const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>({})
   const [newPRs, setNewPRs] = useState<{ name: string; weight: string }[]>([])
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const [timerSeconds, setTimerSeconds] = useState(0)
@@ -285,121 +286,329 @@ export default function TrainingDay() {
 
         {/* Exercises */}
         <div className="space-y-2.5">
-          {day.exercises.map((exercise, i) => {
-            const isExpanded = expandedExercise === i
-            const key = exKey(i, exercise.name)
-            const exerciseSets = completedSets[key] || new Set()
-            const exerciseDone = exerciseSets.size === exercise.sets
+          {(() => {
+            const supersetPattern = /^(\d+)([a-z])\.\s*/
+            const groups: { type: 'single' | 'superset'; exercises: { exercise: typeof day.exercises[0]; index: number }[] }[] = []
+            let i = 0
+            while (i < day.exercises.length) {
+              const match = day.exercises[i].name.match(supersetPattern)
+              if (match && match[2] === 'a') {
+                const groupNum = match[1]
+                const group: { exercise: typeof day.exercises[0]; index: number }[] = [{ exercise: day.exercises[i], index: i }]
+                let j = i + 1
+                while (j < day.exercises.length) {
+                  const nextMatch = day.exercises[j].name.match(supersetPattern)
+                  if (nextMatch && nextMatch[1] === groupNum) {
+                    group.push({ exercise: day.exercises[j], index: j })
+                    j++
+                  } else {
+                    break
+                  }
+                }
+                if (group.length > 1) {
+                  groups.push({ type: 'superset', exercises: group })
+                  i = j
+                } else {
+                  groups.push({ type: 'single', exercises: [{ exercise: day.exercises[i], index: i }] })
+                  i++
+                }
+              } else {
+                groups.push({ type: 'single', exercises: [{ exercise: day.exercises[i], index: i }] })
+                i++
+              }
+            }
 
-            return (
-              <div
-                key={`${i}-${exercise.name}`}
-                className={`animate-slide-up opacity-0 rounded-2xl border transition-all duration-200 relative overflow-hidden ${
-                  exerciseDone
-                    ? 'bg-bg-card border-lime/25'
-                    : 'bg-bg-card border-border'
-                }`}
-                style={{ animationDelay: `${i * 60}ms` }}
-              >
-                {exerciseDone && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-lime/5 to-transparent pointer-events-none" />
-                )}
-                {/* Exercise header */}
-                <button
-                  onClick={() => setExpandedExercise(isExpanded ? null : i)}
-                  className="relative w-full flex items-center gap-3 p-4 text-left"
-                >
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-display font-bold shrink-0 ${
-                    exerciseDone ? 'bg-lime/15 text-lime' : 'bg-bg-elevated text-text-muted'
-                  }`}>
-                    {exerciseDone ? <Check size={16} strokeWidth={3} /> : String(i + 1).padStart(2, '0')}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`font-display font-bold text-sm tracking-tight ${exerciseDone ? 'text-lime' : 'text-text'}`}>
-                      {exercise.name}
-                    </p>
-                    <p className="text-text-muted text-xs mt-0.5">
-                      {exercise.sets > 1 ? `${exercise.sets} sets` : '1 set'} × {exercise.reps}
-                      {exercise.tempo ? ` · ${exercise.tempo}` : ''}
-                      {exercise.rest !== '-' ? ` · ${exercise.rest} rest` : ''}
-                    </p>
-                  </div>
-                  {isExpanded ? (
-                    <ChevronUp size={16} className="text-text-muted shrink-0" />
-                  ) : (
-                    <ChevronDown size={16} className="text-text-muted shrink-0" />
-                  )}
-                </button>
-
-                {/* Expanded detail */}
-                {isExpanded && (
-                  <div className="relative px-4 pb-4 space-y-3">
-                    {/* Coaching cues */}
-                    <div className="rounded-xl bg-bg-elevated/70 p-3.5">
-                      <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-1.5">Coaching Cues</p>
-                      <p className="text-text-secondary text-sm leading-relaxed">{exercise.cues}</p>
+            let displayNum = 0
+            return groups.map((group, gi) => {
+              if (group.type === 'superset') {
+                displayNum++
+                const supersetNum = displayNum
+                displayNum += group.exercises.length - 1
+                return (
+                  <div
+                    key={`group-${gi}`}
+                    className="animate-slide-up opacity-0 rounded-2xl border border-cyan-400/20 bg-bg-card relative overflow-hidden"
+                    style={{ animationDelay: `${group.exercises[0].index * 60}ms` }}
+                  >
+                    <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+                      <Zap size={12} className="text-cyan-400" />
+                      <span className="text-cyan-400 text-[10px] font-bold uppercase tracking-[0.2em]">{group.exercises.length > 2 ? 'Giant Set' : 'Superset'}</span>
                     </div>
+                    <div className="relative">
+                      <div className="absolute left-[30px] top-0 bottom-0 w-px bg-gradient-to-b from-cyan-400/30 via-cyan-400/10 to-cyan-400/30" />
+                      {group.exercises.map(({ exercise, index }, ei) => {
+                        const isExpanded = expandedExercise === index
+                        const key = exKey(index, exercise.name)
+                        const exerciseSets = completedSets[key] || new Set()
+                        const exerciseDone = exerciseSets.size === exercise.sets
+                        const label = exercise.name.match(supersetPattern)?.[2]?.toUpperCase() || ''
+                        const cleanName = exercise.name.replace(supersetPattern, '')
 
-                    {/* Set tracker */}
-                    {sessionStarted && (
-                      <div>
-                        <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-2">Sets</p>
-                        <div className="flex gap-2">
-                          {Array.from({ length: exercise.sets }).map((_, setIdx) => {
-                            const done = exerciseSets.has(setIdx)
-                            return (
-                              <button
-                                key={setIdx}
-                                onClick={() => toggleSet(key, setIdx, exercise.rest)}
-                                className={`flex-1 py-3 rounded-xl border-2 font-display font-bold text-sm transition-all duration-200 ${
-                                  done
-                                    ? 'bg-lime/15 border-lime/50 text-lime'
-                                    : 'bg-bg-elevated border-border text-text-muted hover:border-border-light active:scale-95'
-                                }`}
-                              >
-                                {done ? <Check size={16} className="mx-auto" strokeWidth={3} /> : setIdx + 1}
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
+                        return (
+                          <div key={`${index}-${exercise.name}`} className={`relative ${ei > 0 ? 'border-t border-border/50' : ''}`}>
+                            {exerciseDone && (
+                              <div className="absolute inset-0 bg-gradient-to-r from-lime/5 to-transparent pointer-events-none" />
+                            )}
+                            <button
+                              onClick={() => setExpandedExercise(isExpanded ? null : index)}
+                              className="relative w-full flex items-center gap-3 p-4 text-left"
+                            >
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-display font-bold shrink-0 ${
+                                exerciseDone ? 'bg-lime/15 text-lime' : 'bg-cyan-400/10 text-cyan-400'
+                              }`}>
+                                {exerciseDone ? <Check size={16} strokeWidth={3} /> : label}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <p className={`font-display font-bold text-sm tracking-tight ${exerciseDone ? 'text-lime' : 'text-text'}`}>
+                                    {cleanName}
+                                  </p>
+                                  {exercise.videoUrl && <Video size={12} className="text-cyan-400 shrink-0" />}
+                                </div>
+                                <p className="text-text-muted text-xs mt-0.5">
+                                  {exercise.sets > 1 ? `${exercise.sets} sets` : '1 set'} × {exercise.reps}
+                                  {exercise.tempo ? ` · ${exercise.tempo}` : ''}
+                                  {exercise.rest !== '-' ? ` · ${exercise.rest} rest` : ''}
+                                </p>
+                              </div>
+                              {isExpanded ? (
+                                <ChevronUp size={16} className="text-text-muted shrink-0" />
+                              ) : (
+                                <ChevronDown size={16} className="text-text-muted shrink-0" />
+                              )}
+                            </button>
+
+                            {isExpanded && (
+                              <div className="relative px-4 pb-4 space-y-3">
+                                <div className="rounded-xl bg-bg-elevated/70 p-3.5">
+                                  <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-1.5">Coaching Cues</p>
+                                  <p className="text-text-secondary text-sm leading-relaxed">{exercise.cues}</p>
+                                </div>
+
+                                {exercise.videoUrl && (
+                                  <button
+                                    onClick={() => setVideoUrl(exercise.videoUrl!)}
+                                    className="flex items-center gap-2.5 w-full rounded-xl bg-cyan-400/[0.08] border border-cyan-400/20 p-3 hover:bg-cyan-400/[0.12] active:scale-[0.98] transition-all"
+                                  >
+                                    <div className="w-8 h-8 rounded-lg bg-cyan-400/15 flex items-center justify-center shrink-0">
+                                      <Video size={15} className="text-cyan-400" />
+                                    </div>
+                                    <span className="text-cyan-400 text-sm font-display font-bold tracking-tight">Watch Demo</span>
+                                  </button>
+                                )}
+
+                                {sessionStarted && (
+                                  <div>
+                                    <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-2">Sets</p>
+                                    <div className="flex gap-2">
+                                      {Array.from({ length: exercise.sets }).map((_, setIdx) => {
+                                        const done = exerciseSets.has(setIdx)
+                                        return (
+                                          <button
+                                            key={setIdx}
+                                            onClick={() => toggleSet(key, setIdx, exercise.rest)}
+                                            className={`flex-1 py-3 rounded-xl border-2 font-display font-bold text-sm transition-all duration-200 ${
+                                              done
+                                                ? 'bg-lime/15 border-lime/50 text-lime'
+                                                : 'bg-bg-elevated border-border text-text-muted hover:border-border-light active:scale-95'
+                                            }`}
+                                          >
+                                            {done ? <Check size={16} className="mx-auto" strokeWidth={3} /> : setIdx + 1}
+                                          </button>
+                                        )
+                                      })}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {sessionStarted && (
+                                  <div className="space-y-2">
+                                    {(() => {
+                                      const lastNote = user ? getLastNoteForExercise(user.id, exercise.name) : null
+                                      if (!lastNote) return null
+                                      const currentW = parseFloat(exerciseWeights[key] || '')
+                                      const lastW = parseFloat(lastNote.weight || '')
+                                      const diff = !isNaN(currentW) && !isNaN(lastW) ? currentW - lastW : null
+                                      return (
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] font-semibold bg-bg-elevated px-2 py-1 rounded-lg text-text-muted">
+                                            Last: {lastNote.weight && `${lastNote.weight} lbs`}{lastNote.weight && lastNote.notes ? ' · ' : ''}{lastNote.notes}
+                                          </span>
+                                          {diff !== null && diff !== 0 && (
+                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${diff > 0 ? 'text-lime bg-lime/10' : 'text-cyan-400 bg-cyan-400/10'}`}>
+                                              {diff > 0 ? '+' : ''}{diff} lbs
+                                            </span>
+                                          )}
+                                        </div>
+                                      )
+                                    })()}
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="number"
+                                        inputMode="decimal"
+                                        placeholder="Weight (lbs)"
+                                        value={exerciseWeights[key] || ''}
+                                        onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [key]: e.target.value }))}
+                                        className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
+                                      />
+                                      <input
+                                        type="text"
+                                        placeholder="Notes"
+                                        value={exerciseNotes[key] || ''}
+                                        onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [key]: e.target.value }))}
+                                        className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              } else {
+                displayNum++
+                const { exercise, index: i } = group.exercises[0]
+                const isExpanded = expandedExercise === i
+                const key = exKey(i, exercise.name)
+                const exerciseSets = completedSets[key] || new Set()
+                const exerciseDone = exerciseSets.size === exercise.sets
+
+                return (
+                  <div
+                    key={`${i}-${exercise.name}`}
+                    className={`animate-slide-up opacity-0 rounded-2xl border transition-all duration-200 relative overflow-hidden ${
+                      exerciseDone
+                        ? 'bg-bg-card border-lime/25'
+                        : 'bg-bg-card border-border'
+                    }`}
+                    style={{ animationDelay: `${i * 60}ms` }}
+                  >
+                    {exerciseDone && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-lime/5 to-transparent pointer-events-none" />
                     )}
-
-                    {/* Weight & notes */}
-                    {sessionStarted && (
-                      <div className="space-y-2">
-                        {(() => {
-                          const lastNote = user ? getLastNoteForExercise(user.id, exercise.name) : null
-                          return lastNote ? (
-                            <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium">
-                              Last: {lastNote.weight && `${lastNote.weight} lbs`}{lastNote.weight && lastNote.notes ? ' · ' : ''}{lastNote.notes}
-                            </p>
-                          ) : null
-                        })()}
-                        <div className="flex gap-2">
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            placeholder="Weight (lbs)"
-                            value={exerciseWeights[key] || ''}
-                            onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [key]: e.target.value }))}
-                            className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Notes"
-                            value={exerciseNotes[key] || ''}
-                            onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [key]: e.target.value }))}
-                            className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
-                          />
+                    <button
+                      onClick={() => setExpandedExercise(isExpanded ? null : i)}
+                      className="relative w-full flex items-center gap-3 p-4 text-left"
+                    >
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-display font-bold shrink-0 ${
+                        exerciseDone ? 'bg-lime/15 text-lime' : 'bg-bg-elevated text-text-muted'
+                      }`}>
+                        {exerciseDone ? <Check size={16} strokeWidth={3} /> : String(displayNum).padStart(2, '0')}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className={`font-display font-bold text-sm tracking-tight ${exerciseDone ? 'text-lime' : 'text-text'}`}>
+                            {exercise.name}
+                          </p>
+                          {exercise.videoUrl && <Video size={12} className="text-cyan-400 shrink-0" />}
                         </div>
+                        <p className="text-text-muted text-xs mt-0.5">
+                          {exercise.sets > 1 ? `${exercise.sets} sets` : '1 set'} × {exercise.reps}
+                          {exercise.tempo ? ` · ${exercise.tempo}` : ''}
+                          {exercise.rest !== '-' ? ` · ${exercise.rest} rest` : ''}
+                        </p>
+                      </div>
+                      {isExpanded ? (
+                        <ChevronUp size={16} className="text-text-muted shrink-0" />
+                      ) : (
+                        <ChevronDown size={16} className="text-text-muted shrink-0" />
+                      )}
+                    </button>
+
+                    {isExpanded && (
+                      <div className="relative px-4 pb-4 space-y-3">
+                        <div className="rounded-xl bg-bg-elevated/70 p-3.5">
+                          <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-1.5">Coaching Cues</p>
+                          <p className="text-text-secondary text-sm leading-relaxed">{exercise.cues}</p>
+                        </div>
+
+                        {exercise.videoUrl && (
+                          <button
+                            onClick={() => setVideoUrl(exercise.videoUrl!)}
+                            className="flex items-center gap-2.5 w-full rounded-xl bg-cyan-400/[0.08] border border-cyan-400/20 p-3 hover:bg-cyan-400/[0.12] active:scale-[0.98] transition-all"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-cyan-400/15 flex items-center justify-center shrink-0">
+                              <Video size={15} className="text-cyan-400" />
+                            </div>
+                            <span className="text-cyan-400 text-sm font-display font-bold tracking-tight">Watch Demo</span>
+                          </button>
+                        )}
+
+                        {sessionStarted && (
+                          <div>
+                            <p className="text-text-muted text-[10px] uppercase tracking-[0.15em] font-medium mb-2">Sets</p>
+                            <div className="flex gap-2">
+                              {Array.from({ length: exercise.sets }).map((_, setIdx) => {
+                                const done = exerciseSets.has(setIdx)
+                                return (
+                                  <button
+                                    key={setIdx}
+                                    onClick={() => toggleSet(key, setIdx, exercise.rest)}
+                                    className={`flex-1 py-3 rounded-xl border-2 font-display font-bold text-sm transition-all duration-200 ${
+                                      done
+                                        ? 'bg-lime/15 border-lime/50 text-lime'
+                                        : 'bg-bg-elevated border-border text-text-muted hover:border-border-light active:scale-95'
+                                    }`}
+                                  >
+                                    {done ? <Check size={16} className="mx-auto" strokeWidth={3} /> : setIdx + 1}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {sessionStarted && (
+                          <div className="space-y-2">
+                            {(() => {
+                              const lastNote = user ? getLastNoteForExercise(user.id, exercise.name) : null
+                              if (!lastNote) return null
+                              const currentW = parseFloat(exerciseWeights[key] || '')
+                              const lastW = parseFloat(lastNote.weight || '')
+                              const diff = !isNaN(currentW) && !isNaN(lastW) ? currentW - lastW : null
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] font-semibold bg-bg-elevated px-2 py-1 rounded-lg text-text-muted">
+                                    Last: {lastNote.weight && `${lastNote.weight} lbs`}{lastNote.weight && lastNote.notes ? ' · ' : ''}{lastNote.notes}
+                                  </span>
+                                  {diff !== null && diff !== 0 && (
+                                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${diff > 0 ? 'text-lime bg-lime/10' : 'text-cyan-400 bg-cyan-400/10'}`}>
+                                      {diff > 0 ? '+' : ''}{diff} lbs
+                                    </span>
+                                  )}
+                                </div>
+                              )
+                            })()}
+                            <div className="flex gap-2">
+                              <input
+                                type="number"
+                                inputMode="decimal"
+                                placeholder="Weight (lbs)"
+                                value={exerciseWeights[key] || ''}
+                                onChange={(e) => setExerciseWeights((prev) => ({ ...prev, [key]: e.target.value }))}
+                                className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Notes"
+                                value={exerciseNotes[key] || ''}
+                                onChange={(e) => setExerciseNotes((prev) => ({ ...prev, [key]: e.target.value }))}
+                                className="flex-1 bg-bg-elevated border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:border-lime/40 transition-colors"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
-              </div>
-            )
-          })}
+                )
+              }
+            })
+          })()}
         </div>
 
         {/* Cooldown */}
@@ -476,6 +685,36 @@ export default function TrainingDay() {
         )}
       </div>
 
+      {/* Video demo modal */}
+      {videoUrl && (
+        <div className="fixed inset-0 bg-bg/95 backdrop-blur-md z-50 flex items-center justify-center p-5">
+          <div className="animate-fade-in w-full max-w-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Video size={16} className="text-cyan-400" />
+                <p className="text-cyan-400 font-display font-bold text-sm uppercase tracking-[0.15em]">Exercise Demo</p>
+              </div>
+              <button
+                onClick={() => setVideoUrl(null)}
+                className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="rounded-2xl overflow-hidden bg-bg-card border border-border">
+              <video
+                src={videoUrl}
+                controls
+                autoPlay
+                playsInline
+                className="w-full aspect-video bg-black"
+              />
+            </div>
+            <p className="text-text-muted text-xs text-center mt-3">Tap outside or close to return to your workout</p>
+          </div>
+        </div>
+      )}
+
       {/* Celebration overlay */}
       {showCelebration && (
         <div className="fixed inset-0 bg-bg/95 backdrop-blur-md z-50 flex items-center justify-center">
@@ -484,7 +723,18 @@ export default function TrainingDay() {
               <Trophy size={48} className="text-lime" />
             </div>
             <h1 className="font-display text-3xl font-bold tracking-tight mb-1">Session Complete</h1>
-            <p className="text-text-muted text-sm">{day.title}</p>
+            <p className="text-text-muted text-sm mb-2">{day.title}</p>
+            <p className="text-lime/80 text-xs italic font-medium">
+              {[
+                'You showed up when it mattered.',
+                'One more session closer to the best version of you.',
+                'Discipline is doing it when you don\'t feel like it.',
+                'The work you put in today pays dividends tomorrow.',
+                'Champions are built in the sessions nobody sees.',
+                'You didn\'t come this far to only come this far.',
+                'Compete with who you were yesterday.',
+              ][new Date().getDate() % 7]}
+            </p>
 
             <div className="flex items-center justify-center gap-8 my-6">
               <div>
@@ -496,6 +746,25 @@ export default function TrainingDay() {
                 <p className="font-display font-bold text-3xl text-text">{formatTimer(elapsedSeconds)}</p>
                 <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">Duration</p>
               </div>
+              {(() => {
+                const vol = day.exercises.reduce((acc, ex, i) => {
+                  const w = parseFloat(exerciseWeights[exKey(i, ex.name)] || '')
+                  if (isNaN(w) || w <= 0) return acc
+                  const reps = parseInt(ex.reps) || 0
+                  return acc + w * reps * ex.sets
+                }, 0)
+                return vol > 0 ? (
+                  <>
+                    <div className="w-px h-10 bg-border" />
+                    <div>
+                      <p className="font-display font-bold text-3xl text-cyan-400">
+                        {vol >= 1000 ? `${(vol / 1000).toFixed(1)}k` : vol}
+                      </p>
+                      <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">Volume</p>
+                    </div>
+                  </>
+                ) : null
+              })()}
               {newPRs.length > 0 && (
                 <>
                   <div className="w-px h-10 bg-border" />

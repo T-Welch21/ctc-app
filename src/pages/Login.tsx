@@ -138,25 +138,33 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-6 py-12 login-glow">
+    <div className="min-h-screen flex flex-col justify-center px-6 py-12 login-glow relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(179,255,29,0.06)_0%,transparent_70%)]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(179,255,29,0.04)_0%,transparent_60%)] pointer-events-none" />
       <div className="animate-fade-in max-w-sm mx-auto w-full relative z-10">
-        <div className="text-center mb-14">
-          <div className="mb-8">
-            <h1 className="font-display text-[52px] font-bold tracking-[-0.04em] leading-[0.85]">
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <div className="relative w-24 h-24">
+              <div className="absolute -inset-4 rounded-full bg-lime/8 blur-2xl animate-pulse" />
+              <img src="/logo-circle.png" alt="Called to Compete" className="w-24 h-24 rounded-full relative drop-shadow-[0_0_40px_rgba(179,255,29,0.3)]" />
+            </div>
+          </div>
+          <div className="mb-4">
+            <h1 className="font-display text-[48px] font-bold tracking-[-0.04em] leading-[0.85]">
               CALLED TO
             </h1>
-            <h1 className="font-display text-[52px] font-bold tracking-[-0.04em] leading-[0.85] text-lime drop-shadow-[0_0_30px_rgba(189,255,58,0.2)]">
+            <h1 className="font-display text-[48px] font-bold tracking-[-0.04em] leading-[0.85] text-lime drop-shadow-[0_0_30px_rgba(189,255,58,0.25)]">
               COMPETE
             </h1>
           </div>
           <div className="flex items-center justify-center gap-4 text-text-muted text-[8px] uppercase tracking-[0.35em]">
-            <span>Discipline</span>
+            <span>Speed</span>
             <span className="w-1 h-1 rounded-full bg-lime/50" />
-            <span>Purpose</span>
+            <span>Strength</span>
             <span className="w-1 h-1 rounded-full bg-lime/50" />
-            <span>Leadership</span>
+            <span>Mindset</span>
           </div>
-          <p className="text-text-secondary text-[15px] mt-8 leading-relaxed max-w-[260px] mx-auto font-light">
+          <p className="text-text-secondary text-[15px] mt-6 leading-relaxed max-w-[260px] mx-auto font-light">
             {mode === 'login'
               ? 'Welcome back. The work doesn\'t stop.'
               : 'Built for those who refuse to settle.'}

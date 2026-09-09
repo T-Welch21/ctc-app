@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X, Lock, Mail, Info, CreditCard, Crown, Utensils, RotateCcw } from 'lucide-react'
+import { ArrowLeft, User, Target, LogOut, ChevronRight, Shield, Pencil, Check, X, Lock, Mail, Info, CreditCard, Crown, Utensils } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
 import { supabase } from '../lib/supabase'
@@ -139,8 +139,9 @@ export default function Settings() {
 
         {/* Subscription */}
         {user && (
-          <div className="animate-slide-up rounded-2xl bg-bg-card border border-border p-4 mb-6">
-            <div className="flex items-center gap-3">
+          <div className="animate-slide-up card-shine rounded-2xl bg-bg-card border border-border p-4 mb-6 relative overflow-hidden">
+            {isSubscribed(user) && <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/25 via-lime/10 to-transparent" />}
+            <div className="relative flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isSubscribed(user) ? 'bg-lime/10' : 'bg-bg-elevated'}`}>
                 {isSubscribed(user) ? <Crown size={18} className="text-lime" /> : <CreditCard size={18} className="text-text-muted" />}
               </div>
@@ -172,8 +173,8 @@ export default function Settings() {
             onClick={() => navigate('/onboarding')}
             className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
-              <Target size={18} className="text-text-secondary" />
+            <div className="w-10 h-10 rounded-xl bg-cyan-400/[0.08] flex items-center justify-center">
+              <Target size={18} className="text-cyan-400/70" />
             </div>
             <div className="flex-1">
               <p className="font-display font-bold text-sm tracking-tight">Change Track</p>
@@ -186,8 +187,8 @@ export default function Settings() {
             onClick={() => setShowPasswordChange(!showPasswordChange)}
             className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
-              <Lock size={18} className="text-text-secondary" />
+            <div className="w-10 h-10 rounded-xl bg-blue-400/[0.08] flex items-center justify-center">
+              <Lock size={18} className="text-blue-400/70" />
             </div>
             <div className="flex-1">
               <p className="font-display font-bold text-sm tracking-tight">Change Password</p>
@@ -236,10 +237,10 @@ export default function Settings() {
 
           <a
             href="sms:+12546402697"
-            className="w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card border border-border text-left hover:border-lime/20 transition-colors block"
+            className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors block relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
-              <Mail size={18} className="text-text-secondary" />
+            <div className="w-10 h-10 rounded-xl bg-lime/[0.08] flex items-center justify-center">
+              <Mail size={18} className="text-lime/70" />
             </div>
             <div className="flex-1">
               <p className="font-display font-bold text-sm tracking-tight">Contact Coach</p>
@@ -252,8 +253,8 @@ export default function Settings() {
             onClick={() => navigate('/nutrition')}
             className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
-              <Utensils size={18} className="text-text-secondary" />
+            <div className="w-10 h-10 rounded-xl bg-lime/[0.08] flex items-center justify-center">
+              <Utensils size={18} className="text-lime/70" />
             </div>
             <div className="flex-1">
               <p className="font-display font-bold text-sm tracking-tight">Nutrition Settings</p>
@@ -266,8 +267,8 @@ export default function Settings() {
             onClick={() => navigate('/command')}
             className="card-shine w-full flex items-center gap-3 p-4 rounded-2xl bg-bg-card/80 border border-border text-left hover:border-white/[0.06] transition-colors relative overflow-hidden"
           >
-            <div className="w-10 h-10 rounded-xl bg-bg-elevated flex items-center justify-center">
-              <Shield size={18} className="text-text-secondary" />
+            <div className="w-10 h-10 rounded-xl bg-cyan-400/[0.08] flex items-center justify-center">
+              <Shield size={18} className="text-cyan-400/70" />
             </div>
             <div className="flex-1">
               <p className="font-display font-bold text-sm tracking-tight">Command Center</p>

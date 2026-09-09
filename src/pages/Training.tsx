@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react'
-import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell, ArrowRight, ChevronLeft, Flame, Zap } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell, ArrowRight, ChevronLeft, ChevronRight, Flame, Zap } from 'lucide-react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { isSubscribed, pollSubscriptionStatus } from '../lib/subscription'
 import { allPrograms, getProgramById, getProgram } from '../lib/programs'
 import type { Program } from '../lib/programs'
-import { getCompletedSessions, getCurrentWeek, getExerciseNotes, getSelectedProgramId, setSelectedProgramId } from '../lib/storage'
+import { getCompletedSessions, getExerciseNotes, getSelectedProgramId, setSelectedProgramId } from '../lib/storage'
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + 'T12:00:00')
@@ -35,6 +35,16 @@ function ProgramImage({ src, alt }: { src?: string; alt: string }) {
   )
 }
 
+function getDaysPerWeek(program: Program): number {
+  const match = program.frequency.match(/(\d+)x/)
+  return match ? parseInt(match[1]) : program.days.length
+}
+
+function getTotalWeeks(program: Program): number {
+  const dpw = getDaysPerWeek(program)
+  return Math.ceil(program.days.length / dpw)
+}
+
 function useSelectedProgram(userId: string | undefined, identity: string) {
   const savedId = userId ? getSelectedProgramId(userId) : null
   if (savedId) {
@@ -52,6 +62,7 @@ export default function Training() {
   const currentProgram = useSelectedProgram(user?.id, user?.identity || '')
   const [selectedProgram, setSelectedProgram] = useState<Program>(currentProgram)
   const [showHistory, setShowHistory] = useState(false)
+  const [selectedWeek, setSelectedWeek] = useState(0)
   const [checkoutPending, setCheckoutPending] = useState(searchParams.get('checkout') === 'success')
 
   useEffect(() => {
@@ -82,14 +93,17 @@ export default function Training() {
   const sessions = user ? getCompletedSessions(user.id) : []
   const todayStr = new Date().toISOString().split('T')[0]
 
+  const daysPerWeek = getDaysPerWeek(selectedProgram)
+  const totalWeeks = getTotalWeeks(selectedProgram)
+  const weekStart = selectedWeek * daysPerWeek
+  const weekDays = days.slice(weekStart, weekStart + daysPerWeek)
+
   const completedToday = new Set(
     sessions.filter((s) => s.date === todayStr && s.programId === selectedProgram.id).map((s) => s.dayIndex)
   )
   const completedDays = completedToday.size
-  const currentWeek = user ? getCurrentWeek(user.id, selectedProgram.weeks) : 1
-
   const programSessions = sessions.filter((s) => s.programId === selectedProgram.id)
-  const totalProgramSessions = selectedProgram.weeks * days.length
+  const totalProgramSessions = days.length
   const programProgress = totalProgramSessions > 0
     ? Math.min((programSessions.length / totalProgramSessions) * 100, 100)
     : 0
@@ -106,6 +120,7 @@ export default function Training() {
 
   const switchProgram = (program: Program) => {
     setSelectedProgram(program)
+    setSelectedWeek(0)
     if (user) setSelectedProgramId(user.id, program.id)
     setShowProgramPicker(false)
   }
@@ -165,7 +180,7 @@ export default function Training() {
                         </span>
                         <span className="text-text-muted text-xs">{program.frequency}</span>
                         <span className="text-text-muted text-[8px]">|</span>
-                        <span className="text-text-muted text-xs">{program.weeks} weeks</span>
+                        <span className="text-text-muted text-xs">{getTotalWeeks(program)} weeks</span>
                       </div>
                     </div>
                     {isActive && !program.image && (
@@ -223,7 +238,7 @@ export default function Training() {
                 </span>
                 <span className="text-text-secondary text-xs font-medium">{selectedProgram.frequency}</span>
                 <span className="text-border text-xs">|</span>
-                <span className="text-text-secondary text-xs font-medium">Week {currentWeek} of {selectedProgram.weeks}</span>
+                <span className="text-text-secondary text-xs font-medium">Week {selectedWeek + 1} of {totalWeeks}</span>
               </div>
             </div>
             <div className="flex items-center gap-1.5 text-text-muted group-hover:text-text transition-colors">
@@ -250,13 +265,13 @@ export default function Training() {
           <p className="text-text-muted text-xs">
             {programSessions.length} of {totalProgramSessions} sessions
           </p>
-          {/* Today's dots */}
+          {/* Today's dots — current week only */}
           <div className="flex gap-1">
-            {days.map((_, i) => (
+            {weekDays.map((_, wi) => (
               <div
-                key={i}
+                key={wi}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  completedToday.has(i) ? 'bg-lime' : 'bg-bg-elevated'
+                  completedToday.has(weekStart + wi) ? 'bg-lime' : 'bg-bg-elevated'
                 }`}
               />
             ))}
@@ -264,20 +279,56 @@ export default function Training() {
         </div>
       </div>
 
+      {/* Week selector */}
+      {totalWeeks > 1 && (
+        <div className="animate-slide-up flex items-center justify-between mb-4 rounded-2xl bg-bg-card border border-border p-3">
+          <button
+            onClick={() => setSelectedWeek(Math.max(0, selectedWeek - 1))}
+            disabled={selectedWeek === 0}
+            className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors disabled:opacity-30"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalWeeks }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedWeek(i)}
+                className={`w-8 h-8 rounded-lg font-display font-bold text-xs transition-all ${
+                  i === selectedWeek
+                    ? 'bg-lime text-bg'
+                    : 'bg-bg-elevated text-text-muted hover:text-text'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setSelectedWeek(Math.min(totalWeeks - 1, selectedWeek + 1))}
+            disabled={selectedWeek === totalWeeks - 1}
+            className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors disabled:opacity-30"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      )}
+
       {/* Training days */}
       <div className="space-y-2.5">
-        {days.map((day, i) => {
-          const done = completedToday.has(i)
+        {weekDays.map((day, wi) => {
+          const globalIndex = weekStart + wi
+          const done = completedToday.has(globalIndex)
           return (
             <button
-              key={day.day}
-              onClick={() => navigate(`/training/${i}`)}
+              key={day.day + '-' + globalIndex}
+              onClick={() => navigate(`/training/${globalIndex}`)}
               className={`animate-slide-up opacity-0 card-shine w-full rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
                 done
                   ? 'bg-bg-card/80 border-lime/30'
                   : 'bg-bg-card/80 border-border hover:border-white/[0.06]'
               }`}
-              style={{ animationDelay: `${(i + 1) * 70}ms` }}
+              style={{ animationDelay: `${(wi + 1) * 70}ms` }}
             >
               {done && (
                 <>
@@ -296,16 +347,31 @@ export default function Training() {
                   {done ? (
                     <Check size={20} className="text-lime" strokeWidth={3} />
                   ) : (
-                    <span className="font-display font-bold text-text-muted text-sm">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="font-display font-bold text-text-muted text-sm">{String(globalIndex + 1).padStart(2, '0')}</span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className={`font-display font-bold text-[15px] tracking-tight ${done ? 'text-lime' : 'text-text'}`}>
                     {day.title}
                   </p>
-                  <p className="text-text-muted text-xs mt-0.5">
-                    {day.exercises.length} exercises · {day.duration}
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    {(() => {
+                      const supersets = new Set(
+                        day.exercises
+                          .map(e => e.name.match(/^(\d+)[a-z]\.\s*/))
+                          .filter(Boolean)
+                          .map(m => m![1])
+                      ).size
+                      return supersets > 0 ? (
+                        <span className="text-[10px] font-semibold text-cyan-400/80 bg-cyan-400/[0.08] px-1.5 py-0.5 rounded">
+                          {supersets} superset{supersets > 1 ? 's' : ''}
+                        </span>
+                      ) : null
+                    })()}
+                    <span className="text-text-muted text-xs">
+                      {day.exercises.length} exercises · {day.duration}
+                    </span>
+                  </div>
                 </div>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${done ? 'bg-lime/10' : 'bg-bg-elevated'}`}>
                   {done ? (
@@ -325,7 +391,7 @@ export default function Training() {
         <div className="animate-fade-in mt-6 rounded-2xl bg-lime/5 border border-lime/20 p-4 flex items-center justify-center gap-2">
           <Zap size={16} className="text-lime" />
           <p className="font-display font-semibold text-lime text-sm">
-            {completedDays === days.length ? 'All sessions crushed today' : `${completedDays} of ${days.length} sessions done today`}
+            {completedDays === weekDays.length ? 'All sessions crushed today' : `${completedDays} of ${weekDays.length} sessions done today`}
           </p>
         </div>
       )}
