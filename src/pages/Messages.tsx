@@ -23,8 +23,7 @@ export default function Messages() {
       .then(({ data }) => {
         setBroadcasts(data || [])
         setLoading(false)
-      })
-      .catch(() => setLoading(false))
+      }, () => setLoading(false))
   }, [])
 
   return (

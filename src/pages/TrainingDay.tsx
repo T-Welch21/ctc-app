@@ -322,9 +322,7 @@ export default function TrainingDay() {
             let displayNum = 0
             return groups.map((group, gi) => {
               if (group.type === 'superset') {
-                displayNum++
-                const supersetNum = displayNum
-                displayNum += group.exercises.length - 1
+                displayNum += group.exercises.length
                 return (
                   <div
                     key={`group-${gi}`}

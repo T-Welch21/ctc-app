@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Plus, Search, X, Trash2, Utensils, Target, ChevronDown, ChevronUp, Sparkles, Minus, Camera, ScanBarcode } from 'lucide-react'
+import { Plus, X, Trash2, Utensils, Target, ChevronDown, ChevronUp, Sparkles, Minus, Camera, ScanBarcode } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import {
   getFoodEntries, saveFoodEntry, deleteFoodEntry,

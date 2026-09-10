@@ -97,8 +97,7 @@ export default function Dashboard() {
       .limit(1)
       .then(({ data }) => {
         if (data && data.length > 0) setLatestBroadcast(data[0])
-      })
-      .catch(() => {})
+      }, () => {})
   }, [])
 
   const dismissBroadcast = (id: string) => {
