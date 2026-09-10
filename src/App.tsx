@@ -5,6 +5,7 @@ import BottomNav from './components/BottomNav'
 import ErrorBoundary from './components/ErrorBoundary'
 import Login from './pages/Login'
 
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 const Training = lazy(() => import('./pages/Training'))
@@ -29,7 +30,7 @@ function LoadingFallback() {
 }
 
 function AppRoutes() {
-  const { user, loading } = useAuth()
+  const { user, loading, needsPasswordReset } = useAuth()
   const location = useLocation()
 
   if (loading) {
@@ -47,6 +48,16 @@ function AppRoutes() {
           <p className="text-text-muted text-[9px] uppercase tracking-[0.35em] mt-4">Loading your training</p>
         </div>
       </div>
+    )
+  }
+
+  if (needsPasswordReset) {
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="*" element={<ResetPassword />} />
+        </Routes>
+      </Suspense>
     )
   }
 

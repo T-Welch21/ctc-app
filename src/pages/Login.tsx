@@ -44,8 +44,12 @@ export default function Login() {
         setError('Wrong email or password.')
       } else if (msg.includes('Email not confirmed')) {
         setError('Check your email for a confirmation link.')
-      } else if (msg.includes('already registered')) {
+      } else if (msg.includes('already registered') || msg.includes('already been registered')) {
         setError('That email is already taken. Try signing in.')
+      } else if (msg.includes('rate limit') || msg.includes('too many requests')) {
+        setError('Too many attempts. Wait a minute and try again.')
+      } else if (msg.includes('network') || msg.includes('fetch')) {
+        setError('Connection issue. Check your internet and try again.')
       } else {
         setError(msg)
       }
@@ -91,11 +95,20 @@ export default function Login() {
       setError('')
       setLoading(true)
       try {
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email)
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        })
         if (resetError) throw new Error(resetError.message)
         setResetSent(true)
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        const msg = err instanceof Error ? err.message : 'Something went wrong'
+        if (msg.includes('rate limit') || msg.includes('too many requests')) {
+          setError('Too many attempts. Wait a minute and try again.')
+        } else if (msg.includes('network') || msg.includes('fetch')) {
+          setError('Connection issue. Check your internet and try again.')
+        } else {
+          setError(msg)
+        }
       } finally {
         setLoading(false)
       }

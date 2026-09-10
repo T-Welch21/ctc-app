@@ -16,11 +16,13 @@ type User = {
 type AuthContextType = {
   user: User | null
   loading: boolean
+  needsPasswordReset: boolean
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string, name: string) => Promise<void>
   logout: () => void
   completeOnboarding: (identity: string, goal: string) => Promise<void>
   updateProfile: (updates: Partial<User>) => Promise<void>
+  resetPassword: (newPassword: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -74,6 +76,7 @@ async function syncProfile(user: User): Promise<void> {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [needsPasswordReset, setNeedsPasswordReset] = useState(false)
 
   const buildUser = async (su: SupabaseUser): Promise<User> => {
     const base: User = {
@@ -104,7 +107,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setNeedsPasswordReset(true)
+      }
       if (!session?.user) {
         setUser(null)
       } else {
@@ -161,9 +167,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await syncProfile(updated)
   }
 
+  const resetPassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) throw new Error(error.message)
+    setNeedsPasswordReset(false)
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, signup, logout, completeOnboarding, updateProfile }}
+      value={{ user, loading, needsPasswordReset, login, signup, logout, completeOnboarding, updateProfile, resetPassword }}
     >
       {children}
     </AuthContext.Provider>
