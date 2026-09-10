@@ -32,7 +32,7 @@ serve(async (req) => {
     })
 
     const priceId = Deno.env.get('STRIPE_PRICE_ID')!
-    const appUrl = Deno.env.get('APP_URL') || 'https://app.calledtocompete.net'
+    const appUrl = Deno.env.get('APP_URL') || 'https://calledtocompete.app'
 
     // Get or create Stripe customer
     const { data: profile } = await supabase
