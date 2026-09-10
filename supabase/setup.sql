@@ -175,8 +175,16 @@ create policy "Users can delete own community posts"
   on public.community_posts for delete
   using (auth.uid() = user_id);
 
--- Enable realtime for community posts
-alter publication supabase_realtime add table public.community_posts;
+-- Enable realtime for community posts (safe to re-run)
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and tablename = 'community_posts'
+  ) then
+    alter publication supabase_realtime add table public.community_posts;
+  end if;
+end $$;
 
 -- Food entries (nutrition tracking)
 create table if not exists public.food_entries (
@@ -251,6 +259,26 @@ alter table public.water_intake enable row level security;
 drop policy if exists "Users can manage own water intake" on public.water_intake;
 create policy "Users can manage own water intake"
   on public.water_intake for all
+  using (auth.uid() = user_id);
+
+-- Exercise notes (weights and notes per exercise per session)
+create table if not exists public.exercise_notes (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  date date not null,
+  day_index integer not null,
+  exercise_name text not null,
+  weight text,
+  notes text,
+  created_at timestamptz default now(),
+  unique(user_id, date, day_index, exercise_name)
+);
+
+alter table public.exercise_notes enable row level security;
+
+drop policy if exists "Users can manage own exercise notes" on public.exercise_notes;
+create policy "Users can manage own exercise notes"
+  on public.exercise_notes for all
   using (auth.uid() = user_id);
 
 -- Subscription fields on profiles

@@ -140,9 +140,9 @@ export default function Community() {
               <MessageSquare size={28} className="text-text-muted" />
             </div>
             <p className="font-display font-bold text-lg tracking-tight mb-1">
-              {filter === 'wins' ? 'No wins posted yet' : 'No posts yet'}
+              {filter === 'wins' ? 'No wins yet — go earn one' : 'Be the one who starts it'}
             </p>
-            <p className="text-text-muted text-sm">Be the first to share</p>
+            <p className="text-text-muted text-sm">Drop a post — set the tone</p>
           </div>
         ) : (
           posts.map((post, i) => {

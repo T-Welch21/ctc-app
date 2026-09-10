@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
+import { allPrograms } from '../lib/programs'
 
 type AthleteProfile = {
   id: string
@@ -59,7 +60,7 @@ const quickActions = [
 
 const contentSections = [
   { label: 'Programs & Workouts', icon: Dumbbell, status: 'Active' },
-  { label: 'Video Library', icon: Video, status: 'Coming soon' },
+  { label: 'Video Library', icon: Video, status: 'Active' },
   { label: 'Journal Prompts', icon: BookOpen, status: 'Active' },
   { label: 'Devotionals', icon: Quote, status: 'Active' },
 ]
@@ -177,7 +178,7 @@ export default function Command() {
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
           <Dumbbell size={18} className="text-cyan-400 mx-auto mb-1" />
-          <p className="font-display font-bold text-xl">2</p>
+          <p className="font-display font-bold text-xl">{allPrograms.length}</p>
           <p className="text-text-muted text-[10px]">Programs</p>
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">

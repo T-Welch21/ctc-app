@@ -5,6 +5,7 @@ import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
 import { getProgramById, getProgram } from '../lib/programs'
 import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs, getSelectedProgramId } from '../lib/storage'
+import { getVideoUrl } from '../lib/video-map'
 
 function parseRestSeconds(rest: string): number {
   if (!rest || rest === '-') return 0
@@ -363,7 +364,7 @@ export default function TrainingDay() {
                                   <p className={`font-display font-bold text-sm tracking-tight ${exerciseDone ? 'text-lime' : 'text-text'}`}>
                                     {cleanName}
                                   </p>
-                                  {exercise.videoUrl && <Video size={12} className="text-cyan-400 shrink-0" />}
+                                  {(exercise.videoUrl || getVideoUrl(exercise.name)) && <Video size={12} className="text-cyan-400 shrink-0" />}
                                 </div>
                                 <p className="text-text-muted text-xs mt-0.5">
                                   {exercise.sets > 1 ? `${exercise.sets} sets` : '1 set'} × {exercise.reps}
@@ -385,9 +386,9 @@ export default function TrainingDay() {
                                   <p className="text-text-secondary text-sm leading-relaxed">{exercise.cues}</p>
                                 </div>
 
-                                {exercise.videoUrl && (
+                                {(exercise.videoUrl || getVideoUrl(exercise.name)) && (
                                   <button
-                                    onClick={() => setVideoUrl(exercise.videoUrl!)}
+                                    onClick={() => setVideoUrl(exercise.videoUrl || getVideoUrl(exercise.name)!)}
                                     className="flex items-center gap-2.5 w-full rounded-xl bg-cyan-400/[0.08] border border-cyan-400/20 p-3 hover:bg-cyan-400/[0.12] active:scale-[0.98] transition-all"
                                   >
                                     <div className="w-8 h-8 rounded-lg bg-cyan-400/15 flex items-center justify-center shrink-0">
@@ -504,7 +505,7 @@ export default function TrainingDay() {
                           <p className={`font-display font-bold text-sm tracking-tight ${exerciseDone ? 'text-lime' : 'text-text'}`}>
                             {exercise.name}
                           </p>
-                          {exercise.videoUrl && <Video size={12} className="text-cyan-400 shrink-0" />}
+                          {(exercise.videoUrl || getVideoUrl(exercise.name)) && <Video size={12} className="text-cyan-400 shrink-0" />}
                         </div>
                         <p className="text-text-muted text-xs mt-0.5">
                           {exercise.sets > 1 ? `${exercise.sets} sets` : '1 set'} × {exercise.reps}
@@ -526,9 +527,9 @@ export default function TrainingDay() {
                           <p className="text-text-secondary text-sm leading-relaxed">{exercise.cues}</p>
                         </div>
 
-                        {exercise.videoUrl && (
+                        {(exercise.videoUrl || getVideoUrl(exercise.name)) && (
                           <button
-                            onClick={() => setVideoUrl(exercise.videoUrl!)}
+                            onClick={() => setVideoUrl(exercise.videoUrl || getVideoUrl(exercise.name)!)}
                             className="flex items-center gap-2.5 w-full rounded-xl bg-cyan-400/[0.08] border border-cyan-400/20 p-3 hover:bg-cyan-400/[0.12] active:scale-[0.98] transition-all"
                           >
                             <div className="w-8 h-8 rounded-lg bg-cyan-400/15 flex items-center justify-center shrink-0">
@@ -702,13 +703,29 @@ export default function TrainingDay() {
               </button>
             </div>
             <div className="rounded-2xl overflow-hidden bg-bg-card border border-border">
-              <video
-                src={videoUrl}
-                controls
-                autoPlay
-                playsInline
-                className="w-full aspect-video bg-black"
-              />
+              {videoUrl.includes('drive.google.com') ? (
+                <iframe
+                  src={videoUrl.replace('/view', '/preview').replace('uc?id=', 'file/d/').includes('/preview') ? videoUrl.replace('/view', '/preview') : `https://drive.google.com/file/d/${videoUrl.match(/[-\w]{25,}/)?.[0]}/preview`}
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  className="w-full aspect-video bg-black border-0"
+                />
+              ) : videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
+                <iframe
+                  src={videoUrl.includes('embed') ? videoUrl : `https://www.youtube.com/embed/${videoUrl.match(/(?:v=|youtu\.be\/)([^&\s]+)/)?.[1]}?autoplay=1`}
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  className="w-full aspect-video bg-black border-0"
+                />
+              ) : (
+                <video
+                  src={videoUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full aspect-video bg-black"
+                />
+              )}
             </div>
             <p className="text-text-muted text-xs text-center mt-3">Tap outside or close to return to your workout</p>
           </div>

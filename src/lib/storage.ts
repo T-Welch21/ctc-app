@@ -1,4 +1,4 @@
-import { syncJournalEntry, syncWeight, syncCompletedSession, syncCheckIn, syncPR } from './sync'
+import { syncJournalEntry, syncWeight, syncCompletedSession, syncCheckIn, syncPR, syncExerciseNote } from './sync'
 
 export type JournalEntry = {
   date: string
@@ -194,6 +194,7 @@ export function saveExerciseNote(userId: string, note: ExerciseNote) {
   if (idx >= 0) notes[idx] = note
   else notes.push(note)
   localStorage.setItem(key, JSON.stringify(notes))
+  syncExerciseNote(userId, note)
 }
 
 export function getExerciseNotes(userId: string): ExerciseNote[] {

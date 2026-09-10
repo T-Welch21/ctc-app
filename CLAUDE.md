@@ -87,7 +87,9 @@ src/
     storage.ts         # All data types + localStorage read/write + Supabase sync calls
     sync.ts            # Supabase sync functions (graceful failure when tables missing)
     subscription.ts    # Stripe subscription helpers
-    programs.ts        # 7 training programs (Athletic, Executive, Functional, Hybrid, Strength, Hyrox, Running)
+    programs.ts        # 6 training programs (Athletic, Executive, Functional, Hybrid, Strength, Running)
+    athlete-program.ts # Athletic program definition (separate file for size)
+    video-map.ts       # Exercise name → Google Drive video URL mapping (107 exercises)
 public/
   sw.js               # Service worker (network-first with cache fallback)
   manifest.json       # PWA manifest
@@ -102,9 +104,11 @@ supabase/
 
 ## Programs
 
-Two training tracks based on identity selection during onboarding:
-- **Athletic Performance** (identity: athlete) — 5 days: Lower Body Power, Upper Body Strength, Speed & Agility, Total Body Conditioning, Recovery & Mobility
-- **Executive Performance Protocol** (all other identities) — 4 days: Strength Foundations, Conditioning + Breathwork, Focus & Power, Recovery & Mobility
+6 programs total. Two auto-assigned tracks based on identity selection during onboarding:
+- **Athlete Program** (identity: athlete) — 5x/week, 24 sessions across 5 weeks. Progressive: lower body, upper body, core & arms, lower body II, upper body II each week.
+- **Executive Performance Protocol** (all other identities) — 4x/week. Strength, conditioning + breathwork, focus & power, recovery & mobility.
+
+Plus 4 switchable programs: Adult Performance Class, Hybrid Training, Strength, Running — Half Marathon.
 
 ---
 
@@ -133,6 +137,8 @@ Two training tracks based on identity selection during onboarding:
 - Subscription page with Stripe integration (Subscribe.tsx)
 - Broadcast messages from Command Center
 - Branded loading screen
+- Exercise demo videos (107 Google Drive videos mapped to exercises via video-map.ts)
+- Exercise notes sync to Supabase (weight/notes per exercise per session)
 
 ---
 
@@ -146,7 +152,6 @@ Two training tracks based on identity selection during onboarding:
 ## Roadmap (Not Yet Built)
 
 - Push notifications
-- Video library (exercise demos)
 - Welcome email sequence
 - AI food recognition from photos (needs API key)
 - Stripe webhook completion (Tyler needs to add signing secret)

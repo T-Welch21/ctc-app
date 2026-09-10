@@ -1,10 +1,10 @@
 export const athleticProgram = {
   id: 'athletic-performance',
   name: 'Athlete Program',
-  weeks: 1,
+  weeks: 5,
   frequency: '5x / week',
   description: '5-week progressive training for competitive athletes. Power, speed, strength, and conditioning — new exercises each week.',
-  category: 'hybrid' as const,
+  category: 'athletic' as const,
   image: '/programs/athletic.jpg',
   days: [
     // ═══════════════════════════════════════

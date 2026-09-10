@@ -24,7 +24,7 @@ export type Program = {
   days: TrainingDay[]
   frequency: string
   description: string
-  category: 'strength' | 'hybrid' | 'conditioning' | 'functional' | 'running'
+  category: 'strength' | 'hybrid' | 'conditioning' | 'functional' | 'running' | 'athletic'
   image?: string
 }
 
@@ -244,10 +244,10 @@ export const executiveProgram: Program = {
 
 export const functionalFitnessProgram: Program = {
   id: 'functional-fitness',
-  name: 'Functional Fitness',
+  name: 'Adult Performance Class',
   weeks: 8,
   frequency: '3x / week',
-  description: 'Adult Performance Class — 8-week periodized strength, volume, and power program.',
+  description: '8-week periodized program. Strength, volume, and power — built for adults who train.',
   category: 'functional',
   image: '/programs/functional.jpg',
   days: [

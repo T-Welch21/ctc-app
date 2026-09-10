@@ -653,8 +653,8 @@ export default function Nutrition() {
             <div className="w-14 h-14 rounded-2xl bg-bg-elevated flex items-center justify-center mx-auto mb-3">
               <Utensils size={24} className="text-text-muted" />
             </div>
-            <p className="font-display font-bold tracking-tight mb-1">No food logged yet</p>
-            <p className="text-text-muted text-sm">Type what you ate above to start</p>
+            <p className="font-display font-bold tracking-tight mb-1">Nothing logged yet</p>
+            <p className="text-text-muted text-sm">Log your first meal above</p>
           </div>
         ) : (
           <div className="space-y-2">

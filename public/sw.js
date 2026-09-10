@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ctc-v1'
+const CACHE_NAME = 'ctc-v2'
 const PRECACHE = [
   '/',
   '/manifest.json',
@@ -28,6 +28,23 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url)
   if (url.origin !== location.origin) return
 
+  // Hashed assets are immutable — cache-first
+  if (url.pathname.startsWith('/assets/')) {
+    e.respondWith(
+      caches.match(e.request).then((cached) =>
+        cached || fetch(e.request).then((res) => {
+          if (res.ok) {
+            const clone = res.clone()
+            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone))
+          }
+          return res
+        })
+      )
+    )
+    return
+  }
+
+  // Everything else: network-first with cache fallback
   e.respondWith(
     fetch(e.request)
       .then((res) => {

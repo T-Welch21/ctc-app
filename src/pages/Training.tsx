@@ -18,6 +18,7 @@ const categoryColors: Record<string, { text: string; bg: string; accent: string 
   conditioning: { text: 'text-sky-400', bg: 'bg-sky-400/10', accent: 'from-sky-400/20 to-transparent' },
   functional: { text: 'text-lime', bg: 'bg-lime/10', accent: 'from-lime/20 to-transparent' },
   running: { text: 'text-cyan-400', bg: 'bg-cyan-400/10', accent: 'from-cyan-400/20 to-transparent' },
+  athletic: { text: 'text-lime', bg: 'bg-lime/10', accent: 'from-lime/20 to-transparent' },
 }
 
 function ProgramImage({ src, alt }: { src?: string; alt: string }) {
@@ -41,6 +42,7 @@ function getDaysPerWeek(program: Program): number {
 }
 
 function getTotalWeeks(program: Program): number {
+  if (program.weeks > 1) return program.weeks
   const dpw = getDaysPerWeek(program)
   return Math.ceil(program.days.length / dpw)
 }
@@ -95,7 +97,8 @@ export default function Training() {
 
   const daysPerWeek = getDaysPerWeek(selectedProgram)
   const totalWeeks = getTotalWeeks(selectedProgram)
-  const weekStart = selectedWeek * daysPerWeek
+  const repeating = days.length <= daysPerWeek && totalWeeks > 1
+  const weekStart = repeating ? 0 : selectedWeek * daysPerWeek
   const weekDays = days.slice(weekStart, weekStart + daysPerWeek)
 
   const completedToday = new Set(
@@ -103,7 +106,7 @@ export default function Training() {
   )
   const completedDays = completedToday.size
   const programSessions = sessions.filter((s) => s.programId === selectedProgram.id)
-  const totalProgramSessions = days.length
+  const totalProgramSessions = repeating ? daysPerWeek * totalWeeks : days.length
   const programProgress = totalProgramSessions > 0
     ? Math.min((programSessions.length / totalProgramSessions) * 100, 100)
     : 0
@@ -414,7 +417,7 @@ export default function Training() {
           {showHistory && (
             <div className="space-y-2.5 animate-fade-in">
               {uniqueDates.length === 0 ? (
-                <p className="text-text-muted text-sm py-4 text-center">No past sessions yet</p>
+                <p className="text-text-muted text-sm py-4 text-center">Your history starts after day 1</p>
               ) : (
                 uniqueDates.map((date) => {
                   const daySessions = pastSessions.filter((s) => s.date === date)

@@ -50,8 +50,8 @@ export default function Messages() {
           <div className="w-16 h-16 rounded-2xl bg-bg-card border border-border flex items-center justify-center mx-auto mb-4">
             <Megaphone size={28} className="text-text-muted" />
           </div>
-          <p className="font-display font-bold text-lg tracking-tight mb-1">No messages yet</p>
-          <p className="text-text-muted text-sm">Coach messages will appear here</p>
+          <p className="font-display font-bold text-lg tracking-tight mb-1">Inbox clear</p>
+          <p className="text-text-muted text-sm">Coach Tyler's messages land here</p>
         </div>
       ) : (
         <div className="space-y-2.5">

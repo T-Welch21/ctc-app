@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { JournalEntry, WeightEntry, CompletedSession, CheckInEntry } from './storage'
+import type { JournalEntry, WeightEntry, CompletedSession, CheckInEntry, ExerciseNote } from './storage'
 
 async function tableExists(table: string): Promise<boolean> {
   try {
@@ -87,21 +87,37 @@ export async function syncPR(userId: string, lift: string, value: string, date: 
   } catch {}
 }
 
+export async function syncExerciseNote(userId: string, note: ExerciseNote): Promise<void> {
+  if (!(await checkTables())) return
+  try {
+    await supabase.from('exercise_notes').upsert({
+      user_id: userId,
+      date: note.date,
+      day_index: note.dayIndex,
+      exercise_name: note.exerciseName,
+      weight: note.weight || null,
+      notes: note.notes || null,
+    }, { onConflict: 'user_id,date,day_index,exercise_name' })
+  } catch {}
+}
+
 export async function pullFromSupabase(userId: string): Promise<{
   journals: JournalEntry[]
   weights: WeightEntry[]
   sessions: CompletedSession[]
   checkIns: CheckInEntry[]
   prs: { lift: string; value: string; date: string }[]
+  exerciseNotes: ExerciseNote[]
 } | null> {
   if (!(await checkTables())) return null
   try {
-    const [j, w, s, c, p] = await Promise.all([
+    const [j, w, s, c, p, en] = await Promise.all([
       supabase.from('journal_entries').select('*').eq('user_id', userId).order('date', { ascending: false }),
       supabase.from('weight_entries').select('*').eq('user_id', userId).order('date', { ascending: true }),
       supabase.from('completed_sessions').select('*').eq('user_id', userId).order('date', { ascending: false }),
       supabase.from('check_ins').select('*').eq('user_id', userId).order('date', { ascending: false }),
       supabase.from('personal_records').select('*').eq('user_id', userId),
+      supabase.from('exercise_notes').select('*').eq('user_id', userId).order('date', { ascending: false }),
     ])
 
     return {
@@ -138,6 +154,13 @@ export async function pullFromSupabase(userId: string): Promise<{
         lift: r.lift as string,
         value: r.value as string,
         date: r.date as string,
+      })),
+      exerciseNotes: (en.data || []).map((r: Record<string, unknown>) => ({
+        date: r.date as string,
+        dayIndex: r.day_index as number,
+        exerciseName: r.exercise_name as string,
+        weight: (r.weight || '') as string,
+        notes: (r.notes || '') as string,
       })),
     }
   } catch {

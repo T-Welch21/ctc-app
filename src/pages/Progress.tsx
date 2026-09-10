@@ -130,7 +130,7 @@ export default function Progress() {
 
         {weights.length === 0 ? (
           <div className="h-24 rounded-xl bg-bg-elevated flex items-center justify-center">
-            <p className="text-text-muted text-sm">No data yet — log your first weigh-in</p>
+            <p className="text-text-muted text-sm">Log your first weigh-in. Day 1 starts now.</p>
           </div>
         ) : (
           <div>
@@ -328,7 +328,7 @@ export default function Progress() {
           )}
         </div>
         <p className="text-text-muted text-xs mb-4 leading-relaxed">
-          Submit your weekly update so Coach Tyler can track your progress.
+          Drop your weekly numbers. Coach Tyler reviews every one.
         </p>
         <button
           onClick={() => navigate('/check-in')}

@@ -52,7 +52,7 @@ export default function CheckIn() {
             <CheckCircle size={48} className="text-lime" />
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight mb-2">Check-in submitted</h1>
-          <p className="text-text-muted text-sm mb-8">Coach Tyler will review your progress.</p>
+          <p className="text-text-muted text-sm mb-8">Locked in. Coach Tyler's got eyes on it.</p>
           <button
             onClick={() => navigate('/progress')}
             className="bg-lime text-bg font-display font-bold text-sm py-4 px-12 rounded-xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime uppercase tracking-wider"
