@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Zap, Droplets, Plus, Minus, Dumbbell } from 'lucide-react'
+import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Zap, Droplets, Plus, Minus, Target } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
 import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns, getSelectedProgramId, getWaterIntake, saveWaterIntake } from '../lib/storage'
@@ -55,6 +55,14 @@ const dailyChallenges = [
   { text: "Make your bed first thing. Start with a win.", tag: "Discipline" },
 ]
 
+const needleMovers = [
+  'Train with intensity',
+  'Eat with purpose',
+  'Hydrate (1 gallon)',
+  'Read 10 pages',
+  'Stretch / Mobility work',
+]
+
 function getDevotional() {
   const day = Math.floor(Date.now() / 86400000)
   return devotionals[day % devotionals.length]
@@ -82,7 +90,14 @@ export default function Dashboard() {
   })
   const [waterCups, setWaterCups] = useState(() => user ? getWaterIntake(user.id) : 0)
   const waterGoal = 8
-  const firstName = user?.name?.split(' ')[0] || 'Competitor'
+  const todayStr = new Date().toISOString().split('T')[0]
+  const [needleChecked, setNeedleChecked] = useState<Set<number>>(() => {
+    try {
+      const stored = localStorage.getItem(`ctc_needles_${todayStr}`)
+      return stored ? new Set(JSON.parse(stored)) : new Set()
+    } catch { return new Set() }
+  })
+  const firstName = user?.name?.split(' ')[0] || 'Athlete'
   const devotional = getDevotional()
   const challenge = getDailyChallenge()
   const hour = new Date().getHours()
@@ -114,7 +129,6 @@ export default function Dashboard() {
 
   const streak = user ? getStreak(user.id) : 0
   const sessions = user ? getCompletedSessions(user.id) : []
-  const todayStr = new Date().toISOString().split('T')[0]
   const trainedToday = sessions.some((s) => s.date === todayStr)
 
   const savedProgramId = user ? getSelectedProgramId(user.id) : null
@@ -169,7 +183,10 @@ export default function Dashboard() {
         <div className="animate-fade-in px-5 pt-14 pb-3 relative z-10">
           {/* Top bar */}
           <div className="flex items-center justify-between mb-8">
-            <img src="/logo-wide.png" alt="Called to Compete" className="h-8 w-auto opacity-80" />
+            <div className="flex items-center gap-2.5">
+              <img src="/logo-circle.png" alt="CTC" className="w-8 h-8 rounded-xl shadow-[0_0_12px_rgba(189,255,58,0.08)]" />
+              <span className="font-display text-[11px] font-bold tracking-[0.2em] uppercase text-text-secondary">Called to Compete</span>
+            </div>
             <div className="flex items-center gap-0.5">
               <button
                 onClick={() => navigate('/messages')}
@@ -231,8 +248,79 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* ── Daily Word ── */}
+      <div className="animate-slide-up px-5 mb-5">
+        <div className="rounded-2xl bg-bg-card/80 border border-border p-5 relative overflow-hidden">
+          <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-lime/[0.03] rounded-full blur-[60px] pointer-events-none" />
+          <div className="absolute -right-6 -top-6 w-28 h-28 bg-cyan-400/[0.02] rounded-full blur-[40px] pointer-events-none" />
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/15 via-transparent to-cyan-400/15" />
+          <p className="text-text-muted text-[9px] uppercase tracking-[0.25em] font-bold mb-3 relative">Daily Word</p>
+          <p className="font-display font-medium text-[16px] leading-relaxed italic relative">
+            "{devotional.text}"
+          </p>
+          <p className="text-text-muted text-xs mt-3 relative">— {devotional.author}</p>
+        </div>
+      </div>
+
+      {/* ── Next Workout CTA ── */}
+      <div className="animate-slide-up [animation-delay:40ms] opacity-0 px-5 mb-5">
+        <button
+          onClick={() => {
+            if (user && !isSubscribed(user)) { navigate('/subscribe'); return }
+            navigate(trainedToday ? '/training' : `/training/${nextDayIndex}`)
+          }}
+          className={`card-shine w-full rounded-2xl text-left transition-all active:scale-[0.98] relative overflow-hidden group ${
+            trainedToday
+              ? 'bg-lime/[0.04] border border-lime/15'
+              : 'border border-lime/25 bg-bg-card'
+          }`}
+        >
+          {program.image && !trainedToday && (
+            <>
+              <div className="absolute inset-0">
+                <img src={program.image} alt="" className="w-full h-full object-cover opacity-[0.15]" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-bg-card via-bg-card/90 to-bg-card/70" />
+            </>
+          )}
+          {!trainedToday && (
+            <>
+              <div className="absolute -right-10 -top-10 w-44 h-44 bg-lime/[0.05] rounded-full blur-[60px]" />
+              <div className="absolute right-4 bottom-0 w-24 h-24 bg-cyan-400/[0.03] rounded-full blur-[40px]" />
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
+            </>
+          )}
+          <div className="relative flex items-center justify-between p-5">
+            <div className="flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 text-lime">
+                {trainedToday ? 'Session Complete' : 'Next Session'}
+              </p>
+              <p className="font-display font-bold text-[22px] tracking-tight mb-1 leading-tight">
+                {nextDay?.title || 'Ready to train'}
+              </p>
+              <div className="flex items-center gap-2.5 text-text-muted text-xs">
+                <span>{nextDay?.exercises.length} exercises</span>
+                <span className="w-[3px] h-[3px] rounded-full bg-text-muted/50" />
+                <span>{nextDay?.duration}</span>
+              </div>
+            </div>
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+              trainedToday
+                ? 'bg-lime/10'
+                : 'bg-lime/[0.15] group-hover:bg-lime/[0.2] shadow-[0_0_20px_rgba(189,255,58,0.1)]'
+            }`}>
+              {trainedToday ? (
+                <Check size={24} className="text-lime" />
+              ) : (
+                <Play size={24} className="text-lime ml-0.5" />
+              )}
+            </div>
+          </div>
+        </button>
+      </div>
+
       {/* ── Streak bar ── */}
-      <div className="animate-slide-up px-5 mb-6">
+      <div className="animate-slide-up [animation-delay:60ms] opacity-0 px-5 mb-5">
         <div className="rounded-2xl bg-bg-card/80 border border-border p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -303,65 +391,53 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Next Workout CTA ── */}
-      <div className="animate-slide-up [animation-delay:80ms] opacity-0 px-5 mb-5">
-        <button
-          onClick={() => {
-            if (user && !isSubscribed(user)) { navigate('/subscribe'); return }
-            navigate(trainedToday ? '/training' : `/training/${nextDayIndex}`)
-          }}
-          className={`card-shine w-full rounded-2xl text-left transition-all active:scale-[0.98] relative overflow-hidden group ${
-            trainedToday
-              ? 'bg-lime/[0.04] border border-lime/15'
-              : 'border border-lime/25 bg-bg-card'
-          }`}
-        >
-          {program.image && !trainedToday && (
-            <>
-              <div className="absolute inset-0">
-                <img src={program.image} alt="" className="w-full h-full object-cover opacity-[0.15]" />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-bg-card via-bg-card/90 to-bg-card/70" />
-            </>
-          )}
-          {!trainedToday && (
-            <>
-              <div className="absolute -right-10 -top-10 w-44 h-44 bg-lime/[0.05] rounded-full blur-[60px]" />
-              <div className="absolute right-4 bottom-0 w-24 h-24 bg-cyan-400/[0.03] rounded-full blur-[40px]" />
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/30 via-lime/10 to-transparent" />
-            </>
-          )}
-          <div className="relative flex items-center justify-between p-5">
+      {/* ── Needle Movers ── */}
+      <div className="animate-slide-up [animation-delay:120ms] opacity-0 px-5 mb-5">
+        <div className="rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/20 via-lime/10 to-transparent" />
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-lime/[0.08] flex items-center justify-center">
+              <Target size={15} className="text-lime" />
+            </div>
             <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 text-lime">
-                {trainedToday ? 'Session Complete' : 'Next Session'}
-              </p>
-              <p className="font-display font-bold text-[22px] tracking-tight mb-1 leading-tight">
-                {nextDay?.title || 'Ready to train'}
-              </p>
-              <div className="flex items-center gap-2.5 text-text-muted text-xs">
-                <span>{nextDay?.exercises.length} exercises</span>
-                <span className="w-[3px] h-[3px] rounded-full bg-text-muted/50" />
-                <span>{nextDay?.duration}</span>
-              </div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-lime">Needle Movers</p>
             </div>
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-              trainedToday
-                ? 'bg-lime/10'
-                : 'bg-lime/[0.15] group-hover:bg-lime/[0.2] shadow-[0_0_20px_rgba(189,255,58,0.1)]'
-            }`}>
-              {trainedToday ? (
-                <Check size={24} className="text-lime" />
-              ) : (
-                <Play size={24} className="text-lime ml-0.5" />
-              )}
-            </div>
+            <p className="text-text-muted text-[10px] font-bold">{needleChecked.size}/{needleMovers.length}</p>
           </div>
-        </button>
+          <div className="space-y-1">
+            {needleMovers.map((item, i) => {
+              const done = needleChecked.has(i)
+              return (
+                <button
+                  key={i}
+                  onClick={() => {
+                    const next = new Set(needleChecked)
+                    if (done) next.delete(i); else next.add(i)
+                    setNeedleChecked(next)
+                    try { localStorage.setItem(`ctc_needles_${todayStr}`, JSON.stringify([...next])) } catch {}
+                    if (!done && next.size === needleMovers.length && navigator.vibrate) navigator.vibrate(100)
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+                    done ? 'bg-lime/[0.04]' : 'hover:bg-white/[0.02]'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                    done ? 'bg-lime border-lime' : 'border-white/[0.12]'
+                  }`}>
+                    {done && <Check size={12} className="text-black" strokeWidth={3} />}
+                  </div>
+                  <span className={`text-sm font-medium transition-colors ${done ? 'text-text-secondary line-through decoration-lime/40' : 'text-text'}`}>
+                    {item}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
       </div>
 
       {/* ── Daily Challenge ── */}
-      <div className="animate-slide-up [animation-delay:140ms] opacity-0 px-5 mb-5">
+      <div className="animate-slide-up [animation-delay:180ms] opacity-0 px-5 mb-5">
         <div className={`rounded-2xl border p-4 transition-all relative overflow-hidden ${
           challengeAccepted
             ? 'bg-lime/[0.03] border-lime/15'
@@ -406,7 +482,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Water + Community row ── */}
-      <div className="animate-slide-up [animation-delay:200ms] opacity-0 px-5 mb-5 grid grid-cols-2 gap-3">
+      <div className="animate-slide-up [animation-delay:240ms] opacity-0 px-5 mb-5 grid grid-cols-2 gap-3">
         {/* Water tracker */}
         <div className="rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/15 to-transparent" />
@@ -471,23 +547,9 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* ── Daily Word ── */}
-      <div className="animate-slide-up [animation-delay:260ms] opacity-0 px-5 mb-5">
-        <div className="rounded-2xl bg-bg-card/80 border border-border p-5 relative overflow-hidden">
-          <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-lime/[0.03] rounded-full blur-[60px] pointer-events-none" />
-          <div className="absolute -right-6 -top-6 w-28 h-28 bg-cyan-400/[0.02] rounded-full blur-[40px] pointer-events-none" />
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/15 via-transparent to-cyan-400/15" />
-          <p className="text-text-muted text-[9px] uppercase tracking-[0.25em] font-bold mb-3 relative">Daily Word</p>
-          <p className="font-display font-medium text-[16px] leading-relaxed italic relative">
-            "{devotional.text}"
-          </p>
-          <p className="text-text-muted text-xs mt-3 relative">— {devotional.author}</p>
-        </div>
-      </div>
-
       {/* ── Journal nudge ── */}
       {!journaledToday && (isMorning || isEvening) && (
-        <div className="animate-slide-up [animation-delay:320ms] opacity-0 px-5 mb-4">
+        <div className="animate-slide-up [animation-delay:360ms] opacity-0 px-5 mb-4">
           <button
             onClick={() => navigate('/journal')}
             className="card-shine w-full rounded-2xl border p-4 text-left transition-all active:scale-[0.98] flex items-center gap-3 relative overflow-hidden bg-bg-card/80 border-border hover:border-white/[0.06]"
@@ -508,28 +570,6 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-
-      {/* ── Your Program ── */}
-      <div className="animate-slide-up [animation-delay:340ms] opacity-0 px-5 mb-5">
-        <button
-          onClick={() => navigate('/training')}
-          className="w-full rounded-2xl bg-bg-card/80 border border-border p-5 text-left transition-all active:scale-[0.98] hover:border-white/[0.06] relative overflow-hidden group"
-        >
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-lime/15 via-transparent to-cyan-400/15" />
-          <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-lime/[0.03] rounded-full blur-[50px] pointer-events-none" />
-          <div className="flex items-center gap-3.5">
-            <div className="w-14 h-14 rounded-xl bg-lime/[0.08] flex items-center justify-center shrink-0">
-              <Dumbbell size={22} className="text-lime" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-text-muted mb-1.5">Your Program</p>
-              <p className="font-display font-bold text-[17px] tracking-tight truncate">{program.name}</p>
-              <p className="text-text-muted text-[11px] mt-1">{program.frequency} · {program.days.length} sessions</p>
-            </div>
-            <ChevronRight size={16} className="text-text-muted/40 group-hover:text-lime/40 transition-colors shrink-0" />
-          </div>
-        </button>
-      </div>
 
       {/* ── Quick links ── */}
       <div className="animate-slide-up [animation-delay:400ms] opacity-0 px-5 mb-5">
