@@ -27,7 +27,7 @@ export default function Messages() {
   }, [])
 
   return (
-    <div className="min-h-screen pb-28 px-5 pt-14">
+    <div className="min-h-screen pb-10 px-5 pt-14">
       <div className="animate-fade-in mb-6">
         <div className="flex items-center gap-3 mb-1">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors">

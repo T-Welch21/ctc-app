@@ -139,7 +139,7 @@ export default function TrainingDay() {
   }
 
   return (
-    <div className="min-h-screen pb-28 bg-bg">
+    <div className="min-h-screen pb-10 bg-bg">
       {/* Header */}
       <div className="sticky top-0 glass-heavy z-40 border-b border-border/50">
         <div className="max-w-lg mx-auto px-5 py-4">
@@ -751,7 +751,7 @@ export default function TrainingDay() {
               ][new Date().getDate() % 7]}
             </p>
 
-            <div className="flex items-center justify-center gap-8 my-6">
+            <div className="flex items-center justify-center gap-5 my-6 flex-wrap">
               <div>
                 <p className="font-display font-bold text-3xl text-lime">{totalSets}</p>
                 <p className="text-text-muted text-[10px] uppercase tracking-widest mt-1">Sets</p>

@@ -276,7 +276,7 @@ export default function Nutrition() {
     <div className="min-h-screen pb-28">
       {/* Header */}
       <div className="sticky top-0 glass-heavy z-40 border-b border-border">
-        <div className="px-5 pt-12 pb-3">
+        <div className="px-5 pt-14 pb-3">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="font-display text-2xl font-bold tracking-tight">Nutrition</h1>

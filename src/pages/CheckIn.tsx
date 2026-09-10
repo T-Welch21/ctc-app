@@ -65,9 +65,9 @@ export default function CheckIn() {
   }
 
   return (
-    <div className="min-h-screen pb-28 bg-bg">
+    <div className="min-h-screen pb-10 bg-bg">
       <div className="sticky top-0 glass-heavy z-40 border-b border-border">
-        <div className="max-w-lg mx-auto px-5 py-4 flex items-center gap-3">
+        <div className="max-w-lg mx-auto px-5 pt-14 pb-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/progress')}
             className="w-9 h-9 rounded-xl bg-bg-elevated flex items-center justify-center text-text-muted hover:text-text transition-colors"

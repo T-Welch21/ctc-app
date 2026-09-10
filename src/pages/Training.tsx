@@ -366,7 +366,7 @@ export default function Training() {
                           .map(m => m![1])
                       ).size
                       return supersets > 0 ? (
-                        <span className="text-[10px] font-semibold text-cyan-400/80 bg-cyan-400/[0.08] px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold text-cyan-400/80 bg-cyan-400/[0.08] px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
                           {supersets} superset{supersets > 1 ? 's' : ''}
                         </span>
                       ) : null

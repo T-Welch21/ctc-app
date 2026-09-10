@@ -36,7 +36,7 @@ export default function Subscribe() {
   }
 
   return (
-    <div className="min-h-screen pb-28 px-5 pt-14 mesh-bg">
+    <div className="min-h-screen pb-10 px-5 pt-14 mesh-bg">
       {/* Header */}
       <div className="animate-fade-in mb-6 relative z-10">
         <div className="flex items-center gap-3 mb-1">
@@ -47,7 +47,7 @@ export default function Subscribe() {
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="font-display text-[26px] font-bold tracking-tight">Go Premium</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight">Go Premium</h1>
             <p className="text-text-muted text-[9px] uppercase tracking-[0.25em]">Full CTC Access</p>
           </div>
         </div>

@@ -97,7 +97,7 @@ export default function Community() {
         <div className="px-5 pt-14 pb-3">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h1 className="font-display text-[26px] font-bold tracking-tight">Community</h1>
+              <h1 className="font-display text-2xl font-bold tracking-tight">Community</h1>
               <p className="text-text-muted text-[9px] uppercase tracking-[0.25em]">CTC Athletes</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-lime/10 flex items-center justify-center">
