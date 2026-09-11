@@ -23,11 +23,20 @@ export async function fetchSubscriptionStatus(userId: string): Promise<Subscript
   }
 }
 
-export async function createCheckoutSession(priceId?: string): Promise<string> {
-  const { data, error } = await supabase.functions.invoke('create-checkout', {
-    body: { priceId },
+export async function createCheckoutSession(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.access_token) throw new Error('Not logged in')
+
+  const res = await fetch('/api/create-checkout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.access_token}`,
+    },
   })
-  if (error) throw new Error(error.message || 'Failed to create checkout session')
+
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || 'Failed to create checkout session')
   if (!data?.url) throw new Error('No checkout URL returned')
   return data.url
 }
