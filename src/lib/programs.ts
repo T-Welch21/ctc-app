@@ -272,12 +272,12 @@ export const functionalFitnessProgram: Program = {
 }
 
 export const allPrograms: Program[] = [
-  functionalFitnessProgram,
-  runningProgram,
-  hybridProgram,
   athleticProgram,
+  functionalFitnessProgram,
+  hybridProgram,
   strengthProgram,
   executiveProgram,
+  runningProgram,
 ]
 
 export function getProgram(identity: string): Program {
