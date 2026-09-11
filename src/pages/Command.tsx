@@ -13,10 +13,15 @@ import {
   X,
   Megaphone,
   Clock,
+  Ticket,
+  Copy,
+  Check,
+  Trash2,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { allPrograms } from '../lib/programs'
+import { createInviteCode, listInviteCodes, deactivateInviteCode, type InviteCode } from '../lib/invite-codes'
 
 type AthleteProfile = {
   id: string
@@ -81,6 +86,11 @@ export default function Command() {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([])
   const [selectedAthlete, setSelectedAthlete] = useState<AthleteProfile | null>(null)
   const [athleteStats, setAthleteStats] = useState<{ sessions: number; lastActive: string | null; checkIns: number }>({ sessions: 0, lastActive: null, checkIns: 0 })
+  const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([])
+  const [showCreateCode, setShowCreateCode] = useState(false)
+  const [newCodeLabel, setNewCodeLabel] = useState('')
+  const [newCodeUses, setNewCodeUses] = useState(1)
+  const [copiedCode, setCopiedCode] = useState<string | null>(null)
 
   const loadAthletes = async () => {
     setLoading(true)
@@ -155,9 +165,35 @@ export default function Command() {
     }
   }
 
+  const loadInviteCodes = async () => {
+    const codes = await listInviteCodes()
+    setInviteCodes(codes)
+  }
+
+  const handleCreateCode = async () => {
+    if (!newCodeLabel.trim()) return
+    await createInviteCode(newCodeLabel.trim(), newCodeUses)
+    setNewCodeLabel('')
+    setNewCodeUses(1)
+    setShowCreateCode(false)
+    await loadInviteCodes()
+  }
+
+  const handleDeactivateCode = async (code: string) => {
+    await deactivateInviteCode(code)
+    loadInviteCodes()
+  }
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code)
+    setCopiedCode(code)
+    setTimeout(() => setCopiedCode(null), 2000)
+  }
+
   useEffect(() => {
     loadAthletes()
     loadBroadcasts()
+    loadInviteCodes()
   }, [])
 
   const athleteCount = athletes.filter((a) => a.onboarded).length
@@ -218,6 +254,114 @@ export default function Command() {
             )
           })}
         </div>
+      </div>
+
+      {/* Invite Codes */}
+      <div className="animate-slide-up [animation-delay:150ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Ticket size={16} className="text-lime" />
+            <p className="font-display font-semibold">Invite Codes</p>
+          </div>
+          <button
+            onClick={() => setShowCreateCode(!showCreateCode)}
+            className="text-[11px] font-display font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg bg-lime/10 text-lime hover:bg-lime/20 transition-colors"
+          >
+            {showCreateCode ? 'Cancel' : '+ New Code'}
+          </button>
+        </div>
+
+        {showCreateCode && (
+          <div className="mb-4 p-3 rounded-xl bg-bg-elevated space-y-3">
+            <input
+              type="text"
+              placeholder="Label (e.g. Marie, VIP Client)"
+              value={newCodeLabel}
+              onChange={(e) => setNewCodeLabel(e.target.value)}
+              className="w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-4 py-3 text-sm placeholder-text-muted focus:outline-none focus:border-lime/30"
+            />
+            <div className="flex items-center gap-3">
+              <label className="text-text-muted text-xs">Max uses:</label>
+              <div className="flex gap-2">
+                {[1, 5, 50].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setNewCodeUses(n)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                      newCodeUses === n
+                        ? 'bg-lime/20 text-lime'
+                        : 'bg-white/[0.04] text-text-muted hover:text-text'
+                    }`}
+                  >
+                    {n === 50 ? 'Unlimited' : n}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={handleCreateCode}
+              disabled={!newCodeLabel.trim()}
+              className="w-full py-2.5 rounded-xl font-display font-bold text-sm bg-lime text-black disabled:opacity-40 transition-all active:scale-[0.98]"
+            >
+              Generate Code
+            </button>
+          </div>
+        )}
+
+        {inviteCodes.length === 0 ? (
+          <p className="text-text-muted text-sm text-center py-4">
+            No invite codes yet. Create one to give someone free access.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {inviteCodes.map((ic) => (
+              <div
+                key={ic.code}
+                className={`flex items-center gap-3 p-3 rounded-xl bg-bg-elevated ${!ic.active ? 'opacity-40' : ''}`}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono font-bold text-sm tracking-wider">{ic.code}</p>
+                    <span className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                      !ic.active
+                        ? 'bg-red-500/10 text-red-400'
+                        : ic.used_count >= ic.max_uses
+                        ? 'bg-text-muted/10 text-text-muted'
+                        : 'bg-lime/10 text-lime'
+                    }`}>
+                      {!ic.active ? 'Off' : ic.used_count >= ic.max_uses ? 'Used' : 'Active'}
+                    </span>
+                  </div>
+                  <p className="text-text-muted text-xs mt-0.5">
+                    {ic.label} · {ic.used_count}/{ic.max_uses} used
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => handleCopyCode(ic.code)}
+                    className="p-2 rounded-lg hover:bg-white/[0.04] transition-colors"
+                    title="Copy code"
+                  >
+                    {copiedCode === ic.code ? (
+                      <Check size={14} className="text-lime" />
+                    ) : (
+                      <Copy size={14} className="text-text-muted" />
+                    )}
+                  </button>
+                  {ic.active && (
+                    <button
+                      onClick={() => handleDeactivateCode(ic.code)}
+                      className="p-2 rounded-lg hover:bg-red-500/10 transition-colors"
+                      title="Deactivate"
+                    >
+                      <Trash2 size={14} className="text-text-muted hover:text-red-400" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Content management */}

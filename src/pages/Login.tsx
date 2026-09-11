@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Eye, EyeOff, CheckCircle, ArrowLeft } from 'lucide-react'
+import { Eye, EyeOff, CheckCircle, ArrowLeft, Ticket } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
+import { validateInviteCode, redeemInviteCode } from '../lib/invite-codes'
 
 export default function Login() {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
@@ -14,6 +15,8 @@ export default function Login() {
   const [checkEmail, setCheckEmail] = useState(false)
   const [forgotPassword, setForgotPassword] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [inviteCode, setInviteCode] = useState('')
+  const [showInviteCode, setShowInviteCode] = useState(false)
   const { login, signup } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +35,21 @@ export default function Login() {
           setLoading(false)
           return
         }
+        if (inviteCode.trim()) {
+          const { valid, error: codeError } = await validateInviteCode(inviteCode)
+          if (!valid) {
+            setError(codeError || 'Invalid invite code.')
+            setLoading(false)
+            return
+          }
+        }
         await signup(email, password, name)
+        if (inviteCode.trim()) {
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session?.user) {
+            await redeemInviteCode(inviteCode, session.user.id)
+          }
+        }
       } else {
         await login(email, password)
       }
@@ -186,13 +203,36 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-3">
           {mode === 'signup' && (
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl px-5 py-4 text-text placeholder:text-text-muted text-[15px] focus:outline-none focus:border-lime/25 transition-all"
-            />
+            <>
+              <input
+                type="text"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-white/[0.04] border border-white/[0.06] rounded-2xl px-5 py-4 text-text placeholder:text-text-muted text-[15px] focus:outline-none focus:border-lime/25 transition-all"
+              />
+              {showInviteCode ? (
+                <div className="relative">
+                  <Ticket size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-lime/60" />
+                  <input
+                    type="text"
+                    placeholder="Invite code (e.g. CTC-ABC123)"
+                    value={inviteCode}
+                    onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                    className="w-full bg-lime/[0.04] border border-lime/20 rounded-2xl pl-11 pr-5 py-4 text-text placeholder:text-text-muted text-[15px] focus:outline-none focus:border-lime/40 transition-all uppercase tracking-wider"
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowInviteCode(true)}
+                  className="text-text-muted text-sm hover:text-lime transition-colors flex items-center gap-1.5 mx-auto"
+                >
+                  <Ticket size={14} />
+                  Have an invite code?
+                </button>
+              )}
+            </>
           )}
 
           <input

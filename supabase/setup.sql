@@ -301,3 +301,46 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Add subscription_source column to profiles
+alter table public.profiles add column if not exists subscription_source text;
+
+-- Invite codes table
+create table if not exists public.invite_codes (
+  code text primary key,
+  label text not null default '',
+  max_uses integer not null default 1,
+  used_count integer not null default 0,
+  created_at timestamptz default now(),
+  expires_at timestamptz,
+  active boolean default true
+);
+
+alter table public.invite_codes enable row level security;
+
+drop policy if exists "Coach can manage invite codes" on public.invite_codes;
+create policy "Coach can manage invite codes"
+  on public.invite_codes for all
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+
+drop policy if exists "Anyone can read invite codes for validation" on public.invite_codes;
+create policy "Anyone can read invite codes for validation"
+  on public.invite_codes for select
+  using (true);
+
+-- RPC to atomically redeem an invite code
+create or replace function public.redeem_invite_code(code_input text)
+returns void as $$
+begin
+  update public.invite_codes
+  set used_count = used_count + 1
+  where code = code_input
+    and active = true
+    and used_count < max_uses
+    and (expires_at is null or expires_at > now());
+
+  if not found then
+    raise exception 'Invalid or expired invite code';
+  end if;
+end;
+$$ language plpgsql security definer;
