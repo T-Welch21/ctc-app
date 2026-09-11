@@ -38,10 +38,10 @@ export { athleticProgram, executiveProgram, hybridProgram, strengthProgram, runn
 
 export const functionalFitnessProgram: Program = {
   id: 'functional-fitness',
-  name: 'Adult Performance Class',
+  name: 'CTC Foundations',
   weeks: 8,
   frequency: '3x / week',
-  description: '8-week periodized program. Strength, volume, and power — built for adults who train.',
+  description: '8-week periodized program. Strength, volume, and power — your starting point to compete.',
   category: 'functional',
   image: '/programs/functional.jpg',
   days: [
