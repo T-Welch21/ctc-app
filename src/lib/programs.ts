@@ -24,17 +24,16 @@ export type Program = {
   days: TrainingDay[]
   frequency: string
   description: string
-  category: 'strength' | 'hybrid' | 'conditioning' | 'functional' | 'running' | 'athletic'
+  category: 'strength' | 'hybrid' | 'conditioning' | 'functional' | 'running' | 'athletic' | 'sprint'
   image?: string
 }
 
 import { athleticProgram } from './athlete-program'
-import { executiveProgram } from './executive-program'
-import { hybridProgram } from './hybrid-program'
 import { strengthProgram } from './strength-program'
 import { runningProgram } from './running-program'
+import { sprintProgram } from './sprint-program'
 
-export { athleticProgram, executiveProgram, hybridProgram, strengthProgram, runningProgram }
+export { athleticProgram, strengthProgram, runningProgram, sprintProgram }
 
 export const functionalFitnessProgram: Program = {
   id: 'functional-fitness',
@@ -273,15 +272,14 @@ export const functionalFitnessProgram: Program = {
 
 export const allPrograms: Program[] = [
   athleticProgram,
-  functionalFitnessProgram,
-  hybridProgram,
   strengthProgram,
-  executiveProgram,
+  functionalFitnessProgram,
   runningProgram,
+  sprintProgram,
 ]
 
 export function getProgram(identity: string): Program {
-  return identity === 'athlete' ? athleticProgram : executiveProgram
+  return identity === 'athlete' ? athleticProgram : functionalFitnessProgram
 }
 
 export function getProgramById(id: string): Program | undefined {

@@ -2,7 +2,7 @@ import type { Program } from './programs'
 
 export const strengthProgram: Program = {
   id: 'strength',
-  name: 'Strength',
+  name: 'CTC Strength',
   weeks: 6,
   frequency: '6x / week',
   description: 'Push. Pull. Legs. Repeat. Build serious strength and size.',

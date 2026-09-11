@@ -1,6 +1,6 @@
 export const athleticProgram = {
   id: 'athletic-performance',
-  name: 'Athlete Program',
+  name: 'CTC Athlete',
   weeks: 6,
   frequency: '5x / week',
   description: '6-week progressive training for competitive athletes. Power, speed, strength, and conditioning — new exercises each week, peaking in Week 6.',

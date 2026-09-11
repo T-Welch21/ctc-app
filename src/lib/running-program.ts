@@ -2,7 +2,7 @@ import type { Program } from './programs'
 
 export const runningProgram: Program = {
   id: 'running',
-  name: 'Running — Half Marathon',
+  name: 'CTC Endurance',
   weeks: 6,
   frequency: '3x / week',
   description: '6-week half marathon build. Intervals, tempo, and long runs — every session under 60 minutes.',
