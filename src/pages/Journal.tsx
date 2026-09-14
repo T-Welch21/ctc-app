@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronUp, Clock, Target, Eye, Trophy, ArrowUp, Heart, Star, Lock } from 'lucide-react'
+import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronUp, Clock, Target, Eye, Trophy, ArrowUp, Heart, Star } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
