@@ -1,6 +1,8 @@
 import { useState, useMemo, useRef } from 'react'
-import { Plus, X, Trash2, Utensils, Target, ChevronDown, ChevronUp, Sparkles, Minus, Camera, ScanBarcode } from 'lucide-react'
+import { Plus, X, Trash2, Utensils, Target, ChevronDown, ChevronUp, Sparkles, Minus, Camera, ScanBarcode, ArrowRight, Lock } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { isSubscribed } from '../lib/subscription'
 import {
   getFoodEntries, saveFoodEntry, deleteFoodEntry,
   getMacroGoals, saveMacroGoals,
@@ -87,6 +89,8 @@ function smartMatch(query: string): QuickFood[] {
 
 export default function Nutrition() {
   const { user } = useAuth()
+  const navigate = useNavigate()
+  const subscribed = user ? isSubscribed(user) : false
   const todayStr = new Date().toISOString().split('T')[0]
   const inputRef = useRef<HTMLInputElement>(null)
   const barcodeInputRef = useRef<HTMLInputElement>(null)
@@ -140,6 +144,7 @@ export default function Nutrition() {
 
   const addQuickFood = (food: QuickFood) => {
     if (!user) return
+    if (!subscribed) { navigate('/subscribe'); return }
     const qty = getServingsCount(food.name)
     const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
     saveFoodEntry(user.id, {
@@ -156,6 +161,7 @@ export default function Nutrition() {
 
   const addCustomFood = () => {
     if (!user || !customName.trim() || !customCalories) return
+    if (!subscribed) { navigate('/subscribe'); return }
     const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
     saveFoodEntry(user.id, {
       date: selectedDate, time, name: customName.trim(),

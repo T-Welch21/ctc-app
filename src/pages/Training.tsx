@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Check, Play, ChevronDown, ChevronUp, History, Dumbbell, ArrowRight, ChevronLeft, ChevronRight, Flame, Zap } from 'lucide-react'
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { isSubscribed, pollSubscriptionStatus } from '../lib/subscription'
 import { allPrograms, getProgramById, getProgram } from '../lib/programs'
@@ -88,9 +88,7 @@ export default function Training() {
     )
   }
 
-  if (user && !isSubscribed(user)) {
-    return <Navigate to="/subscribe" replace />
-  }
+  const subscribed = user ? isSubscribed(user) : false
 
   const days = selectedProgram.days
   const sessions = user ? getCompletedSessions(user.id) : []
@@ -326,7 +324,7 @@ export default function Training() {
           return (
             <button
               key={day.day + '-' + globalIndex}
-              onClick={() => navigate(`/training/${globalIndex}`)}
+              onClick={() => subscribed ? navigate(`/training/${globalIndex}`) : navigate('/subscribe')}
               className={`animate-slide-up opacity-0 card-shine w-full rounded-2xl border transition-all duration-200 text-left active:scale-[0.98] relative overflow-hidden ${
                 done
                   ? 'bg-bg-card/80 border-lime/30'
@@ -398,6 +396,20 @@ export default function Training() {
             {completedDays === weekDays.length ? 'All sessions crushed today' : `${completedDays} of ${weekDays.length} sessions done today`}
           </p>
         </div>
+      )}
+
+      {/* Subscribe CTA for free users */}
+      {!subscribed && (
+        <button
+          onClick={() => navigate('/subscribe')}
+          className="animate-fade-in mt-6 w-full rounded-2xl border border-lime/30 bg-lime/5 p-5 text-left active:scale-[0.98] transition-all"
+        >
+          <p className="font-display font-bold text-lime text-sm uppercase tracking-wider mb-1">Unlock Full Access</p>
+          <p className="text-text-secondary text-xs leading-relaxed">Start your 7-day free trial to begin training with any program.</p>
+          <div className="mt-3 inline-flex items-center gap-1.5 bg-lime text-bg px-4 py-2 rounded-xl text-xs font-display font-bold uppercase tracking-wider">
+            Start Free Trial <ArrowRight size={12} />
+          </div>
+        </button>
       )}
 
       {/* Session history */}

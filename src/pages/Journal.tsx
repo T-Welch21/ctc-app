@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronUp, Clock, Target, Eye, Trophy, ArrowUp, Heart, Star } from 'lucide-react'
+import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronUp, Clock, Target, Eye, Trophy, ArrowUp, Heart, Star, Lock } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { isSubscribed } from '../lib/subscription'
 import { saveJournalEntry, getJournalEntries, type JournalEntry } from '../lib/storage'
 
 const needleMovers = [
@@ -42,6 +44,8 @@ function formatDayName(dateStr: string) {
 
 export default function Journal() {
   const { user } = useAuth()
+  const navigate = useNavigate()
+  const subscribed = user ? isSubscribed(user) : false
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'evening'>('morning')
   const [energy, setEnergy] = useState(5)
   const [mind, setMind] = useState(5)
@@ -74,6 +78,7 @@ export default function Journal() {
 
   const handleSave = () => {
     if (!user) return
+    if (!subscribed) { navigate('/subscribe'); return }
     saveJournalEntry(user.id, {
       date: todayStr,
       timeOfDay,
