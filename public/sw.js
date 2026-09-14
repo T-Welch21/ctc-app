@@ -54,6 +54,10 @@ self.addEventListener('fetch', (e) => {
         }
         return res
       })
-      .catch(() => caches.match(e.request).then((cached) => cached || caches.match('/')))
+      .catch(() => caches.match(e.request).then((cached) => {
+        if (cached) return cached
+        if (e.request.mode === 'navigate') return caches.match('/')
+        return new Response('Network error', { status: 503, statusText: 'Service Unavailable' })
+      }))
   )
 })

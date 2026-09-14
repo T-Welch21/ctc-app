@@ -1,18 +1,25 @@
 import { Home, Dumbbell, Utensils, ShoppingBag, BookOpen, LayoutDashboard } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../lib/auth'
 
-const tabs = [
+const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+
+const baseTabs = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/training', icon: Dumbbell, label: 'Train' },
   { path: '/nutrition', icon: Utensils, label: 'Nutrition' },
   { path: '/shop', icon: ShoppingBag, label: 'Shop' },
   { path: '/journal', icon: BookOpen, label: 'Journal' },
-  { path: '/command', icon: LayoutDashboard, label: 'Command' },
 ]
 
 export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const tabs = user && COACH_EMAILS.includes(user.email)
+    ? [...baseTabs, { path: '/command', icon: LayoutDashboard, label: 'Command' }]
+    : baseTabs
 
   return (
     <nav className="fixed bottom-5 left-4 right-4 z-50">

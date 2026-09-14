@@ -31,9 +31,26 @@ export default function TrainingDay() {
   const idx = parseInt(dayIndex || '0')
   const day = program.days[idx]
 
-  const [completedSets, setCompletedSets] = useState<Record<string, Set<number>>>({})
+  const storageKey = user ? `ctc_wip_${user.id}_${savedId || 'default'}_${idx}` : null
+
+  const [completedSets, setCompletedSets] = useState<Record<string, Set<number>>>(() => {
+    if (!storageKey) return {}
+    try {
+      const raw = sessionStorage.getItem(storageKey)
+      if (!raw) return {}
+      const parsed = JSON.parse(raw)
+      const restored: Record<string, Set<number>> = {}
+      for (const [k, v] of Object.entries(parsed)) {
+        restored[k] = new Set(v as number[])
+      }
+      return restored
+    } catch { return {} }
+  })
   const [expandedExercise, setExpandedExercise] = useState<number | null>(0)
-  const [sessionStarted, setSessionStarted] = useState(false)
+  const [sessionStarted, setSessionStarted] = useState(() => {
+    if (!storageKey) return false
+    try { return sessionStorage.getItem(storageKey) !== null } catch { return false }
+  })
   const [showCelebration, setShowCelebration] = useState(false)
   const [exerciseWeights, setExerciseWeights] = useState<Record<string, string>>({})
   const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>({})
@@ -86,6 +103,15 @@ export default function TrainingDay() {
   }, [])
 
   useEffect(() => {
+    if (!storageKey) return
+    const serializable: Record<string, number[]> = {}
+    for (const [k, v] of Object.entries(completedSets)) {
+      serializable[k] = [...v]
+    }
+    try { sessionStorage.setItem(storageKey, JSON.stringify(serializable)) } catch {}
+  }, [completedSets, storageKey])
+
+  useEffect(() => {
     if (!user || !day) return
     const prefilled: Record<string, string> = {}
     day.exercises.forEach((exercise, i) => {
@@ -104,10 +130,11 @@ export default function TrainingDay() {
     }
   }, [sessionStarted, showCelebration])
 
-  if (!day) {
-    navigate('/training', { replace: true })
-    return null
-  }
+  useEffect(() => {
+    if (!day) navigate('/training', { replace: true })
+  }, [day, navigate])
+
+  if (!day) return null
 
   const exKey = (i: number, name: string) => `${i}:${name}`
 
@@ -675,6 +702,7 @@ export default function TrainingDay() {
                 })
                 setNewPRs(detectedPRs)
               }
+              if (storageKey) try { sessionStorage.removeItem(storageKey) } catch {}
               setShowCelebration(true)
             }}
             className="w-full bg-lime text-bg font-display font-bold text-base py-4 rounded-2xl hover:brightness-110 active:scale-[0.98] transition-all glow-lime animate-pulse-glow mt-6 uppercase tracking-wider"

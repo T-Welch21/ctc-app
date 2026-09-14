@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
 import {
   Users,
   BarChart3,
@@ -22,6 +23,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { allPrograms } from '../lib/programs'
 import { createInviteCode, listInviteCodes, deactivateInviteCode, type InviteCode } from '../lib/invite-codes'
+
+const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
 
 type AthleteProfile = {
   id: string
@@ -91,6 +94,10 @@ export default function Command() {
   const [newCodeLabel, setNewCodeLabel] = useState('')
   const [newCodeUses, setNewCodeUses] = useState(1)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
+
+  if (!user || !COACH_EMAILS.includes(user.email)) {
+    return <Navigate to="/dashboard" replace />
+  }
 
   const loadAthletes = async () => {
     setLoading(true)
