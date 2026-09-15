@@ -24,35 +24,81 @@ export type TrainingDay = {
   duration: string
 }
 
+function splitOutsideParens(text: string): string[] {
+  const parts: string[] = []
+  let depth = 0
+  let start = 0
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '(') depth++
+    else if (text[i] === ')') depth--
+    else if (text[i] === ',' && depth === 0) {
+      parts.push(text.slice(start, i).trim())
+      start = i + 1
+    }
+  }
+  parts.push(text.slice(start).trim())
+  return parts.filter(Boolean)
+}
+
+function parseSubExercise(raw: string, roundsCount: string): WarmupItem | null {
+  let part = raw.replace(/^and\s+/i, '').replace(/\.\s*$/, '').trim()
+  if (!part) return null
+
+  const parenIdx = part.indexOf('(')
+  let name = '', detail = ''
+  if (parenIdx > 0) {
+    name = part.slice(0, parenIdx).trim()
+    detail = part.slice(parenIdx + 1).replace(/\)\s*$/, '').trim()
+  } else {
+    name = part
+  }
+
+  let reps: string | undefined
+  const repMatch = name.match(/[×x]\d+(?:\s+(?:each|skips?|fast|sec|reps?)(?:\s+(?:each|arm|leg|side))?)?/i)
+    || name.match(/\d+\/\d+\s*(?:calories?|cal)\b/i)
+    || name.match(/\d+\s*(?:yards?|yds?|calories?|cal|sec|seconds?|skips?)\b/i)
+  if (repMatch) {
+    reps = repMatch[0].trim()
+    name = name.replace(repMatch[0], '').trim()
+  }
+  if (roundsCount) {
+    reps = reps ? `${roundsCount} rounds — ${reps}` : `${roundsCount} rounds`
+  }
+
+  name = name.replace(/^\d+\s+/, '').replace(/,\s*$/, '').trim()
+  if (!name) return null
+  name = name.charAt(0).toUpperCase() + name.slice(1)
+  return { name, detail: detail || '', reps }
+}
+
 export function parseWarmup(text: string): { intro?: string; items: WarmupItem[] } {
   if (!text) return { items: [] }
 
   const trimmed = text.trim()
 
-  // Extract intro timing (e.g. "5 min:", "10 min to get loose:")
+  // Extract intro timing (e.g. "5 min:", "10 min, 2 rounds:")
   let introEnd = 0
   const timeMatch = trimmed.match(/^\d+\s*min\b[^.]*?[:.]\s*/)
   if (timeMatch) {
     introEnd = timeMatch[0].length
   }
 
+  // Check if intro captured a "rounds" count
+  let globalRoundsCount = ''
+  if (timeMatch) {
+    const rm = timeMatch[0].match(/(\d+)\s+rounds?\b/i)
+    if (rm) globalRoundsCount = rm[1]
+  }
+
   const body = trimmed.slice(introEnd).trim()
   if (!body) return { intro: trimmed, items: [] }
 
-  // Split body into exercise segments using sentence boundaries + exercise-start patterns
   const items: WarmupItem[] = []
-  let remaining = body
 
-  // Regex to match exercise boundaries:
-  // 1. "Then exercise" / "Next, exercise" / "Finish with exercise"
-  // 2. "ExerciseName:" or "ExerciseName —"
-  // We split before these patterns when they appear after a period+space
   const exerciseBoundary = /\.\s+(?=(?:Then\s|Next,?\s|Finish with\s|[A-Z][a-zA-Z\s&'/-]*?(?::\s|—|–)))/g
-
-  const segments = remaining.split(exerciseBoundary).map(s => s.trim()).filter(Boolean)
+  const segments = body.split(exerciseBoundary).map(s => s.trim()).filter(Boolean)
 
   for (const seg of segments) {
-    // Strip connector words
     let cleaned = seg
       .replace(/^Then\s+(?:do\s+)?/i, '')
       .replace(/^Next,?\s+/i, '')
@@ -60,12 +106,31 @@ export function parseWarmup(text: string): { intro?: string; items: WarmupItem[]
       .replace(/^Start\s+with\s+/i, '')
       .replace(/\.$/, '')
 
+    // Detect "X rounds (of):" prefix
+    const roundsMatch = cleaned.match(/^(\d+)\s+rounds?\s+(?:of\s*)?:\s*/i)
+    let localRounds = ''
+    if (roundsMatch) {
+      localRounds = roundsMatch[1]
+      cleaned = cleaned.slice(roundsMatch[0].length).trim()
+    }
+
+    // Split comma-separated exercise lists (from rounds blocks or paren-separated lists)
+    const topLevelParts = splitOutsideParens(cleaned)
+    const effectiveRounds = localRounds || globalRoundsCount
+    const hasMultiParens = (cleaned.match(/\(/g) || []).length >= 2
+    if (topLevelParts.length >= 2 && (effectiveRounds || hasMultiParens)) {
+      for (const part of topLevelParts) {
+        const item = parseSubExercise(part, effectiveRounds)
+        if (item) items.push(item)
+      }
+      continue
+    }
+
+    // Single exercise parsing
     let name = ''
     let detail = ''
 
-    // Try "Name: description"
     const colonIdx = cleaned.indexOf(':')
-    // Try "Name — description"
     const dashIdx = cleaned.search(/\s[—–]\s/)
 
     if (colonIdx > 0 && colonIdx < 80 && (dashIdx < 0 || colonIdx < dashIdx)) {
@@ -75,10 +140,8 @@ export function parseWarmup(text: string): { intro?: string; items: WarmupItem[]
       name = cleaned.slice(0, dashIdx).trim()
       detail = cleaned.slice(dashIdx).replace(/^\s*[—–]\s*/, '').trim()
     } else {
-      // No clear separator — find a natural breakpoint
       const parenIdx = cleaned.indexOf('(')
       const commaIdx = cleaned.indexOf(',')
-      // Look for prepositions that start the description
       const prepMatch = cleaned.match(/\s+(?:at\s+(?:an?\s+)?|to\s+(?:get|raise|warm|wake|prep|fire|loosen)|for\s+\d|keeping\s|while\s|without\s|like\s+you)/i)
       const cutoff = [parenIdx, commaIdx, prepMatch?.index].filter((i): i is number => i != null && i > 2 && i < 80)
       if (cutoff.length > 0) {
@@ -93,7 +156,6 @@ export function parseWarmup(text: string): { intro?: string; items: WarmupItem[]
       }
     }
 
-    // Extract reps from the text
     let reps: string | undefined
     const fullText = name + ' ' + detail
     const repPatterns = [
@@ -109,13 +171,11 @@ export function parseWarmup(text: string): { intro?: string; items: WarmupItem[]
       if (m) { reps = m[0].trim(); break }
     }
 
-    // Clean up name: remove leading time/quantity, articles
     name = name
       .replace(/^\d+\s*(sec|seconds?|min|minutes?)\s+(?:of|on)\s+(?:the\s+)?/i, '')
       .replace(/^(a|an|the)\s+/i, '')
       .replace(/^\d+\s+/, '')
 
-    // Capitalize first letter of name
     if (name.length > 0) {
       name = name.charAt(0).toUpperCase() + name.slice(1)
     }
@@ -125,14 +185,17 @@ export function parseWarmup(text: string): { intro?: string; items: WarmupItem[]
     }
   }
 
-  // If parsing produced nothing, return the whole text as a single item
   if (items.length === 0) {
     return { items: [{ name: 'Warm-Up', detail: body }] }
   }
 
-  const introText = timeMatch
-    ? trimmed.slice(0, introEnd).replace(/^\d+\s*min\b/, '').replace(/^[^a-zA-Z]*/, '').replace(/[:.]\s*$/, '').trim()
-    : undefined
+  let introText: string | undefined
+  if (timeMatch) {
+    let intro = trimmed.slice(0, introEnd).replace(/^\d+\s*min\b/, '').trim()
+    if (globalRoundsCount) intro = intro.replace(/,?\s*\d+\s+rounds?\s*(?:of\s*)?/i, '').trim()
+    intro = intro.replace(/^[^a-zA-Z]*/, '').replace(/[:.]\s*$/, '').trim()
+    introText = intro || undefined
+  }
 
   return { intro: introText || undefined, items }
 }
