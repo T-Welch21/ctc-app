@@ -313,20 +313,20 @@ export default function TrainingDay() {
                 return (
                   <div
                     key={wi}
-                    className="animate-slide-up opacity-0 rounded-2xl border border-amber-500/20 bg-bg-card overflow-hidden"
+                    className="animate-slide-up opacity-0 rounded-2xl border border-border bg-bg-card overflow-hidden"
                     style={{ animationDelay: `${wi * 50}ms` }}
                   >
                     <button
                       onClick={() => setExpandedWarmup(isOpen ? null : wi)}
                       className="w-full flex items-center gap-3 p-3.5 text-left"
                     >
-                      <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-xs font-display font-bold text-amber-500 shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-bg-elevated flex items-center justify-center text-xs font-display font-bold text-text-muted shrink-0">
                         {String(wi + 1).padStart(2, '0')}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-display font-bold text-sm tracking-tight text-text">{item.name}</p>
                         {item.reps && (
-                          <p className="text-amber-500/80 text-xs mt-0.5">{item.reps}</p>
+                          <p className="text-text-muted text-xs mt-0.5">{item.reps}</p>
                         )}
                       </div>
                       {item.detail && (
