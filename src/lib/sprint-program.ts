@@ -17,6 +17,7 @@ export const sprintProgram: Program = {
       title: 'W1 · Acceleration',
       warmup: '10 min: Jog 400m (one lap) easy. Then 20 high knees (drive knees to hip height, pump your arms), 20 butt kicks (kick heels to your glutes), 10 leg swings each leg (forward and back, holding a wall). Finish with 3 easy build-ups over 40 yards — start slow, finish at about 70% speed. Walk back between each.',
       duration: '45 min',
+      sections: [{'name':'Sprints','start':0}],
       exercises: [
         { name: '10-Yard Starts', sets: 6, reps: '10 yards', rest: '1:00 walk back', cues: 'This is your explosive first step. Start in a 2-point stance: feet staggered (one forward, one back), weight on the balls of your feet, lean forward slightly. On "go," drive your back knee forward and push hard off the ground. Stay low for the first 3-4 steps — don\'t stand up right away. Think "push the ground behind you." Walk back to rest. These teach you to accelerate out of a dead stop.' },
         { name: '20-Yard Sprint', sets: 6, reps: '20 yards', rest: '1:30 walk back', cues: 'Same explosive start, but now hold the acceleration for 20 yards. Your body should gradually rise from the low start position to full upright by about 15 yards. Pump your arms hard — your arms drive your legs. Keep your hands relaxed (don\'t clench your fists) and swing them from your hip to your chin. Walk back for full recovery between each rep.' },
@@ -29,6 +30,7 @@ export const sprintProgram: Program = {
       title: 'W1 · Speed Endurance',
       warmup: '10 min: Jog 400m easy. 20 high knees, 20 butt kicks, 10 leg swings each direction. Then 3 build-ups over 60 yards — start easy, finish at 75%. Walk back between each.',
       duration: '45 min',
+      sections: [{'name':'Speed Endurance','start':0}],
       exercises: [
         { name: '100m Sprint', sets: 4, reps: '100m (one straight of a track)', rest: '2:00 walk back', cues: '100 meters is one straight section of a track — takes about 13-18 seconds depending on your speed. The first 30m is acceleration (stay low, drive hard). The middle 40m is top speed (stand tall, fast arms, knees high). The last 30m is about holding your form when your body wants to tighten up — stay relaxed, especially in your face and shoulders. Walk the curve back to start for full recovery.' },
         { name: '200m Sprint', sets: 3, reps: '200m (half a lap)', rest: '3:00 walk', cues: '200 meters is half a lap — the full curve plus one straight. This is where you learn to hold speed when your muscles start burning. Run the curve by leaning slightly inward (like a motorcycle in a turn). When you hit the straight, open up your stride and drive hard to the finish. The last 50m will feel tough — don\'t let your form fall apart. Stay tall, keep pumping your arms. Walk for 3 full minutes between reps.' },
@@ -41,6 +43,7 @@ export const sprintProgram: Program = {
       title: 'W1 · Power & Agility',
       warmup: '10 min: Jog 400m easy. Leg swings (10 each direction each leg), arm circles (10 forward, 10 backward), 10 bodyweight squats. Then 3 build-ups over 40 yards at 70%. Walk back between each.',
       duration: '45 min',
+      sections: [{'name':'Power','start':0},{'name':'Agility','start':1},{'name':'Conditioning','start':3}],
       exercises: [
         { name: 'Standing Broad Jump', sets: 5, reps: '3 jumps', rest: '1:00', cues: 'Stand with feet shoulder-width apart. Swing your arms back, bend your knees, then explode forward and upward — throw your arms forward as you jump. Land softly on both feet (bend your knees to absorb the landing). This builds the explosive power that makes you faster off the line. Try to jump a little farther each rep.' },
         { name: 'Lateral Shuffle Sprint', sets: 4, reps: '10 yards shuffle + 20 yards sprint', rest: '1:30', cues: 'Start in an athletic position (knees bent, weight on the balls of your feet). Shuffle sideways for 10 yards (don\'t cross your feet — push off with the trailing foot), then immediately turn and sprint 20 yards straight ahead. This trains your body to change direction and accelerate — exactly what you need in sports. Walk back to rest.' },
@@ -58,6 +61,7 @@ export const sprintProgram: Program = {
       title: 'W2 · Acceleration',
       warmup: '10 min: Jog 400m, 20 high knees, 20 butt kicks, 10 leg swings each direction. 3 build-ups over 40 yards at 75%. Walk back between each.',
       duration: '48 min',
+      sections: [{'name':'Sprints','start':0}],
       exercises: [
         { name: '10-Yard Starts — 3-Point Stance', sets: 6, reps: '10 yards', rest: '1:00 walk back', cues: 'This week, try a 3-point stance: one hand on the ground (same side as your back foot), other arm cocked back. Weight forward over your hand. On "go," drive out low and hard. The hand on the ground lets you lean further forward, which means more explosive acceleration. Stay low for the first 4 steps. Power comes from pushing backward against the ground, not reaching forward with your feet.' },
         { name: '30-Yard Sprint', sets: 6, reps: '30 yards', rest: '1:30 walk back', cues: '10 yards longer than last week. Focus on the transition from low acceleration (first 10 yards) to upright sprinting (last 20 yards). This transition should feel smooth, not sudden — your body gradually rises as you build speed. Pump your arms the entire time. Each rep should feel faster and smoother than the last. Full recovery between reps.' },
@@ -70,6 +74,7 @@ export const sprintProgram: Program = {
       title: 'W2 · Speed Endurance',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 60 yards at 80%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Speed Endurance','start':0}],
       exercises: [
         { name: '100m Sprint', sets: 5, reps: '100m', rest: '2:00 walk back', cues: 'One more rep than last week. By now you should notice the 3 phases more clearly: acceleration (first 30m — stay low), top speed (middle 40m — tall and fast), and speed maintenance (last 30m — hold form). The third phase is where races are won and lost. When you feel yourself tightening up, consciously relax your shoulders and hands. Speed comes from relaxation, not tension.' },
         { name: '200m Sprint', sets: 3, reps: '200m', rest: '3:00 walk', cues: 'Half a lap. Same as last week but it should feel more controlled. On the curve, shorten your stride slightly and lean in. On the straight, open up and drive. The last 50m is about mental toughness — your legs will want to slow down but you decide when to stop pushing. Hold your form all the way through the finish line.' },
@@ -82,6 +87,7 @@ export const sprintProgram: Program = {
       title: 'W2 · Power & Agility',
       warmup: '10 min: Jog 400m, leg swings, arm circles, 10 bodyweight squats. 3 build-ups over 40 yards at 75%. Walk back between each.',
       duration: '48 min',
+      sections: [{'name':'Power','start':0},{'name':'Agility','start':1},{'name':'Speed Endurance','start':3}],
       exercises: [
         { name: 'Single Leg Bound', sets: 4, reps: '5 bounds each leg', rest: '1:00', cues: 'Stand on one leg. Jump forward as far as you can, landing on the SAME foot. That\'s 1 bound — do 5 in a row on each leg. Swing your arms to help propel you forward. This builds single-leg explosive power, which is exactly what sprinting is — you\'re only ever on one foot at a time. Land softly by bending your knee on each landing.' },
         { name: 'Pro Agility (5-10-5)', sets: 5, reps: '1 full rep', rest: '2:00', cues: 'Set 3 cones in a line, 5 yards apart. Start at the middle cone in an athletic stance. Sprint 5 yards to one side, touch the ground. Sprint 10 yards to the other side, touch the ground. Sprint 5 yards back through the middle. Stay low on the turns — the lower you are, the faster you can change direction. Your first step out of each turn is the most important — explode out of it.' },
@@ -99,6 +105,7 @@ export const sprintProgram: Program = {
       title: 'W3 · Acceleration',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 40 yards at 80%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Sprints','start':0}],
       exercises: [
         { name: 'Block Start or 3-Point Start', sets: 6, reps: '10 yards', rest: '1:00 walk back', cues: 'If you have access to starting blocks, use them. If not, use the 3-point stance from last week. Focus on your first 3 steps — they should be short, powerful, and low to the ground. Your shin angle should match the angle of your body lean (about 45 degrees). Think about driving your knees forward and pushing the ground behind you. Power from the hips, not the ankles.' },
         { name: '30-Yard Sprint — Timed', sets: 5, reps: '30 yards', rest: '1:30 walk back', cues: 'Time these if you can (phone stopwatch or a friend). Knowing your time gives you a target to beat. Focus on an explosive start and smooth transition to upright sprinting. Don\'t look at your phone mid-sprint — have someone else time you or check it after. Every rep is a chance to get faster.' },
@@ -111,6 +118,7 @@ export const sprintProgram: Program = {
       title: 'W3 · Speed Endurance',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 60 yards at 80%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Speed Endurance','start':0}],
       exercises: [
         { name: '150m Sprint', sets: 4, reps: '150m', rest: '2:30 walk', cues: 'One more rep than last week. 150 meters at 90-95% effort. This distance is long enough to build endurance but short enough that you should be sprinting, not jogging. Focus on the last 50m — that\'s where you win. Stay tall, keep your arms pumping, and don\'t let your stride get sloppy. When it burns, push through it.' },
         { name: '200m Sprint', sets: 3, reps: '200m', rest: '3:00 walk', cues: 'Half a lap. Run the curve with a slight inward lean, then attack the straight. By Week 3, your body should be more efficient at this distance. Pay attention to how you feel in the last 50m compared to Week 1 — you should be holding your form better. That\'s fitness.' },
@@ -123,6 +131,7 @@ export const sprintProgram: Program = {
       title: 'W3 · Power & Agility',
       warmup: '10 min: Jog 400m, leg swings, arm circles, 10 bodyweight squats, 3 build-ups over 40 yards at 80%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Power','start':0},{'name':'Agility','start':1},{'name':'Speed Endurance','start':3}],
       exercises: [
         { name: 'Depth Jump to Sprint', sets: 4, reps: '3 reps', rest: '2:00', cues: 'Stand on a low box or step (12-18 inches). Step off (don\'t jump off) and land on both feet. The instant your feet hit the ground, explode into a 10-yard sprint. The point is to spend as little time on the ground as possible after landing — touch and go. This trains your muscles to react explosively, which is exactly what happens during the start of a sprint. Walk back to rest.' },
         { name: 'T-Drill', sets: 4, reps: '1 full rep', rest: '2:00', cues: 'Set 4 cones in a T-shape: one at the start, one 10 yards ahead, one 5 yards to the left of that, one 5 yards to the right. Sprint from start to the center cone, shuffle left to the left cone, shuffle right all the way to the right cone, shuffle back to center, then backpedal to the start. Stay low on every change of direction. This builds the multi-directional speed that makes you dangerous in any sport.' },
@@ -140,6 +149,7 @@ export const sprintProgram: Program = {
       title: 'W4 · Acceleration',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 40 yards at 85%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Sprints','start':0}],
       exercises: [
         { name: '10-Yard Starts — Reaction', sets: 6, reps: '10 yards', rest: '1:00 walk back', cues: 'This week, add a reaction element. Have a friend clap or shout "go" at a random time (don\'t count down). Start from your 3-point stance and explode when you hear the signal. In real competition, you don\'t get to go when you\'re ready — you go when the signal fires. Reacting quickly is a skill you can train. Stay loaded and ready. First step wins.' },
         { name: '40-Yard Dash — Timed', sets: 6, reps: '40 yards', rest: '2:00 walk back', cues: 'Your peak 40-yard session. 6 reps — each one is a chance to set your best time. Compare to your Week 3 times. Focus on the things that make the biggest difference: explosive first step, stay low through 10 yards, drive your arms hard, and hold your speed through the finish. Don\'t slow down before the line — sprint through it like the line is 5 yards past the actual cone.' },
@@ -152,6 +162,7 @@ export const sprintProgram: Program = {
       title: 'W4 · Speed Endurance',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 60 yards at 85%. Walk back between each.',
       duration: '55 min',
+      sections: [{'name':'Speed Endurance','start':0}],
       exercises: [
         { name: '200m Sprint', sets: 4, reps: '200m', rest: '3:00 walk', cues: 'One more rep than previous weeks. By now, 200m should feel like a distance you know well. Attack the curve, open up on the straight. Your goal this week: the last 50m should look as smooth as the first 50m. That\'s the real test — not how fast you start, but how well you finish.' },
         { name: '300m Sprint', sets: 3, reps: '300m', rest: '3:30 walk', cues: '300m at 85-90% effort. This is the toughest speed endurance distance. Break it into thirds mentally: the first 100m is building speed, the middle 100m is holding, the last 100m is competing against the voice in your head that says slow down. Don\'t listen to it. Push through with good form. Walk for 3.5 minutes between reps — you need the full recovery.' },
@@ -164,6 +175,7 @@ export const sprintProgram: Program = {
       title: 'W4 · Power & Agility',
       warmup: '10 min: Jog 400m, leg swings, arm circles, 10 bodyweight squats, 3 build-ups over 40 yards at 80%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Power','start':0},{'name':'Agility','start':1},{'name':'Speed Endurance','start':2}],
       exercises: [
         { name: 'Sprint—Backpedal—Sprint', sets: 5, reps: '10 yd sprint + 5 yd backpedal + 10 yd sprint', rest: '1:30', cues: 'Sprint 10 yards forward, immediately transition to a 5-yard backpedal (run backward — stay on the balls of your feet, keep your hips low), then immediately sprint forward 10 more yards. The transitions are the key — how fast can you stop, reverse, and accelerate again? Stay low during the direction changes. This is pure sport speed.' },
         { name: 'Single Leg Hop (Distance)', sets: 4, reps: '3 hops each leg', rest: '1:30', cues: 'Stand on one foot. Hop forward for distance — 3 big hops in a row, each one as far as you can go, landing on the same foot each time. Swing your arms hard to help. This builds single-leg power and stability. If you lose your balance on landing, that tells you where to improve. Do all 3 on one leg, then switch.' },
@@ -181,6 +193,7 @@ export const sprintProgram: Program = {
       title: 'W5 · Acceleration',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 40 yards at 85%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Sprints','start':0}],
       exercises: [
         { name: '10-Yard Starts — Competition', sets: 6, reps: '10 yards', rest: '1:00 walk back', cues: 'If you can, race someone on these. Competition brings out speed you didn\'t know you had. From your 3-point stance, explode on the signal. These 10-yard starts should feel automatic by now — low, powerful, aggressive. If you\'re training alone, imagine someone next to you and try to beat them every rep.' },
         { name: '40-Yard Dash — Best Effort', sets: 6, reps: '40 yards', rest: '2:30 walk back', cues: 'This is your peak 40-yard session. Extra rest between reps so you can give 100% on every one. At least one of these 6 reps should be your fastest 40 ever. Everything you\'ve trained — starts, acceleration, arm drive, relaxation — put it all together. Time every rep. Your body is at its peak speed this week.' },
@@ -193,6 +206,7 @@ export const sprintProgram: Program = {
       title: 'W5 · Speed Endurance',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 build-ups over 60 yards at 85%. Walk back between each.',
       duration: '55 min',
+      sections: [{'name':'Speed Endurance','start':0}],
       exercises: [
         { name: '200m Sprint — Best Effort', sets: 4, reps: '200m', rest: '3:30 walk', cues: 'Peak 200m session. Time these if possible. Attack the curve, explode down the straight. By now you should feel confident over this distance. Each rep is a chance to prove how much faster you\'ve gotten over 5 weeks. Run through the finish line, not to it.' },
         { name: '300m Sprint', sets: 3, reps: '300m', rest: '3:30 walk', cues: 'The 300 is your endurance test. 85-90% effort. The first 200m should feel controlled, the last 100m is where you compete. Against the clock, against the pain, against the voice telling you to slow down. Hold your form. Drive your arms. You\'re almost through the hardest training of the program.' },
@@ -205,6 +219,7 @@ export const sprintProgram: Program = {
       title: 'W5 · Power & Agility',
       warmup: '10 min: Jog 400m, leg swings, arm circles, 10 bodyweight squats, 3 build-ups over 40 yards at 85%. Walk back between each.',
       duration: '50 min',
+      sections: [{'name':'Power','start':0},{'name':'Agility','start':1},{'name':'Speed Endurance','start':2}],
       exercises: [
         { name: 'Depth Jump to 20-Yard Sprint', sets: 5, reps: '1 rep', rest: '2:00', cues: 'Step off a box (12-18 inches), land on both feet, and instantly explode into a 20-yard sprint. Spend as little time on the ground as possible after landing. Your muscles store energy during the landing and release it during the sprint — like a coiled spring. This is peak reactive power training. Walk back to rest fully.' },
         { name: 'Pro Agility (5-10-5) — Timed', sets: 5, reps: '1 full rep', rest: '2:00', cues: 'Time these and compare to Week 2. Same drill: start at the middle cone, sprint 5 yards, touch, sprint 10 yards, touch, sprint 5 yards back. Stay low on every cut. Plant hard and explode out. Your change-of-direction speed should be noticeably better than Week 2.' },
@@ -221,6 +236,7 @@ export const sprintProgram: Program = {
       title: 'W6 · Speed Sharpening',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 easy build-ups over 40 yards at 75%. Keep it relaxed — this week is about being sharp, not tired.',
       duration: '40 min',
+      sections: [{'name':'Sprints','start':0}],
       exercises: [
         { name: '10-Yard Starts', sets: 4, reps: '10 yards', rest: '1:00 walk back', cues: 'Just 4 reps — keep the starts feeling explosive and sharp. This is taper week: your muscles have recovered from 5 weeks of hard training and you should feel springy and powerful. Don\'t overthink it — just explode.' },
         { name: '40-Yard Dash', sets: 3, reps: '40 yards', rest: '2:30 walk back', cues: 'Only 3 reps with generous rest. These should feel fast — possibly your fastest ever. Your body has been training for 5 weeks and is at its peak right now. Enjoy how smooth and powerful your sprinting feels. If you\'re testing for a combine, tryout, or race, this is what peak performance feels like.' },
@@ -233,6 +249,7 @@ export const sprintProgram: Program = {
       title: 'W6 · Speed Endurance Tune-Up',
       warmup: '10 min: Jog 400m, high knees, butt kicks, leg swings. 3 relaxed build-ups over 60 yards at 75%.',
       duration: '38 min',
+      sections: [{'name':'Speed Endurance','start':0}],
       exercises: [
         { name: '200m Sprint', sets: 2, reps: '200m', rest: '3:00 walk', cues: 'Just 2 reps. Run with confidence — the hard training is done. These are about reminding your body what 200m speed feels like. Should feel surprisingly smooth and fast. Don\'t strain — let the speed come to you.' },
         { name: '100m Sprint', sets: 3, reps: '100m', rest: '2:00 walk back', cues: '3 reps at 95% effort. Short, sharp, fast. Your 100m should feel completely different than Week 1 — more powerful, more controlled, more confident. That\'s the result of 6 weeks of training. Enjoy it.' },
@@ -244,6 +261,7 @@ export const sprintProgram: Program = {
       title: 'W6 · Test Day',
       warmup: '12 min: Jog 400m, thorough dynamic warmup — 20 high knees, 20 butt kicks, 10 leg swings each direction, 10 bodyweight squats. 4 build-ups: 40 yards at 60%, 70%, 80%, 90%. Walk back between each. Take your time — warm up completely.',
       duration: '40 min',
+      sections: [{'name':'Testing','start':0}],
       exercises: [
         { name: '40-Yard Dash — Final Test', sets: 3, reps: '40 yards', rest: '3:00 walk back', cues: 'This is it. 3 reps, full rest, best effort. Time every single one. Your fastest rep today is your result — compare it to your Week 3 baseline. You are faster than when you started. Everything you trained — starts, acceleration, top speed, arm drive, relaxation — put it all together one last time. Run with confidence. Sprint through the finish.' },
         { name: '100m Sprint — Final Test', sets: 2, reps: '100m', rest: '3:00 walk back', cues: 'Full 100m test. 2 reps, best effort. Accelerate hard, hit top speed, and hold it through the line. Time it and own it. Compare to Week 1 if you have a time. 6 weeks of work just paid off.' },

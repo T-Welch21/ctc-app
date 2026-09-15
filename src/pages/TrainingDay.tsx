@@ -308,43 +308,95 @@ export default function TrainingDay() {
               {parsed.intro && (
                 <p className="text-text-muted text-xs italic px-1">{parsed.intro}</p>
               )}
-              {parsed.items.map((item, wi) => {
-                const isOpen = expandedWarmup === wi
-                return (
-                  <div
-                    key={wi}
-                    className="animate-slide-up opacity-0 rounded-2xl border border-border bg-bg-card overflow-hidden"
-                    style={{ animationDelay: `${wi * 50}ms` }}
-                  >
-                    <button
-                      onClick={() => setExpandedWarmup(isOpen ? null : wi)}
-                      className="w-full flex items-center gap-3 p-3.5 text-left"
-                    >
-                      <div className="w-8 h-8 rounded-xl bg-bg-elevated flex items-center justify-center text-xs font-display font-bold text-text-muted shrink-0">
-                        {String(wi + 1).padStart(2, '0')}
+              {(() => {
+                const groups: { circuit?: string; items: { item: typeof parsed.items[0]; idx: number }[] }[] = []
+                parsed.items.forEach((item, wi) => {
+                  const last = groups[groups.length - 1]
+                  if (item.circuit && last?.circuit === item.circuit) {
+                    last.items.push({ item, idx: wi })
+                  } else {
+                    groups.push({ circuit: item.circuit, items: [{ item, idx: wi }] })
+                  }
+                })
+                return groups.map((group, gi) => {
+                  if (group.circuit) {
+                    return (
+                      <div key={`circuit-${gi}`} className="rounded-2xl border border-border bg-bg-card overflow-hidden animate-slide-up opacity-0" style={{ animationDelay: `${group.items[0].idx * 50}ms` }}>
+                        <div className="px-3.5 py-2 border-b border-border/50 bg-bg-elevated/30">
+                          <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium">Circuit — {group.circuit}</p>
+                        </div>
+                        {group.items.map(({ item, idx }) => {
+                          const isOpen = expandedWarmup === idx
+                          return (
+                            <div key={idx} className={idx !== group.items[0].idx ? 'border-t border-border/30' : ''}>
+                              <button
+                                onClick={() => setExpandedWarmup(isOpen ? null : idx)}
+                                className="w-full flex items-center gap-3 p-3.5 text-left"
+                              >
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-display font-bold text-sm tracking-tight text-text">{item.name}</p>
+                                  {item.reps && (
+                                    <p className="text-text-muted text-xs mt-0.5">{item.reps}</p>
+                                  )}
+                                </div>
+                                {item.detail && (
+                                  isOpen
+                                    ? <ChevronUp size={16} className="text-text-muted shrink-0" />
+                                    : <ChevronDown size={16} className="text-text-muted shrink-0" />
+                                )}
+                              </button>
+                              {isOpen && item.detail && (
+                                <div className="px-3.5 pb-3.5 pt-0">
+                                  <div className="rounded-xl bg-bg-elevated/70 p-3">
+                                    <p className="text-text-secondary text-xs leading-relaxed">{item.detail}</p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-display font-bold text-sm tracking-tight text-text">{item.name}</p>
-                        {item.reps && (
-                          <p className="text-text-muted text-xs mt-0.5">{item.reps}</p>
+                    )
+                  }
+                  return group.items.map(({ item, idx }) => {
+                    const isOpen = expandedWarmup === idx
+                    return (
+                      <div
+                        key={idx}
+                        className="animate-slide-up opacity-0 rounded-2xl border border-border bg-bg-card overflow-hidden"
+                        style={{ animationDelay: `${idx * 50}ms` }}
+                      >
+                        <button
+                          onClick={() => setExpandedWarmup(isOpen ? null : idx)}
+                          className="w-full flex items-center gap-3 p-3.5 text-left"
+                        >
+                          <div className="w-8 h-8 rounded-xl bg-bg-elevated flex items-center justify-center text-xs font-display font-bold text-text-muted shrink-0">
+                            {String(idx + 1).padStart(2, '0')}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-display font-bold text-sm tracking-tight text-text">{item.name}</p>
+                            {item.reps && (
+                              <p className="text-text-muted text-xs mt-0.5">{item.reps}</p>
+                            )}
+                          </div>
+                          {item.detail && (
+                            isOpen
+                              ? <ChevronUp size={16} className="text-text-muted shrink-0" />
+                              : <ChevronDown size={16} className="text-text-muted shrink-0" />
+                          )}
+                        </button>
+                        {isOpen && item.detail && (
+                          <div className="px-3.5 pb-3.5 pt-0">
+                            <div className="rounded-xl bg-bg-elevated/70 p-3">
+                              <p className="text-text-secondary text-xs leading-relaxed">{item.detail}</p>
+                            </div>
+                          </div>
                         )}
                       </div>
-                      {item.detail && (
-                        isOpen
-                          ? <ChevronUp size={16} className="text-text-muted shrink-0" />
-                          : <ChevronDown size={16} className="text-text-muted shrink-0" />
-                      )}
-                    </button>
-                    {isOpen && item.detail && (
-                      <div className="px-3.5 pb-3.5 pt-0">
-                        <div className="rounded-xl bg-bg-elevated/70 p-3">
-                          <p className="text-text-secondary text-xs leading-relaxed">{item.detail}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+                    )
+                  })
+                })
+              })()}
             </div>
           )
         })()}

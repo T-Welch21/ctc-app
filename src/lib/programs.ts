@@ -12,6 +12,7 @@ export type WarmupItem = {
   name: string
   detail: string
   reps?: string
+  circuit?: string
 }
 
 export type TrainingDay = {
@@ -61,14 +62,12 @@ function parseSubExercise(raw: string, roundsCount: string): WarmupItem | null {
     reps = repMatch[0].trim()
     name = name.replace(repMatch[0], '').trim()
   }
-  if (roundsCount) {
-    reps = reps ? `${roundsCount} rounds — ${reps}` : `${roundsCount} rounds`
-  }
+  const circuit = roundsCount ? `${roundsCount} Rounds` : undefined
 
   name = name.replace(/^\d+\s+/, '').replace(/,\s*$/, '').trim()
   if (!name) return null
   name = name.charAt(0).toUpperCase() + name.slice(1)
-  return { name, detail: detail || '', reps }
+  return { name, detail: detail || '', reps, circuit }
 }
 
 export function parseWarmup(text: string): { intro?: string; items: WarmupItem[] } {
