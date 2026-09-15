@@ -8,6 +8,12 @@ export type Exercise = {
   videoUrl?: string
 }
 
+export type WarmupItem = {
+  name: string
+  detail: string
+  reps?: string
+}
+
 export type TrainingDay = {
   day: string
   title: string
@@ -15,6 +21,119 @@ export type TrainingDay = {
   exercises: Exercise[]
   cooldown?: string
   duration: string
+}
+
+export function parseWarmup(text: string): { intro?: string; items: WarmupItem[] } {
+  if (!text) return { items: [] }
+
+  const trimmed = text.trim()
+
+  // Extract intro timing (e.g. "5 min:", "10 min to get loose:")
+  let introEnd = 0
+  const timeMatch = trimmed.match(/^\d+\s*min\b[^.]*?[:.]\s*/)
+  if (timeMatch) {
+    introEnd = timeMatch[0].length
+  }
+
+  const body = trimmed.slice(introEnd).trim()
+  if (!body) return { intro: trimmed, items: [] }
+
+  // Split body into exercise segments using sentence boundaries + exercise-start patterns
+  const items: WarmupItem[] = []
+  let remaining = body
+
+  // Regex to match exercise boundaries:
+  // 1. "Then exercise" / "Next, exercise" / "Finish with exercise"
+  // 2. "ExerciseName:" or "ExerciseName —"
+  // We split before these patterns when they appear after a period+space
+  const exerciseBoundary = /\.\s+(?=(?:Then\s|Next,?\s|Finish with\s|[A-Z][a-zA-Z\s&'/-]*?(?::\s|—|–)))/g
+
+  const segments = remaining.split(exerciseBoundary).map(s => s.trim()).filter(Boolean)
+
+  for (const seg of segments) {
+    // Strip connector words
+    let cleaned = seg
+      .replace(/^Then\s+(?:do\s+)?/i, '')
+      .replace(/^Next,?\s+/i, '')
+      .replace(/^Finish\s+with\s+/i, '')
+      .replace(/^Start\s+with\s+/i, '')
+      .replace(/\.$/, '')
+
+    let name = ''
+    let detail = ''
+
+    // Try "Name: description"
+    const colonIdx = cleaned.indexOf(':')
+    // Try "Name — description"
+    const dashIdx = cleaned.search(/\s[—–]\s/)
+
+    if (colonIdx > 0 && colonIdx < 80 && (dashIdx < 0 || colonIdx < dashIdx)) {
+      name = cleaned.slice(0, colonIdx).trim()
+      detail = cleaned.slice(colonIdx + 1).trim()
+    } else if (dashIdx > 0 && dashIdx < 80) {
+      name = cleaned.slice(0, dashIdx).trim()
+      detail = cleaned.slice(dashIdx).replace(/^\s*[—–]\s*/, '').trim()
+    } else {
+      // No clear separator — find a natural breakpoint
+      const parenIdx = cleaned.indexOf('(')
+      const commaIdx = cleaned.indexOf(',')
+      // Look for prepositions that start the description
+      const prepMatch = cleaned.match(/\s+(?:at\s+(?:an?\s+)?|to\s+(?:get|raise|warm|wake|prep|fire|loosen)|for\s+\d|keeping\s|while\s|without\s|like\s+you)/i)
+      const cutoff = [parenIdx, commaIdx, prepMatch?.index].filter((i): i is number => i != null && i > 2 && i < 80)
+      if (cutoff.length > 0) {
+        const cut = Math.min(...cutoff)
+        name = cleaned.slice(0, cut).trim()
+        detail = cleaned.slice(cut).replace(/^\s*[,(]\s*/, '').replace(/\)$/, '').trim()
+      } else {
+        const words = cleaned.split(/\s+/)
+        const nameLen = Math.min(5, words.length)
+        name = words.slice(0, nameLen).join(' ')
+        detail = words.slice(nameLen).join(' ')
+      }
+    }
+
+    // Extract reps from the text
+    let reps: string | undefined
+    const fullText = name + ' ' + detail
+    const repPatterns = [
+      /(\d+)\s*(?:×|x)\s*(\d+\s*(?:yards?|yds?|meters?|m|seconds?|sec|s))/i,
+      /(\d+\s*sets?\s*(?:of\s*)?\d+\s*(?:yards?|reps?|sec|each)?)/i,
+      /(\d+)\s*(?:reps?|each\s+(?:leg|arm|side|direction))/i,
+      /(\d+\s*(?:sec|seconds?|min|minutes?))\s+(?:each|per|hold)?/i,
+      /(\d+)\s+(?:forward|backward|each|per|slow)/i,
+      /(\d+\s*(?:yards?|yds?|meters?|m)\b)/i,
+    ]
+    for (const pat of repPatterns) {
+      const m = fullText.match(pat)
+      if (m) { reps = m[0].trim(); break }
+    }
+
+    // Clean up name: remove leading time/quantity, articles
+    name = name
+      .replace(/^\d+\s*(sec|seconds?|min|minutes?)\s+(?:of|on)\s+(?:the\s+)?/i, '')
+      .replace(/^(a|an|the)\s+/i, '')
+      .replace(/^\d+\s+/, '')
+
+    // Capitalize first letter of name
+    if (name.length > 0) {
+      name = name.charAt(0).toUpperCase() + name.slice(1)
+    }
+
+    if (name) {
+      items.push({ name, detail: detail || cleaned, reps })
+    }
+  }
+
+  // If parsing produced nothing, return the whole text as a single item
+  if (items.length === 0) {
+    return { items: [{ name: 'Warm-Up', detail: body }] }
+  }
+
+  const introText = timeMatch
+    ? trimmed.slice(0, introEnd).replace(/^\d+\s*min\b/, '').replace(/^[^a-zA-Z]*/, '').replace(/[:.]\s*$/, '').trim()
+    : undefined
+
+  return { intro: introText || undefined, items }
 }
 
 export type Program = {

@@ -3,7 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Clock, Check, Play, ChevronDown, ChevronUp, Trophy, Pause, RotateCcw, Award, Timer, Zap, Video, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
-import { getProgramById, getProgram } from '../lib/programs'
+import { getProgramById, getProgram, parseWarmup } from '../lib/programs'
 import { saveCompletedSession, saveExerciseNote, getLastNoteForExercise, getExerciseNotes, savePR, getPRs, getSelectedProgramId } from '../lib/storage'
 import { getVideoUrl } from '../lib/video-map'
 
@@ -47,6 +47,7 @@ export default function TrainingDay() {
     } catch { return {} }
   })
   const [expandedExercise, setExpandedExercise] = useState<number | null>(0)
+  const [expandedWarmup, setExpandedWarmup] = useState<number | null>(null)
   const [sessionStarted, setSessionStarted] = useState(() => {
     if (!storageKey) return false
     try { return sessionStorage.getItem(storageKey) !== null } catch { return false }
@@ -295,12 +296,58 @@ export default function TrainingDay() {
 
       <div className="max-w-lg mx-auto px-5 pt-5">
         {/* Warmup */}
-        {day.warmup && (
-          <div className="animate-fade-in rounded-2xl bg-bg-card border border-border p-4 mb-5">
-            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium mb-2">Warm-Up</p>
-            <p className="text-sm text-text-secondary leading-relaxed">{day.warmup}</p>
-          </div>
-        )}
+        {day.warmup && (() => {
+          const parsed = parseWarmup(day.warmup)
+          return (
+            <div className="mb-5 space-y-2">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="h-px flex-1 bg-border/50" />
+                <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium">Warm-Up</p>
+                <div className="h-px flex-1 bg-border/50" />
+              </div>
+              {parsed.intro && (
+                <p className="text-text-muted text-xs italic px-1">{parsed.intro}</p>
+              )}
+              {parsed.items.map((item, wi) => {
+                const isOpen = expandedWarmup === wi
+                return (
+                  <div
+                    key={wi}
+                    className="animate-slide-up opacity-0 rounded-2xl border border-amber-500/20 bg-bg-card overflow-hidden"
+                    style={{ animationDelay: `${wi * 50}ms` }}
+                  >
+                    <button
+                      onClick={() => setExpandedWarmup(isOpen ? null : wi)}
+                      className="w-full flex items-center gap-3 p-3.5 text-left"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-xs font-display font-bold text-amber-500 shrink-0">
+                        {String(wi + 1).padStart(2, '0')}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-display font-bold text-sm tracking-tight text-text">{item.name}</p>
+                        {item.reps && (
+                          <p className="text-amber-500/80 text-xs mt-0.5">{item.reps}</p>
+                        )}
+                      </div>
+                      {item.detail && (
+                        isOpen
+                          ? <ChevronUp size={16} className="text-text-muted shrink-0" />
+                          : <ChevronDown size={16} className="text-text-muted shrink-0" />
+                      )}
+                    </button>
+                    {isOpen && item.detail && (
+                      <div className="px-3.5 pb-3.5 pt-0">
+                        <div className="rounded-xl bg-bg-elevated/70 p-3">
+                          <p className="text-text-secondary text-xs leading-relaxed">{item.detail}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })()}
 
         {/* Start button */}
         {!sessionStarted && (
