@@ -18,6 +18,7 @@ export type TrainingDay = {
   day: string
   title: string
   warmup?: string
+  sections?: { name: string; start: number }[]
   exercises: Exercise[]
   cooldown?: string
   duration: string
@@ -168,6 +169,7 @@ export const functionalFitnessProgram: Program = {
       title: 'Strength',
       warmup: '10 min: Start with 2 minutes on the stationary bike at an easy pace to get your blood flowing and your joints warm. Then monster walks — put a resistance band around your ankles, get into a quarter-squat position, and take small steps sideways, keeping tension on the band the whole time (this wakes up your hips and glutes). Next, single-arm dumbbell external rotations — hold a light dumbbell, elbow bent at 90 degrees and pinned to your side, and rotate your forearm outward away from your body (this warms up your shoulder joint for pressing and pulling). Then banded hip hinges — loop a band around a rack at hip height, step back until there\'s tension, then hinge at your hips (push your butt back, soft knees, flat back) until you feel a stretch in your hamstrings, then stand tall and squeeze your glutes. Finish with bodyweight squats — feet shoulder-width apart, sit your hips back and down like you\'re sitting in a chair, chest up, then stand back up.',
       duration: '60 min',
+      sections: [{ name: 'Strength', start: 0 }],
       exercises: [
         {
           name: 'Barbell Back Squat',
@@ -233,6 +235,7 @@ export const functionalFitnessProgram: Program = {
       title: 'Volume & Bodybuilding',
       warmup: '10 min: Start with 2 minutes on the ski erg (the standing cable machine that mimics a skiing motion) at an easy pace to raise your heart rate and warm up your upper body. Then banded pull-aparts — hold a resistance band in front of you with both hands, arms straight, and pull it apart until it touches your chest, squeezing your shoulder blades together, then return with control (this wakes up your upper back and shoulders for pressing and pulling). Next, single-arm dumbbell overhead carry — hold a light dumbbell straight overhead with one arm locked out, and walk a short distance while keeping your core tight and the weight steady (this builds shoulder stability). Finish with lunge jumps — start in a lunge position, then jump up and switch legs in the air, landing softly in a lunge on the other side (this fires up your legs and gets your heart rate up).',
       duration: '55 min',
+      sections: [{ name: 'Accessories', start: 0 }, { name: 'Core', start: 8 }],
       exercises: [
         {
           name: '1a. Incline Dumbbell Bench Press',
@@ -312,6 +315,7 @@ export const functionalFitnessProgram: Program = {
       title: 'Power & Speed',
       warmup: '10 min: Line hops — hop forward and back over a line on the ground with both feet together, quick and light. Lateral hops — same idea but hopping side to side over the line. High knees — jog in place (or moving forward) driving your knees up toward your chest as fast as you can, pumping your arms. A-skips — a skipping drill where you drive one knee up sharply while hopping on the opposite foot, then switch — it teaches your body the knee-drive pattern used in sprinting. Finish with a few build-up sprints — jog into a gradual sprint, building from an easy jog up to about 70% speed over 20-30 yards, then walk back and repeat. This wakes up your whole nervous system for the explosive work ahead.',
       duration: '55 min',
+      sections: [{ name: 'Speed', start: 0 }, { name: 'Accessories', start: 3 }, { name: 'Conditioning', start: 9 }],
       exercises: [
         {
           name: 'Double Leg Line Hops',

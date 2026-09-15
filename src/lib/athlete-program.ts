@@ -15,6 +15,7 @@ export const athleticProgram = {
       title: 'W1 · Lower Body',
       warmup: '10 min: Skip for height — like a playground skip, but drive one knee up toward your chest and pop off the ground with the other foot. 2 sets of 20 yards, walking back between. Then bound for distance — take big, exaggerated running strides, pushing off hard with each leg to cover as much ground as possible. 2 sets of 20 yards. Finish with 5 broad jumps: feet shoulder-width apart, swing your arms back, bend your knees, then jump forward as far as you can and land softly on both feet. This wakes up your legs and hips before you lift.',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2},{'name':'Conditioning','start':7}],
       exercises: [
         { name: 'Power Clean', sets: 4, reps: '5', rest: '2:00', cues: 'This is an Olympic-style lift — Coach will walk you through it before you add real weight, so don\'t worry if it feels foreign at first. Start with the bar over your shoelaces, feet hip-width, chest up, back flat. Pull the bar up close to your body by explosively straightening your hips, knees, and ankles all at once — think of it like a powerful vertical jump with the bar in your hands. As the bar reaches your upper chest, quickly drop underneath it and catch it resting on your shoulders and collarbones with your elbows pointed forward, landing in a shallow squat to absorb the impact, then stand up tall. You\'ll feel this in your hips, glutes, and shoulders.' },
         { name: 'Barbell Front Squat', sets: 4, reps: '12 / 10 / 8 / 6', rest: '2:00', cues: 'The bar rests across the front of your shoulders, held in place by your fingertips with your elbows pointed up and forward — this keeps your chest tall the whole rep. Stand with feet shoulder-width apart, toes slightly turned out. Bend your knees and hips together to lower down like you\'re sitting into a chair behind you, keeping your chest proud the entire way, until your hip crease dips below your knee. Drive back up through your heels to standing. You\'ll feel this mainly in your quads (front of thighs) and your core, which has to work hard to keep you upright. Add a little weight each set as the reps go down.' },
@@ -32,6 +33,7 @@ export const athleticProgram = {
       title: 'W1 · Upper Body',
       warmup: '10 min: Row or ski erg for 3 minutes at an easy pace to get your blood flowing. Then 2 rounds of: ring rows ×15 (hang under a suspended set of rings or a bar, pull your chest up to your hands, keeping your body straight), clapping push-ups ×10 (a regular push-up, but push off the ground hard enough to clap your hands together before landing — go to your knees if a full push-up is too much), and banded "90 & shoot" ×12 (hold a light band with elbows bent at 90 degrees at your sides, then press your arms straight out in front of you against the band, like shooting a basketball, and pull back).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Dumbbell Hang Snatch', sets: 4, reps: '3 each', rest: '2:00', cues: 'This move takes a single dumbbell from your thigh straight overhead in one explosive motion. Hold the dumbbell with one hand, hinge your hips back slightly (the "hang" position), then explosively extend your hips and pull the weight up close to your body, punching it straight overhead as you catch it with a locked-out arm, landing in a slight squat. It\'s a full-body power move — your hips do most of the work, not your arm. Keep it light until the motion feels smooth, then Coach will add weight.' },
         { name: '1a. Bench Press', sets: 4, reps: '12 / 10 / 8 / 6', rest: '1:00', cues: 'Lie on a bench with your feet flat on the floor and your shoulder blades pulled together and down. Grip the bar slightly wider than shoulder-width. Lower it under control to touch your mid-chest, keeping your elbows at roughly a 45-degree angle to your body rather than flared straight out, then press it back up to full arm extension. You\'ll feel this in your chest, shoulders, and triceps. Add a little weight each set as the reps go down.' },
@@ -52,6 +54,7 @@ export const athleticProgram = {
       title: 'W1 · Core & Arms',
       warmup: '5 min: Jog at an easy, conversational pace to raise your heart rate and warm up your muscles before the core and arm work ahead.',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':10}],
       exercises: [
         { name: 'EZ Bar Skull Crusher', sets: 4, reps: '15 / 12 / 10 / 10', rest: '1:30', cues: 'Lie on a bench holding an EZ bar (the zig-zag shaped bar) above your chest with your arms straight. Keeping your upper arms still and pointed at the ceiling, bend only your elbows to lower the bar toward your forehead, then straighten your arms back up. This isolates your triceps (back of your upper arm) hard — start light and add weight each set as reps drop.' },
         { name: '1a. EZ Bar Spider Curl', sets: 4, reps: '10', rest: '0:30', cues: 'Lean your chest against an incline bench so your arms hang straight down in front of you, holding an EZ bar. Curl the bar up toward your shoulders, squeezing your biceps hard at the top, then lower with control. Bracing your chest against the bench removes any swinging, so your biceps do all the work.' },
@@ -73,6 +76,7 @@ export const athleticProgram = {
       title: 'W1 · Lower Body II',
       warmup: '10 min: Lateral shuffle — stand in an athletic stance (knees bent, weight on the balls of your feet) and shuffle sideways 10 yards without crossing your feet, then shuffle back. 2 sets each direction, sticking and holding each direction change for a second. Then the 5-10-5 shuttle run 3 times: set 3 cones 5 yards apart, sprint 5 yards one way, touch the ground, sprint 10 yards the other way, touch the ground, sprint 5 yards back through the middle.',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Hang Power Clean', sets: 5, reps: '3', rest: '2:00', cues: 'Same lift as the power clean, but you start with the bar already resting at your thighs instead of the floor (that\'s the "hang" position — hinge your hips back slightly to get there). From the hang, explosively drive your hips forward and shrug the bar up, then quickly drop underneath it to catch it across your shoulders in a front rack with your elbows up, landing in a quarter squat. Starting from the hang trains raw hip power — keep it light until the pattern feels natural.' },
         { name: '1a. Barbell Box Squat', sets: 4, reps: '8 / 6 / 4 / 4', rest: '1:00', cues: 'Set a box or bench behind you at a height just below where your hips would sit in a normal squat. Squat down with the same form as a regular squat — chest up, knees tracking over your toes — but actually sit your hips back onto the box, pausing there for a moment without fully relaxing, then drive back up explosively through your heels. Sitting on the box teaches you to squat with your hips rather than just your knees, and builds explosive power off the bottom.' },
@@ -91,6 +95,7 @@ export const athleticProgram = {
       title: 'W1 · Upper Body II',
       warmup: '10 min, 2 rounds: banded front raise into pull apart ×10 (hold a light band with both hands, raise it straight out in front to shoulder height, then pull it apart by driving your arms out to the sides — that\'s 1 rep), single arm dumbbell overhead carry 20 yards (hold a dumbbell locked out straight overhead in one hand and walk 20 yards without letting your arm drop, keeping your core tight), scalp push-ups ×10 (regular push-ups, hands slightly wider than shoulders), scalp pull-ups ×10 (regular pull-ups or an assisted/banded version).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Landmine Split Jerk', sets: 4, reps: '3 each', rest: '2:00', cues: 'Hold the loaded end of a landmine barbell (a bar anchored in a landmine attachment, or wedged into a corner) at your shoulder with one hand. Dip your knees slightly, then explosively drive the bar overhead while stepping one foot forward and the other back into a split stance, catching it locked out overhead. Step your feet back together to finish. This builds explosive, controlled overhead pressing power.' },
         { name: '1a. Seated Shoulder Press', sets: 4, reps: '10', rest: '1:00', cues: 'Sit holding a barbell or use the Smith machine at shoulder height. Press straight up overhead until your arms are fully locked out, then lower back down under control to shoulder height. Keep your core braced so your lower back doesn\'t arch. You\'ll feel this in your shoulders and triceps.' },
@@ -117,6 +122,7 @@ export const athleticProgram = {
       title: 'W2 · Lower Body',
       warmup: '10 min: Kneeling starts, 2 sets each leg over 10 yards (kneel on one knee, opposite foot planted in front, explode up and sprint forward 10 yards — this teaches an explosive first step). Then med ball throws: 5 thrown backward overhead (hold the ball with both hands, squat down, then throw it up and behind you explosively), 5 thrown forward from your chest (like a explosive chest pass), and 5 thrown straight up in the air from a squat (drop into a quarter squat and explode the ball straight overhead).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':9}],
       exercises: [
         { name: 'Power Clean', sets: 5, reps: '3', rest: '2:00', cues: 'Heavier than last week — same technique: bar over your shoelaces, chest up, back flat. Pull the bar up close to your body with an explosive triple extension of your hips, knees, and ankles, then quickly drop underneath and catch it on your shoulders with your elbows pointed forward, landing in a shallow squat. Stay aggressive with your hip drive and keep your elbows fast getting under the bar.' },
         { name: '1a. Barbell Back Squat — Paused', sets: 4, reps: '5', rest: '1:00', cues: 'The bar rests across your upper back, held with your hands slightly wider than shoulder-width. Squat down like sitting into a low chair, chest up, until your hip crease drops below your knee. This time, pause for a full 3 seconds at the bottom, staying tight and controlled, before driving back up through your heels. The pause removes any bounce and forces your legs to do all the work.' },
@@ -136,6 +142,7 @@ export const athleticProgram = {
       title: 'W2 · Upper Body',
       warmup: '10 min, 2 rounds: ski erg 15/12 calories (an easy-moderate pace on the ski erg machine), banded pass-through + around the world (hold a light band wide with both hands, pass it overhead and behind you without bending your elbows, then reverse — 10 pass-throughs, then 5 slow circles each direction with the band held overhead), banded pull-apart ×10 (hold a band at chest height and pull it apart, squeezing your shoulder blades together), scalp pull-ups ×10 (bodyweight or assisted pull-ups).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Dumbbell Hang Snatch', sets: 4, reps: '3 each', rest: '2:00', cues: 'Heavier than last week. From the hang position at your thigh, explosively extend your hips and pull the dumbbell up close to your body, punching it straight overhead in one motion and catching it with a locked-out arm, landing in a slight squat. Keep the hip drive explosive even as the weight goes up.' },
         { name: '1a. Decline Bench Press', sets: 4, reps: '12 / 10 / 8 / 6', rest: '1:00', cues: 'Bench angled so your head is lower than your hips. Lower the bar under control to your lower chest, then drive it back up to full lockout. Add weight each set as reps go down.' },
@@ -156,6 +163,7 @@ export const athleticProgram = {
       title: 'W2 · Core & Arms',
       warmup: '5 min: Jog at an easy, conversational pace to get warm before today\'s arm and core work.',
       duration: '55 min',
+      sections: [{'name':'Accessories','start':0},{'name':'Conditioning','start':13}],
       exercises: [
         { name: '1a. Single Arm Cable Curl', sets: 4, reps: '15 / 12 / 10 / 10', rest: '0:30', cues: 'Stand facing away from a low cable with a handle in one hand, elbow pinned to your side. Curl the handle up toward your shoulder, squeezing your bicep at the top, then lower with control through the full range of motion. Finish all reps on one arm, then switch.' },
         { name: '1b. Single Arm Cable Tricep Extension', sets: 4, reps: '15 / 12 / 10 / 10', rest: '1:00', cues: 'Stand facing a cable with a handle in one hand, upper arm pinned to your side. Straighten your elbow against the resistance to full lockout, squeezing your tricep, then bend back with control. Finish one arm, then switch.' },
@@ -179,6 +187,7 @@ export const athleticProgram = {
       title: 'W2 · Lower Body II',
       warmup: '10 min: Ice skaters, 3 sets of 15 seconds (jump laterally from one foot to the other like a speed skater, swinging your arms across your body for balance and power, landing soft each time). Then lateral kneeling starts, 2 sets each leg over 10 yards (kneel sideways on one knee, explode up and sprint 10 yards to that side).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Hang Power Clean', sets: 5, reps: '3', rest: '2:00', cues: 'From the hang position at your thighs, explode your hips forward and pull the bar up with fast elbows, dropping underneath to catch it across your shoulders in a quarter squat, then stand tall. Focus on staying aggressive and fast under the bar.' },
         { name: '1a. Barbell Back Squat — from Pins', sets: 4, reps: '8 / 6 / 4 / 4', rest: '1:00', cues: 'Set safety pins in a rack at parallel squat depth. Start each rep from a dead stop with the bar resting on the pins instead of lowering into it — this removes any stretch-and-bounce and forces raw strength off the bottom. Brace hard, then drive the bar straight up to standing.' },
@@ -197,6 +206,7 @@ export const athleticProgram = {
       title: 'W2 · Upper Body II',
       warmup: '10 min, 2 rounds: row 15/12 cal on the rowing machine at an easy-moderate pace, med ball ground passes ×15 fast (hold the ball overhead and slam it into the ground as quickly and explosively as you can, catching the bounce or picking it up each time), TRX Y-T-W ×5 each (holding suspension straps, lean back with straight arms and raise them overhead to form a Y, then out to the sides to form a T, then bend elbows to form a W — 5 reps of each letter).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Landmine Split Jerk', sets: 4, reps: '4 each', rest: '2:00', cues: 'One more rep per side than last week. Hold the loaded landmine bar at your shoulder, dip your knees, then explosively drive it overhead while stepping into a split stance, catching it locked out. Step your feet back together and reset for the next rep.' },
         { name: '1a. Seated Dumbbell Arnold Press', sets: 4, reps: '12 / 10 / 8 / 8', rest: '1:00', cues: 'Sit holding dumbbells at shoulder height with your palms facing you. As you press them overhead, rotate your wrists so your palms end up facing forward at the top, reversing the rotation as you lower back down. This works your shoulders through a fuller range of motion than a standard press.' },
@@ -224,6 +234,7 @@ export const athleticProgram = {
       title: 'W3 · Lower Body',
       warmup: '10 min: Kneeling starts, 2 sets each leg over 10 yards (kneel on one knee, opposite foot planted in front, explode up and sprint forward 10 yards).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Power Clean', sets: 5, reps: '5 / 3 / 3 / 2 / 2', rest: '2:00', cues: 'You\'re building up to heavier doubles today. Same technique as always: pull the bar close to your body with an explosive triple extension of hips, knees, and ankles, then drop underneath to catch it on your shoulders in a quarter squat. As the weight climbs each set, keep your technique sharp — don\'t let the heavier bar rush your form.' },
         { name: '1a. Barbell Front Squat', sets: 4, reps: '8 / 6 / 4 / 4', rest: '1:00', cues: 'Bar across the front of your shoulders, elbows high, chest tall. Squat down until your hip crease drops below your knee, then drive back up through your heels. Add weight each set — the last two sets should feel genuinely heavy while your form stays solid.' },
@@ -242,6 +253,7 @@ export const athleticProgram = {
       title: 'W3 · Upper Body',
       warmup: '10 min, 2 rounds: row 15/12 cal, kettlebell bottoms-up carry 20 yards each arm (hold a light kettlebell upside down by the handle, bell facing up, and walk 20 yards without letting it tip — this forces your grip and shoulder to stabilize hard), scalp pull-up & push-up ×7 each, banded pass-through + around the world 10+5 each.',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Dumbbell Hang Snatch', sets: 4, reps: '3 each', rest: '2:00', cues: 'Heavier than previous weeks. From the hang, explosively extend your hips and pull the dumbbell up close to your body, punching it overhead to a locked-out arm as you catch it in a slight squat. Keep your technique clean even as the weight increases.' },
         { name: '1a. Bench Press', sets: 4, reps: '10 / 8 / 6 / 4', rest: '1:00', cues: 'Heavier progression than Week 1. Lower the bar under control to your mid-chest, elbows at about 45 degrees, then press it back up to full extension. Push for a new heavy weight on the last two sets while keeping your shoulder blades pinned together.' },
@@ -262,6 +274,7 @@ export const athleticProgram = {
       title: 'W3 · Core & Arms',
       warmup: '7 min: Jog at an easy, conversational pace to warm up your body before today\'s arm and core work.',
       duration: '55 min',
+      sections: [{'name':'Accessories','start':0},{'name':'Conditioning','start':10}],
       exercises: [
         { name: '1a. Cable Skull Crusher', sets: 4, reps: '20 / 15 / 10 / 10', rest: '0:30', cues: 'Lie on a bench holding a cable attachment above your chest, arms straight. Keeping your upper arms still, bend only your elbows to lower the attachment toward your forehead, then straighten back up, squeezing your triceps. Start with high reps and lighter weight, then build up.' },
         { name: '1b. EZ Bar Reverse Grip Curl', sets: 4, reps: '10', rest: '1:00', cues: 'Hold the EZ bar with an underhand grip on the angled part of the bar (a comfortable, wrist-friendly underhand position). Curl it up toward your shoulders with strict form, no swinging, targeting the long head of your bicep (the part that gives it its peak).' },
@@ -283,6 +296,7 @@ export const athleticProgram = {
       title: 'W3 · Lower Body II',
       warmup: '10 min: Lateral shuffle 2 sets of 6 (10 yards each direction, sticking and holding each direction change). Then the 5-10-5 shuttle run ×3 (sprint 5 yards, touch, sprint 10 yards the other way, touch, sprint 5 yards back through the middle).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Hang Power Clean', sets: 5, reps: '5 / 3 / 3 / 2 / 2', rest: '2:00', cues: 'Building to heavier doubles from the hang position. Hinge your hips back slightly, then explosively drive your hips forward, pull the bar up close to your body, and quickly drop underneath to catch it across your shoulders, landing in a quarter squat. Stay aggressive as the weight climbs.' },
         { name: '1a. Barbell Front Squat — Paused', sets: 4, reps: '5', rest: '1:00', cues: 'Bar on your shoulders, elbows high, chest tall. Squat down to full depth, pause for 3 full seconds staying tight, then drive back up hard through your heels. No bounce — pure control and strength.' },
@@ -301,6 +315,7 @@ export const athleticProgram = {
       title: 'W3 · Upper Body II',
       warmup: '10 min, 2 rounds: jump rope ×60 skips, dumbbell external rotation off knee ×10 each (kneel with your elbow resting on your knee, rotate a light dumbbell outward slowly), inverted row ×12 (lie under a bar set at waist height, pull your chest up to the bar keeping your body straight), single arm sliding push-up ×5 each (in a push-up position with one hand on a slider or towel, lower down and let that hand slide out to the side as you press up).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Landmine Split Jerk', sets: 4, reps: '5 each', rest: '2:00', cues: 'More reps per side than previous weeks. Dip your knees, then explosively drive the landmine bar overhead while stepping into a split stance, catching it locked out. Maintain your power and technique even as fatigue builds across the set.' },
         { name: '1a. Barbell Shoulder Press', sets: 4, reps: '10 / 8 / 6 / 4', rest: '1:00', cues: 'Standing, press the bar from shoulder height straight overhead to full lockout without using your legs to help (a strict press), then lower back down under control. Push for heavy weight on the last set while keeping your core tight so your back doesn\'t arch.' },
@@ -328,6 +343,7 @@ export const athleticProgram = {
       title: 'W4 · Lower Body',
       warmup: '10 min: Kneeling starts, 2 sets each leg over 10 yards. Then med ball throws: 5 backward overhead, 5 forward from your chest, 5 vertical from a squat (same setup as Week 2, Day 6).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Power Clean', sets: 5, reps: '3 / 3 / 2 / 2 / 2', rest: '2:00', cues: 'Heavier doubles than previous weeks. Same technique: explosive triple extension of hips, knees, and ankles, fast elbows getting under the bar, catch on your shoulders in a quarter squat. Stay technically sharp under the heavier load — don\'t let speed replace form.' },
         { name: '1a. Banded Barbell Back Squat', sets: 4, reps: '8 / 6 / 4 / 4', rest: '1:00', cues: 'Anchor a resistance band to the floor and loop it over the bar on your back — this adds extra resistance the higher you stand, so the squat gets harder near the top instead of just at the bottom. Squat to full depth, then explode up, driving extra hard through the lockout to fight the band.' },
@@ -346,6 +362,7 @@ export const athleticProgram = {
       title: 'W4 · Upper Body',
       warmup: '10 min: Ski erg 3 min at an easy pace. Then 2 rounds of: ring rows ×15, clapping push-ups ×10 (go to your knees if needed), banded 90 & shoot ×12 (same as Week 1, Day 2).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Dumbbell Hang Snatch', sets: 4, reps: '3 each', rest: '2:00', cues: 'From the hang position, explosively extend your hips and pull the dumbbell up, punching it overhead to a locked-out arm. Maintain the heavy loads you\'ve built up over the last few weeks while keeping your technique clean.' },
         { name: '1a. Bench Press — Paused', sets: 4, reps: '5', rest: '1:00', cues: 'Lower the bar to your chest and pause for a full 3 seconds, staying tight, before pressing up explosively from that dead stop. No bounce off the chest — this builds raw pressing strength.' },
@@ -366,6 +383,7 @@ export const athleticProgram = {
       title: 'W4 · Core & Arms',
       warmup: '10 min: Jog at an easy, conversational pace to warm up before today\'s arm and core work.',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':11}],
       exercises: [
         { name: 'EZ Bar Skull Crusher', sets: 4, reps: '15 / 12 / 10 / 10', rest: '1:30', cues: 'Lying on a bench holding the EZ bar above your chest with straight arms, keep your upper arms still and lower the bar toward your forehead by bending only your elbows, then straighten back up. Add weight each set as reps go down.' },
         { name: '1a. EZ Bar Spider Curl', sets: 4, reps: '10', rest: '0:30', cues: 'Chest braced against an incline bench so your arms hang free. Curl the bar up toward your shoulders with strict form, no swinging, squeezing your biceps hard at the top.' },
@@ -387,6 +405,7 @@ export const athleticProgram = {
       title: 'W4 · Lower Body II',
       warmup: '10 min: Ice skaters, 3 sets of 15 seconds (jump laterally from foot to foot, swinging your arms for balance and power). Then lateral kneeling starts, 2 sets each leg over 10 yards.',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Hang Power Clean', sets: 5, reps: '3 / 3 / 2 / 2 / 2', rest: '2:00', cues: 'Heavier doubles than previous weeks, starting from the hang at your thighs. Explosively drive your hips forward, pull the bar up with fast elbows, and catch it across your shoulders in a quarter squat. Stay fast and aggressive as the weight climbs.' },
         { name: '1a. Banded Barbell Front Squat', sets: 4, reps: '8 / 6 / 4 / 4', rest: '1:00', cues: 'Bands add extra resistance the higher you stand, so squat to full depth with elbows high and chest up, then explode out of the hole and drive extra hard through the top of the rep to fight the band tension.' },
@@ -405,6 +424,7 @@ export const athleticProgram = {
       title: 'W4 · Upper Body II',
       warmup: '10 min, 2 rounds: banded front raise into pull apart ×10, single arm dumbbell overhead carry 20 yards, scalp push-ups ×10, scalp pull-ups ×10 (same as Week 1, Day 5).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Landmine Split Jerk', sets: 4, reps: '5 each', rest: '2:00', cues: 'Same rep volume as last week — push for heavier weight while keeping the dip-and-drive technique clean: dip your knees, explosively drive the bar overhead while stepping into a split stance, catch it locked out.' },
         { name: '1a. Seated Dumbbell Arnold Press', sets: 4, reps: '12 / 10 / 8 / 8', rest: '1:00', cues: 'Rotate your palms from facing you to facing forward as you press the dumbbells overhead, reaching full lockout at the top.' },
@@ -431,6 +451,7 @@ export const athleticProgram = {
       title: 'W5 · Lower Body',
       warmup: '10 min: Broad jump to single leg landing, 2 sets of 4 each (jump forward with both feet like a regular broad jump, but land on just one foot each time, absorbing the impact with a bent knee). Then single leg cycling bounds, 2 sets of 20 yards (bound forward off one leg at a time, driving your knee high like a cycling motion, alternating legs as you cover ground). Finish with get-offs, 2 sets of 20 yards (an explosive first-step drill — start in an athletic stance and explode into a sprint for 20 yards).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
         { name: 'Barbell Complex — Power Clean + Split Jerk', sets: 5, reps: '2+1', rest: '2:00', cues: 'A "complex" means two lifts back to back without setting the bar down. First, do 2 power cleans (explosive hip drive, catch the bar on your shoulders, stand up, then set up for the next rep). Immediately after, do 1 split jerk from that position: dip your knees slightly, then drive the bar overhead while stepping one foot forward and one back, catching it locked out overhead, and stepping your feet back together to finish. Maintain speed and clean technique on all three lifts.' },
         { name: '1a. Barbell Split Squat — Slow Eccentric', sets: 4, reps: '5 each', rest: '1:00', cues: 'One foot forward, one back, bar across your shoulders. Lower your back knee toward the floor slowly, taking a full 3 seconds to descend, then drive back up through your front heel at a normal speed. The slow lowering makes your quads and glutes work far harder than usual.' },
@@ -449,6 +470,7 @@ export const athleticProgram = {
       title: 'W5 · Upper Body',
       warmup: '10 min: Ski erg 3 min at an easy pace. Then 2 rounds of: dumbbell Powell raise ×10 each (a shoulder raise where you raise a dumbbell diagonally across your body from your hip to overhead on the opposite side), inverted row ×12, dumbbell hang snatch ×7 each (light weight, focusing on the hip-drive pattern before today\'s working sets).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Barbell Hang Snatch', sets: 5, reps: '2', rest: '2:00', cues: 'Same snatch pattern as the dumbbell version, but now with a barbell using a wide grip. From the hang at your thighs, explosively extend your hips, pull the bar up close to your body, and punch it straight overhead to catch it with both arms locked out, landing in a slight squat. This is a demanding lift — Coach will help dial in your technique.' },
         { name: '1a. Decline Bench Press — 1.5 Rep', sets: 4, reps: '8', rest: '1:00', cues: 'On the decline bench, lower the bar all the way to your chest, press up only halfway, lower back down again, then press all the way to the top — that whole sequence counts as 1 rep. This extra time under tension builds serious chest strength.' },
@@ -469,6 +491,7 @@ export const athleticProgram = {
       title: 'W5 · Core & Arms',
       warmup: '10 min jump rope EMOM: skip rope for 40 seconds, rest 20 seconds, and repeat that pattern for the full 10 minutes to get your heart rate up and your coordination sharp before today\'s session.',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':9}],
       exercises: [
         { name: 'EZ Bar Curl — Arm Blaster', sets: 4, reps: '10', rest: '1:30', cues: 'An "arm blaster" is a curved pad that locks your elbows in place against your body, removing any swinging so your biceps do all the work. Alternate a wide grip and a narrow grip on the EZ bar each set, curling with strict form.' },
         { name: '1a. Cable Overhead Tricep Extension', sets: 4, reps: '12 / 12 / 10 / 10', rest: '0:30', cues: 'Face away from the cable, extend your arms overhead to full lockout, squeezing your triceps, then bend back with control.' },
@@ -488,6 +511,7 @@ export const athleticProgram = {
       title: 'W5 · Lower Body II',
       warmup: '10 min: Mini hurdle hops (double and single leg), 2 sets each (small, quick hops over low hurdles or lines on the ground, landing soft between each one — do 2 sets with both feet, then 2 sets on each single leg). Then lateral ice skater jump into box jump, 3 sets of 3 each side (a sideways skater bound, landing on one foot, then immediately exploding straight up onto a box).',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         { name: 'Trap Bar Deadlift', sets: 4, reps: '10 / 8 / 6 / 4', rest: '2:00', cues: 'Stand inside the trap bar, feet hip-width. Bend your hips and knees to grab the handles, chest up, back flat — like the start of a squat. Drive through the floor with your legs, standing all the way up until your hips and knees lock out, then lower back down with control. Increase the weight each set as the reps go down.' },
         { name: 'Seated Box Jump', sets: 4, reps: '2', rest: '1:30', cues: 'Sit on a low box or bench, feet flat, no swing from standing. From that dead stop, explode up and forward onto a taller box in front of you, landing with bent knees, then stand tall. Removing the countermovement forces your legs to generate all the power instantly.' },
@@ -506,6 +530,7 @@ export const athleticProgram = {
       title: 'W5 · Upper Body II',
       warmup: '10 min, 2 rounds: row 15 cal, dumbbell external rotation off knee ×10 each, inverted row ×12, band pull-apart ×15 (hold a band at chest height with both hands and pull it apart, squeezing your shoulder blades together).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Barbell Push Press', sets: 5, reps: '5 / 4 / 3 / 3 / 2', rest: '2:00', cues: 'Bar across the front of your shoulders like the top of a front squat. Dip your knees slightly, then explosively drive up through your legs, using that leg power to help launch the bar overhead to full lockout. Lower it back to your shoulders with control and build the weight each set.' },
         { name: '1a. Incline Barbell Bench Press', sets: 4, reps: '8 / 6 / 6 / 4', rest: '1:00', cues: 'Bench set at about a 30-degree incline. Lower the bar to your upper chest under control, then drive it hard back up off your chest to full extension.' },
@@ -530,6 +555,7 @@ export const athleticProgram = {
       title: 'W6 · Lower Body',
       warmup: '10 min: Depth drop to broad jump, 2 sets of 3 (step off a low box, land and absorb the impact, then immediately explode forward into a broad jump). Then single leg bounding, 2 sets of 20 yards (bound forward off one leg at a time, driving your free knee up as you cover ground). Finish with lateral shuffle to sprint, 2 sets of 3 each side (shuffle sideways for a few steps, then explode into a forward sprint).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         { name: 'Barbell Back Squat — Heavy', sets: 5, reps: '5 / 3 / 3 / 2 / 2', rest: '3:00', cues: 'This is peak week — the payoff for the last six weeks of training. Work up to the heaviest weight you can safely handle for a couple of reps while keeping your form solid. Brace your core hard before every rep, fight to keep your hips going below parallel, and take the full 3 minutes of rest so every set gets your best effort.' },
         { name: 'Box Jump — Max Height', sets: 4, reps: '2', rest: '2:00', cues: 'Work up to the highest box you can land on safely with soft, controlled landings — don\'t sacrifice a safe landing just to jump higher. Full hip extension at the top of each jump, and always step back down.' },
@@ -548,6 +574,7 @@ export const athleticProgram = {
       title: 'W6 · Upper Body',
       warmup: '10 min, 2 rounds: band pull-apart ×15, push-up walkout ×5 (from standing, bend forward and walk your hands out to a push-up position, do a push-up, then walk your hands back to your feet and stand up), dumbbell hang clean ×8 each (light weight — same hip-drive pattern as the power clean, but with a single dumbbell), dead hang from a pull-up bar :30 (just hang with straight arms to open up your shoulders).',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         { name: 'Barbell Bench Press — Heavy', sets: 5, reps: '5 / 3 / 2 / 2 / 1', rest: '3:00', cues: 'Peak week for your bench. Build to the heaviest single rep you can press with good form. Shoulder blades locked together, feet flat, full-body tension from your legs through your grip. Make every rep count.' },
         { name: 'Barbell Hang Clean', sets: 4, reps: '3', rest: '2:00', cues: 'From the hang position at your thighs, explosively extend your hips and pull the bar up with fast elbows, catching it in a solid front rack on your shoulders. Reset your position fully between every rep.' },
@@ -568,6 +595,7 @@ export const athleticProgram = {
       title: 'W6 · Core & Arms',
       warmup: '5 min jump rope mixing singles, doubles, and crossovers at your own pace. Then 2 rounds of: plank shoulder tap ×10 (in a push-up plank position, tap your opposite shoulder with each hand without letting your hips rock side to side), dead bug ×10 each (lie on your back, arms reaching up and knees bent at 90 degrees, slowly lower one arm overhead and the opposite leg toward the floor while keeping your lower back pressed flat, then switch sides).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':10}],
       exercises: [
         { name: 'EZ Bar Curl — Heavy', sets: 4, reps: '8 / 6 / 6 / 4', rest: '1:30', cues: 'Peak bicep work for the program. Build the weight each set with strict form — no body english or swinging to help the bar up.' },
         { name: '1a. Dip — Weighted', sets: 4, reps: '8 / 6 / 6 / 4', rest: '1:00', cues: 'Add weight with a belt or a dumbbell between your feet. Full depth, bending your elbows until your upper arms are about parallel to the floor, then driving to full lockout.' },
@@ -588,6 +616,7 @@ export const athleticProgram = {
       title: 'W6 · Lower Body II',
       warmup: '10 min: Mini hurdle hops (double and single leg), 2 sets each (same as Week 5, Day 24). Then depth jump to sprint, 3 sets of 2 (step off a low box, land and absorb the impact, and instantly explode into a short sprint). Finish with A-skips, 20 yards (a high-knee skip where you actively drive one knee up toward your chest while popping off the ground with the other foot, pumping your arms).',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         { name: 'Trap Bar Deadlift — Heavy', sets: 5, reps: '5 / 3 / 3 / 2 / 1', rest: '3:00', cues: 'Peak week — build to the heaviest single rep you can pull with perfect form. Grip hard, brace your core, and drive the floor away with your legs as you stand up. Six weeks of training led to this lift.' },
         { name: 'Depth Jump to Box Jump', sets: 4, reps: '3', rest: '2:00', cues: 'Step off a low box, land and absorb the impact by bending your knees, and the instant you touch down, explode up and forward onto a taller box in front of you. This is reactive power training — spend as little time on the ground as possible between the landing and the jump.' },
@@ -606,6 +635,7 @@ export const athleticProgram = {
       title: 'W6 · Upper Body II',
       warmup: '10 min, 2 rounds: banded face pull ×15 (same motion as the cable face pull, using a band anchored at head height), push-up to rotation ×8 each (do a push-up, then as you press up, rotate your body to one side and reach that arm toward the ceiling, alternating sides), dumbbell hang snatch ×5 each (light weight, focusing on the hip-drive pattern), dead hang :30.',
       duration: '70 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
         { name: 'Barbell Overhead Press — Heavy', sets: 5, reps: '5 / 3 / 3 / 2 / 1', rest: '3:00', cues: 'Peak overhead strength for the program. Build to the heaviest single rep you can press with a strict press — no leg drive, just your shoulders and triceps locking the bar out overhead. This is the last big lift of the six weeks, so make it count.' },
         { name: '1a. Weighted Dip — Heavy', sets: 4, reps: '6 / 5 / 4 / 3', rest: '1:00', cues: 'The heaviest dips of the program. Full depth, elbows to about parallel, then a powerful press back up to lockout.' },

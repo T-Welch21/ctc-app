@@ -393,13 +393,29 @@ export default function TrainingDay() {
               }
             }
 
+            const sectionMap = new Map<number, string>()
+            if (day.sections) {
+              for (const s of day.sections) sectionMap.set(s.start, s.name)
+            }
+
             let displayNum = 0
             return groups.map((group, gi) => {
+              const firstIdx = group.exercises[0].index
+              const sectionName = sectionMap.get(firstIdx)
+
+              const sectionHeader = sectionName ? (
+                <div className="flex items-center gap-2 mt-4 mb-1" key={`section-${firstIdx}`}>
+                  <div className="h-px flex-1 bg-border/50" />
+                  <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] font-medium">{sectionName}</p>
+                  <div className="h-px flex-1 bg-border/50" />
+                </div>
+              ) : null
               if (group.type === 'superset') {
                 displayNum += group.exercises.length
                 return (
+                  <div key={`group-${gi}`}>
+                  {sectionHeader}
                   <div
-                    key={`group-${gi}`}
                     className="animate-slide-up opacity-0 rounded-2xl border border-cyan-400/20 bg-bg-card relative overflow-hidden"
                     style={{ animationDelay: `${group.exercises[0].index * 60}ms` }}
                   >
@@ -541,6 +557,7 @@ export default function TrainingDay() {
                       })}
                     </div>
                   </div>
+                  </div>
                 )
               } else {
                 displayNum++
@@ -551,6 +568,8 @@ export default function TrainingDay() {
                 const exerciseDone = exerciseSets.size === exercise.sets
 
                 return (
+                  <div key={`single-${gi}`}>
+                  {sectionHeader}
                   <div
                     key={`${i}-${exercise.name}`}
                     className={`animate-slide-up opacity-0 rounded-2xl border transition-all duration-200 relative overflow-hidden ${
@@ -677,6 +696,7 @@ export default function TrainingDay() {
                         )}
                       </div>
                     )}
+                  </div>
                   </div>
                 )
               }

@@ -21,6 +21,7 @@ export const strengthProgram: Program = {
       title: 'W1 · Push — Strength',
       warmup: '5 min to wake up your chest and shoulders before you press heavy. Band pull-aparts: hold a light band with both hands out in front of your chest, arms straight, and pull it apart until it touches your chest — squeeze your shoulder blades together each time, 15 reps. Arm circles: arms straight out to your sides, make small circles — 15 forward, 15 backward. Push-up walkouts: stand tall, bend forward and walk your hands out on the floor until you\'re in push-up position, do 1 push-up, then walk your hands back to your feet and stand up — 5 reps. Rotator cuff external rotations: elbow bent 90 degrees and glued to your side, holding a light band or light dumbbell, rotate your forearm outward away from your body and back in — 15 each arm.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Bench Press',
@@ -74,6 +75,7 @@ export const strengthProgram: Program = {
       title: 'W1 · Pull — Strength',
       warmup: '5 min to prep your back and grip before pulling heavy. Band pull-aparts: 15 reps, pulling a light band apart at chest height. Cat-cow: on hands and knees, arch your back up toward the ceiling like a scared cat, then let it sag down while lifting your chest — 10 slow reps, this loosens up your spine. Dead hangs: hang from a pull-up bar with straight arms for 30 seconds — this opens up your shoulders and back and warms up your grip. Scap retractions on the bar: still hanging, without bending your elbows, pull your shoulder blades down and together so your body rises an inch or two, then relax back down — 10 reps. This teaches your back muscles to fire before you add a pull-up.',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Deadlift',
@@ -127,6 +129,7 @@ export const strengthProgram: Program = {
       title: 'W1 · Legs — Strength',
       warmup: '5 min to get your legs and hips ready to squat heavy. Bodyweight squats: 15 reps with no weight, going as low as feels comfortable, just to get the motion moving. Leg swings (front/side): hold onto a wall for balance, swing one leg forward and back 10 times, then side to side 10 times, then switch legs — this loosens your hips. Hip circles: stand with hands on hips and make big circles with your hips, 10 each direction, like a hula hoop. Glute bridges: lie on your back, knees bent, feet flat, push your hips up toward the ceiling squeezing your glutes at the top, 15 reps — this wakes up your glutes so they help (not your lower back). Foam roll quads: roll the front of your thighs on a foam roller for 1 minute.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Back Squat',
@@ -180,6 +183,7 @@ export const strengthProgram: Program = {
       title: 'W1 · Push — Volume',
       warmup: '5 min to loosen up the chest and shoulders before higher-rep pressing. Band pull-aparts: 15 reps. Arm circles: 15 each direction. Light push-ups: 10 reps, slow and controlled, just to prime the chest. Shoulder dislocates with a band: hold a light band with a wide overhand grip, arms straight, and slowly raise it up and over your head to behind your back, then bring it back over — 10 slow reps, this improves shoulder mobility for overhead pressing.',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Dumbbell Bench Press',
@@ -234,6 +238,7 @@ export const strengthProgram: Program = {
       title: 'W1 · Pull — Volume',
       warmup: '5 min to prep your back for higher-rep pulling. Band pull-aparts: 15 reps. Scap push-ups: start in a push-up plank position with straight arms, without bending your elbows let your shoulder blades pinch together (chest drops slightly) then push the floor away to spread them apart — 10 reps, this activates your upper back. Cat-cow: 10 slow reps to loosen your spine. Light cable rows: 15 reps with a very light weight on the cable row machine, just to get blood into your back muscles.',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Chest-Supported Dumbbell Row',
@@ -287,6 +292,7 @@ export const strengthProgram: Program = {
       title: 'W1 · Legs — Power',
       warmup: '5 min to get your nervous system firing before explosive work. Foam roll quads and glutes: 1 minute each. Leg swings: 10 forward/back and 10 side to side, each leg. Bodyweight squats: 15 reps. 3 low box jumps: step up onto a low, sturdy box or step (6-12 inches), then step back down — just get the pattern moving, don\'t go max effort yet, this primes your nervous system for the power work ahead.',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Box Squat',
@@ -346,6 +352,7 @@ export const strengthProgram: Program = {
       title: 'W2 · Push — Strength',
       warmup: '5 min: band pull-aparts (15 reps, pulling a light band apart at chest height), arm circles (15 each direction), push-up walkouts (bend forward, walk your hands out to a push-up position, do 1 push-up, walk back and stand — 5 reps), shoulder external rotations (elbow bent 90 degrees at your side, rotate your forearm out and back with a light band or dumbbell — 15 each arm).',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Bench Press',
@@ -399,6 +406,7 @@ export const strengthProgram: Program = {
       title: 'W2 · Pull — Strength',
       warmup: '5 min: band pull-aparts (15 reps), cat-cow (10 slow reps on hands and knees, arching and sagging your back), dead hangs (30 sec hanging from a pull-up bar with straight arms), scap retractions on the bar (still hanging, pull your shoulder blades together so your body rises slightly without bending your elbows, 10 reps).',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Deadlift',
@@ -452,6 +460,7 @@ export const strengthProgram: Program = {
       title: 'W2 · Legs — Strength',
       warmup: '5 min: bodyweight squats (15 reps), leg swings (10 each direction, each leg, holding a wall for balance), hip circles (10 each direction), glute bridges (15 reps, lying on your back and pushing your hips up), foam roll quads and adductors (inner thighs) — 1 minute each.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Back Squat',
@@ -505,6 +514,7 @@ export const strengthProgram: Program = {
       title: 'W2 · Push — Volume',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), light push-ups (10 reps), shoulder dislocates with a light band (raise the band overhead and behind your back and back over, 10 slow reps).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Dumbbell Bench Press',
@@ -559,6 +569,7 @@ export const strengthProgram: Program = {
       title: 'W2 · Pull — Volume',
       warmup: '5 min: band pull-aparts (15 reps), scap push-ups (10 reps, from a plank position pinch your shoulder blades together then spread them apart), cat-cow (10 slow reps), light cable rows (15 reps, very light weight, to warm the back up).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Chest-Supported Dumbbell Row',
@@ -612,6 +623,7 @@ export const strengthProgram: Program = {
       title: 'W2 · Legs — Power',
       warmup: '5 min: foam roll quads and glutes (1 minute each), leg swings (10 each direction, each leg), bodyweight squats (15 reps), 4 low box jumps (step up onto a low sturdy box and step back down, priming your nervous system for the power work today).',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Box Squat',
@@ -672,6 +684,7 @@ export const strengthProgram: Program = {
       title: 'W3 · Push — Strength',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), push-up walkouts (5 reps), rotator cuff work (15 external rotations each arm), then 2 light bench sets — a few easy reps with just the empty bar or a light weight to rehearse your setup before the heavy work.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Paused Bench Press',
@@ -725,6 +738,7 @@ export const strengthProgram: Program = {
       title: 'W3 · Pull — Strength',
       warmup: '5 min: band pull-aparts (15 reps), cat-cow (10 slow reps), dead hangs (30 sec), scap retractions on the bar (10 reps), then 2 light deadlift sets — a few easy reps with a light weight to groove your setup before the heavy work.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Deficit Deadlift',
@@ -778,6 +792,7 @@ export const strengthProgram: Program = {
       title: 'W3 · Legs — Strength',
       warmup: '5 min: bodyweight squats (15 reps), leg swings (10 each direction, each leg), hip circles (10 each direction), glute bridges (15 reps), then 2 light squat sets — a few easy reps at a light weight to rehearse your setup before going heavy.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Pin Squat',
@@ -831,6 +846,7 @@ export const strengthProgram: Program = {
       title: 'W3 · Push — Volume',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), light push-ups (10 reps), shoulder dislocates with a band (10 slow reps).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Dumbbell Bench Press',
@@ -885,6 +901,7 @@ export const strengthProgram: Program = {
       title: 'W3 · Pull — Volume',
       warmup: '5 min: band pull-aparts (15 reps), scap push-ups (10 reps), cat-cow (10 slow reps), light cable rows (15 reps, very light weight).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Chest-Supported Dumbbell Row',
@@ -938,6 +955,7 @@ export const strengthProgram: Program = {
       title: 'W3 · Legs — Power',
       warmup: '5 min: foam roll quads and glutes (1 minute each), leg swings (10 each direction, each leg), bodyweight squats (15 reps), 4 box jumps at a medium height (step up onto a sturdy box, step down, priming your nervous system for explosive work).',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Box Squat',
@@ -997,6 +1015,7 @@ export const strengthProgram: Program = {
       title: 'W4 · Push — Strength',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), push-up walkouts (5 reps), rotator cuff work (15 external rotations each arm), then 2 warm-up bench sets at a light weight to rehearse your setup before the heavy work.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Paused Bench Press',
@@ -1050,6 +1069,7 @@ export const strengthProgram: Program = {
       title: 'W4 · Pull — Strength',
       warmup: '5 min: band pull-aparts (15 reps), cat-cow (10 slow reps), dead hangs (30 sec), scap retractions on the bar (10 reps), then 2 warm-up deadlift sets at a light weight.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Deficit Deadlift',
@@ -1103,6 +1123,7 @@ export const strengthProgram: Program = {
       title: 'W4 · Legs — Strength',
       warmup: '5 min: bodyweight squats (15 reps), leg swings (10 each direction, each leg), hip circles (10 each direction), glute bridges (15 reps), then 2 warm-up squat sets at a light weight.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Pin Squat',
@@ -1156,6 +1177,7 @@ export const strengthProgram: Program = {
       title: 'W4 · Push — Volume',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), light push-ups (10 reps), shoulder dislocates with a band (10 slow reps).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Dumbbell Bench Press',
@@ -1210,6 +1232,7 @@ export const strengthProgram: Program = {
       title: 'W4 · Pull — Volume',
       warmup: '5 min: band pull-aparts (15 reps), scap push-ups (10 reps), cat-cow (10 slow reps), light cable rows (15 reps).',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Chest-Supported Dumbbell Row',
@@ -1263,6 +1286,7 @@ export const strengthProgram: Program = {
       title: 'W4 · Legs — Power',
       warmup: '5 min: foam roll quads and glutes (1 minute each), leg swings (10 each direction, each leg), bodyweight squats (15 reps), 5 box jumps at a medium-to-high box (step up, step down carefully, this primes your nervous system for explosive work).',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Box Squat',
@@ -1323,6 +1347,7 @@ export const strengthProgram: Program = {
       title: 'W5 · Push — Strength',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), push-up walkouts (5 reps), rotator cuff work (15 external rotations each arm), then 3 progressive warm-up bench sets — start light and add weight each set to build up to today\'s heavy work.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Bench Press',
@@ -1376,6 +1401,7 @@ export const strengthProgram: Program = {
       title: 'W5 · Pull — Strength',
       warmup: '5 min: band pull-aparts (15 reps), cat-cow (10 slow reps), dead hangs (30 sec), scap retractions on the bar (10 reps), then 3 progressive warm-up deadlift sets — start light and build up to today\'s heavy work.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Deadlift',
@@ -1422,6 +1448,7 @@ export const strengthProgram: Program = {
       title: 'W5 · Legs — Strength',
       warmup: '5 min: bodyweight squats (15 reps), leg swings (10 each direction, each leg), hip circles (10 each direction), glute bridges (15 reps), then 3 progressive warm-up squat sets — start light and build up to today\'s heavy work.',
       duration: '65 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Back Squat',
@@ -1475,6 +1502,7 @@ export const strengthProgram: Program = {
       title: 'W5 · Push — Volume',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), light push-ups (10 reps), shoulder dislocates with a band (10 slow reps).',
       duration: '50 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Dumbbell Bench Press',
@@ -1529,6 +1557,7 @@ export const strengthProgram: Program = {
       title: 'W5 · Pull — Volume',
       warmup: '5 min: band pull-aparts (15 reps), scap push-ups (10 reps), cat-cow (10 slow reps), light cable rows (15 reps).',
       duration: '50 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Chest-Supported Dumbbell Row',
@@ -1582,6 +1611,7 @@ export const strengthProgram: Program = {
       title: 'W5 · Legs — Power',
       warmup: '5 min: foam roll (1 minute), leg swings (10 each direction, each leg), bodyweight squats (15 reps), 5 box jumps at a medium height — focus on landing softly with bent knees, this teaches good landing mechanics before the heavier jump work.',
       duration: '55 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Box Jump',
@@ -1642,6 +1672,7 @@ export const strengthProgram: Program = {
       title: 'W6 · Push — Strength',
       warmup: '8 min: a thorough warm-up since today is a test day. Band pull-aparts (15 reps), arm circles (15 each direction), push-up walkouts (5 reps), rotator cuff work (15 external rotations each arm). Then work up through progressive bench sets: empty bar for 10 reps, 50% of today\'s target weight for 5 reps, 65% for 3 reps, 75% for 2 reps, 85% for 1 rep — each set gets you closer to your top effort so your body is fully ready when it matters.',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Bench Press — Work to New 3RM',
@@ -1688,6 +1719,7 @@ export const strengthProgram: Program = {
       title: 'W6 · Pull — Strength',
       warmup: '8 min: a thorough warm-up for today\'s test. Band pull-aparts (15 reps), cat-cow (10 slow reps), dead hangs (30 sec). Then work up through progressive deadlift sets: 135 lbs (or a light bar weight) for 5 reps, 50% of today\'s target for 5 reps, 65% for 3 reps, 75% for 2 reps, 85% for 1 rep — this gets your whole body primed for the heavy pulling ahead.',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Deadlift — Work to New 3RM',
@@ -1734,6 +1766,7 @@ export const strengthProgram: Program = {
       title: 'W6 · Legs — Strength',
       warmup: '8 min: a thorough warm-up for today\'s test. Bodyweight squats (15 reps), leg swings (10 each direction, each leg), glute bridges (15 reps). Then work up through progressive squat sets: empty bar for 10 reps, 50% of today\'s target for 5 reps, 65% for 3 reps, 75% for 2 reps, 85% for 1 rep — building up gradually so you\'re fully warm for the heavy work.',
       duration: '60 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Barbell Back Squat — Work to New 3RM',
@@ -1780,6 +1813,7 @@ export const strengthProgram: Program = {
       title: 'W6 · Push — Volume',
       warmup: '5 min: band pull-aparts (15 reps), arm circles (15 each direction), light push-ups (10 reps).',
       duration: '45 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Dumbbell Bench Press',
@@ -1827,6 +1861,7 @@ export const strengthProgram: Program = {
       title: 'W6 · Pull — Volume',
       warmup: '5 min: band pull-aparts (15 reps), scap push-ups (10 reps), cat-cow (10 slow reps), light cable rows (15 reps).',
       duration: '45 min',
+      sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
         {
           name: 'Chest-Supported Dumbbell Row',
@@ -1873,6 +1908,7 @@ export const strengthProgram: Program = {
       title: 'W6 · Legs — Power',
       warmup: '5 min: foam roll (1 minute), leg swings (10 each direction, each leg), bodyweight squats (15 reps), 5 box jumps at a medium height — focus on being explosive and landing clean, this is your last session so make every warmup rep count too.',
       duration: '50 min',
+      sections: [{'name':'Strength','start':0}],
       exercises: [
         {
           name: 'Box Jump',
