@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ctc-v3'
+const CACHE_NAME = 'ctc-v4'
 const PRECACHE = [
   '/',
   '/manifest.json',

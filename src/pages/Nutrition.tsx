@@ -258,6 +258,7 @@ export default function Nutrition() {
   const [servings, setServings] = useState<Record<string, number>>({})
   const [scanning, setScanning] = useState(false)
   const [scanResult, setScanResult] = useState<string | null>(null)
+  const [scannedFood, setScannedFood] = useState<{ name: string; calories: number; protein: number; carbs: number; fat: number; serving: string } | null>(null)
 
   const [customName, setCustomName] = useState('')
   const [customCalories, setCustomCalories] = useState('')
@@ -329,6 +330,22 @@ export default function Nutrition() {
     setTimeout(() => setAddedFood(null), 1500)
   }
 
+  const addScannedFood = () => {
+    if (!user || !scannedFood) return
+    if (!subscribed) { navigate('/subscribe'); return }
+    const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+    saveFoodEntry(user.id, {
+      date: selectedDate, time, name: scannedFood.name,
+      calories: scannedFood.calories, protein: scannedFood.protein,
+      carbs: scannedFood.carbs, fat: scannedFood.fat,
+    })
+    refreshEntries()
+    setAddedFood(scannedFood.name)
+    setScannedFood(null)
+    setScanResult(null)
+    setTimeout(() => setAddedFood(null), 1500)
+  }
+
   const removeEntry = (id: string) => { if (user) { deleteFoodEntry(user.id, id); refreshEntries() } }
 
   const runCalculator = () => {
@@ -372,13 +389,7 @@ export default function Nutrition() {
         const pro = Math.round(n.proteins_serving || n.proteins_100g || 0)
         const carb = Math.round(n.carbohydrates_serving || n.carbohydrates_100g || 0)
         const f = Math.round(n.fat_serving || n.fat_100g || 0)
-        setCustomName(name)
-        setCustomCalories(cal.toString())
-        setCustomProtein(pro.toString())
-        setCustomCarbs(carb.toString())
-        setCustomFat(f.toString())
-        setShowCustom(true)
-        setShowAdd(true)
+        setScannedFood({ name, calories: cal, protein: pro, carbs: carb, fat: f, serving: servingSize })
         setScanResult(`Found: ${name} (${servingSize})`)
         return true
       }
@@ -651,17 +662,9 @@ export default function Nutrition() {
               {scanning ? (
                 <div className="w-4 h-4 border-2 border-lime border-t-transparent rounded-full animate-spin" />
               ) : (
-                <ScanBarcode size={16} className="text-cyan-400" />
+                <Camera size={16} className="text-cyan-400" />
               )}
-              <span className="font-display font-bold text-xs">{scanning ? 'Scanning...' : 'Scan Barcode'}</span>
-            </div>
-          </label>
-          <label className="flex-1 cursor-pointer">
-            <input type="file" accept="image/*" capture="environment" className="hidden"
-              onChange={handleBarcodeScan} />
-            <div className="flex items-center justify-center gap-2 bg-bg-card border border-border rounded-xl py-3 hover:border-lime/30 transition-colors active:scale-[0.98]">
-              <Camera size={16} className="text-blue-400" />
-              <span className="font-display font-bold text-xs">{scanning ? 'Scanning...' : 'Photo'}</span>
+              <span className="font-display font-bold text-xs">{scanning ? 'Scanning...' : 'Scan / Photo'}</span>
             </div>
           </label>
         </div>
@@ -671,6 +674,44 @@ export default function Nutrition() {
             <ScanBarcode size={14} className="text-cyan-400 mt-0.5 shrink-0" />
             <p className="text-xs text-text-secondary">{scanResult}</p>
             <button onClick={() => setScanResult(null)} className="shrink-0"><X size={14} className="text-text-muted" /></button>
+          </div>
+        )}
+
+        {/* Scanned food — Add to Macros card */}
+        {scannedFood && (
+          <div className="mt-3 rounded-2xl bg-gradient-to-br from-cyan-400/10 to-lime/10 border border-cyan-400/30 p-4 animate-slide-up">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-lime text-[9px] uppercase tracking-[0.2em] font-bold flex items-center gap-1">
+                <ScanBarcode size={10} /> Scanned Food
+              </p>
+              <button onClick={() => { setScannedFood(null); setScanResult(null) }}>
+                <X size={14} className="text-text-muted" />
+              </button>
+            </div>
+            <p className="font-display font-bold text-base mb-1">{scannedFood.name}</p>
+            <p className="text-text-muted text-[10px] mb-3">{scannedFood.serving}</p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
+                <p className="text-lime font-bold text-sm">{scannedFood.calories}</p>
+                <p className="text-text-muted text-[9px] uppercase">Cal</p>
+              </div>
+              <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
+                <p className="text-cyan-400 font-bold text-sm">{scannedFood.protein}g</p>
+                <p className="text-text-muted text-[9px] uppercase">Protein</p>
+              </div>
+              <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
+                <p className="text-blue-400 font-bold text-sm">{scannedFood.carbs}g</p>
+                <p className="text-text-muted text-[9px] uppercase">Carbs</p>
+              </div>
+              <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
+                <p className="text-text-secondary font-bold text-sm">{scannedFood.fat}g</p>
+                <p className="text-text-muted text-[9px] uppercase">Fat</p>
+              </div>
+            </div>
+            <button onClick={addScannedFood}
+              className="w-full bg-lime text-black font-display font-bold text-sm uppercase tracking-wider py-3 rounded-xl active:scale-[0.97] transition-transform">
+              Add to Macros
+            </button>
           </div>
         )}
 
