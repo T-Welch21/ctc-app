@@ -87,8 +87,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const remote = await fetchProfile(su.id)
     if (remote) {
-      const merged = { ...base, ...remote }
+      const cleaned = Object.fromEntries(
+        Object.entries(remote).filter(([, v]) => v != null)
+      )
+      const merged = { ...base, ...cleaned }
       saveLocalProfile(merged)
+      await syncProfile(merged)
       return merged
     }
 
