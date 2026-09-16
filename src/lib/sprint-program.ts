@@ -6,7 +6,7 @@ export const sprintProgram: Program = {
   weeks: 6,
   frequency: '3x / week',
   description: '6-week sprint program. 40-yard dash to 400m — get faster, more explosive, and race-ready.',
-  category: 'conditioning',
+  category: 'running',
   image: '/programs/sprint.jpg',
   days: [
     // ──────────────────────────────────────────────

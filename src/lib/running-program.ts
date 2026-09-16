@@ -6,7 +6,7 @@ export const runningProgram: Program = {
   weeks: 6,
   frequency: '3x / week',
   description: '6-week half marathon build. Intervals, tempo, and long runs — every session under 60 minutes.',
-  category: 'running',
+  category: 'conditioning',
   image: '/programs/running.jpg',
   days: [
     // ──────────────────────────────────────────────
