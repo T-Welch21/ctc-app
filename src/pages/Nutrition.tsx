@@ -259,6 +259,7 @@ export default function Nutrition() {
   const [scanning, setScanning] = useState(false)
   const [scanResult, setScanResult] = useState<string | null>(null)
   const [scannedFood, setScannedFood] = useState<{ name: string; calories: number; protein: number; carbs: number; fat: number; serving: string } | null>(null)
+  const [scanServings, setScanServings] = useState(1)
 
   const [customName, setCustomName] = useState('')
   const [customCalories, setCustomCalories] = useState('')
@@ -333,16 +334,21 @@ export default function Nutrition() {
   const addScannedFood = () => {
     if (!user || !scannedFood) return
     if (!subscribed) { navigate('/subscribe'); return }
+    const qty = scanServings
     const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
     saveFoodEntry(user.id, {
-      date: selectedDate, time, name: scannedFood.name,
-      calories: scannedFood.calories, protein: scannedFood.protein,
-      carbs: scannedFood.carbs, fat: scannedFood.fat,
+      date: selectedDate, time,
+      name: `${scannedFood.name}${qty !== 1 ? ` (x${qty})` : ''}`,
+      calories: Math.round(scannedFood.calories * qty),
+      protein: Math.round(scannedFood.protein * qty),
+      carbs: Math.round(scannedFood.carbs * qty),
+      fat: Math.round(scannedFood.fat * qty),
     })
     refreshEntries()
     setAddedFood(scannedFood.name)
     setScannedFood(null)
     setScanResult(null)
+    setScanServings(1)
     setTimeout(() => setAddedFood(null), 1500)
   }
 
@@ -390,6 +396,7 @@ export default function Nutrition() {
         const carb = Math.round(n.carbohydrates_serving || n.carbohydrates_100g || 0)
         const f = Math.round(n.fat_serving || n.fat_100g || 0)
         setScannedFood({ name, calories: cal, protein: pro, carbs: carb, fat: f, serving: servingSize })
+        setScanServings(1)
         setScanResult(`Found: ${name} (${servingSize})`)
         return true
       }
@@ -688,23 +695,36 @@ export default function Nutrition() {
                 <X size={14} className="text-text-muted" />
               </button>
             </div>
-            <p className="font-display font-bold text-base mb-1">{scannedFood.name}</p>
-            <p className="text-text-muted text-[10px] mb-3">{scannedFood.serving}</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="font-display font-bold text-base">{scannedFood.name}</p>
+              <div className="flex items-center gap-1.5">
+                <button onClick={() => setScanServings(Math.max(0.5, scanServings - 0.5))}
+                  className="w-8 h-8 rounded-lg bg-bg-card flex items-center justify-center active:scale-90">
+                  <Minus size={14} className="text-text-muted" />
+                </button>
+                <span className="text-sm font-display font-bold w-8 text-center">{scanServings}</span>
+                <button onClick={() => setScanServings(Math.min(10, scanServings + 0.5))}
+                  className="w-8 h-8 rounded-lg bg-bg-card flex items-center justify-center active:scale-90">
+                  <Plus size={14} className="text-text-muted" />
+                </button>
+              </div>
+            </div>
+            <p className="text-text-muted text-[10px] mb-3">{scannedFood.serving}{scanServings !== 1 ? ` × ${scanServings}` : ''}</p>
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
-                <p className="text-lime font-bold text-sm">{scannedFood.calories}</p>
+                <p className="text-lime font-bold text-sm">{Math.round(scannedFood.calories * scanServings)}</p>
                 <p className="text-text-muted text-[9px] uppercase">Cal</p>
               </div>
               <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
-                <p className="text-cyan-400 font-bold text-sm">{scannedFood.protein}g</p>
+                <p className="text-cyan-400 font-bold text-sm">{Math.round(scannedFood.protein * scanServings)}g</p>
                 <p className="text-text-muted text-[9px] uppercase">Protein</p>
               </div>
               <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
-                <p className="text-blue-400 font-bold text-sm">{scannedFood.carbs}g</p>
+                <p className="text-blue-400 font-bold text-sm">{Math.round(scannedFood.carbs * scanServings)}g</p>
                 <p className="text-text-muted text-[9px] uppercase">Carbs</p>
               </div>
               <div className="bg-bg-card rounded-lg px-3 py-1.5 text-center">
-                <p className="text-text-secondary font-bold text-sm">{scannedFood.fat}g</p>
+                <p className="text-text-secondary font-bold text-sm">{Math.round(scannedFood.fat * scanServings)}g</p>
                 <p className="text-text-muted text-[9px] uppercase">Fat</p>
               </div>
             </div>
