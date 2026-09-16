@@ -13,6 +13,7 @@ export type WarmupItem = {
   detail: string
   reps?: string
   circuit?: string
+  section?: string
 }
 
 export type TrainingDay = {
@@ -74,6 +75,39 @@ export function parseWarmup(text: string): { intro?: string; items: WarmupItem[]
   if (!text) return { items: [] }
 
   const trimmed = text.trim()
+
+  if (trimmed.includes('\n')) {
+    const blocks = trimmed.split('\n\n').filter(Boolean)
+    const items: WarmupItem[] = []
+    let intro: string | undefined
+
+    for (let i = 0; i < blocks.length; i++) {
+      const lines = blocks[i].split('\n').filter(Boolean)
+      const firstLine = lines[0].trim()
+
+      if (i === 0 && /^\d/.test(firstLine)) {
+        intro = firstLine
+        continue
+      }
+
+      const header = firstLine
+      const body = lines.slice(1).join(' ').trim()
+      if (!body) {
+        items.push({ name: header, detail: '', section: header })
+        continue
+      }
+      const drills = body.split('·').map(s => s.trim()).filter(Boolean)
+      for (const drill of drills) {
+        const parenIdx = drill.indexOf('(')
+        const name = parenIdx > 0 ? drill.slice(0, parenIdx).trim() : drill
+        const detail = parenIdx > 0 ? drill.slice(parenIdx + 1).replace(/\)$/, '').trim() : ''
+        const repMatch = drill.match(/×\s*(\d+\s*(?:yards?|yds?))/i) || drill.match(/(\d+)\s+(?:each|per)/i)
+        items.push({ name, detail, reps: repMatch?.[0]?.trim(), section: header })
+      }
+    }
+
+    return { intro, items }
+  }
 
   // Extract intro timing (e.g. "5 min:", "10 min, 2 rounds:")
   let introEnd = 0
