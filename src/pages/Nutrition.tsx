@@ -359,48 +359,53 @@ export default function Nutrition() {
     setShowGoals(false)
   }
 
+  const lookupBarcode = async (code: string) => {
+    try {
+      const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`)
+      const data = await res.json()
+      if (data.status === 1 && data.product) {
+        const p = data.product
+        const n = p.nutriments || {}
+        const name = p.product_name || p.generic_name || 'Scanned Food'
+        const servingSize = p.serving_size || '1 serving'
+        const cal = Math.round(n['energy-kcal_serving'] || n['energy-kcal_100g'] || 0)
+        const pro = Math.round(n.proteins_serving || n.proteins_100g || 0)
+        const carb = Math.round(n.carbohydrates_serving || n.carbohydrates_100g || 0)
+        const f = Math.round(n.fat_serving || n.fat_100g || 0)
+        setCustomName(name)
+        setCustomCalories(cal.toString())
+        setCustomProtein(pro.toString())
+        setCustomCarbs(carb.toString())
+        setCustomFat(f.toString())
+        setShowCustom(true)
+        setShowAdd(true)
+        setScanResult(`Found: ${name} (${servingSize})`)
+        return true
+      }
+    } catch { /* fall through */ }
+    return false
+  }
+
   const handleBarcodeScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     setScanning(true)
     setScanResult(null)
     try {
+      const { BarcodeDetector } = await import('barcode-detector/pure')
       const bitmap = await createImageBitmap(file)
-      if ('BarcodeDetector' in window) {
-        // @ts-expect-error BarcodeDetector is experimental
-        const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] })
-        const barcodes = await detector.detect(bitmap)
-        if (barcodes.length > 0) {
-          const code = barcodes[0].rawValue
-          const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`)
-          const data = await res.json()
-          if (data.status === 1 && data.product) {
-            const p = data.product
-            const n = p.nutriments || {}
-            const name = p.product_name || p.generic_name || 'Scanned Food'
-            const servingSize = p.serving_size || '1 serving'
-            const cal = Math.round(n['energy-kcal_serving'] || n['energy-kcal_100g'] || 0)
-            const pro = Math.round(n.proteins_serving || n.proteins_100g || 0)
-            const carb = Math.round(n.carbohydrates_serving || n.carbohydrates_100g || 0)
-            const f = Math.round(n.fat_serving || n.fat_100g || 0)
-            setCustomName(name)
-            setCustomCalories(cal.toString())
-            setCustomProtein(pro.toString())
-            setCustomCarbs(carb.toString())
-            setCustomFat(f.toString())
-            setShowCustom(true)
-            setShowAdd(true)
-            setScanResult(`Found: ${name} (${servingSize})`)
-          } else {
-            setScanResult('Product not found in database. Enter manually.')
-            setShowCustom(true); setShowAdd(true)
-          }
-        } else {
-          setScanResult('No barcode detected. Try again or enter manually.')
+      const detector = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39'] })
+      const barcodes = await detector.detect(bitmap)
+      if (barcodes.length > 0) {
+        const code = barcodes[0].rawValue
+        setScanResult(`Barcode found: ${code} — looking up nutrition...`)
+        const found = await lookupBarcode(code)
+        if (!found) {
+          setScanResult(`Barcode ${code} not in database. Enter nutrition manually.`)
           setShowCustom(true); setShowAdd(true)
         }
       } else {
-        setScanResult('Barcode scanner not supported on this device. Enter food manually.')
+        setScanResult('No barcode detected. Make sure the barcode is clear and well-lit, then try again.')
         setShowCustom(true); setShowAdd(true)
       }
     } catch {
@@ -653,16 +658,10 @@ export default function Nutrition() {
           </label>
           <label className="flex-1 cursor-pointer">
             <input type="file" accept="image/*" capture="environment" className="hidden"
-              onChange={(e) => {
-                if (e.target.files?.[0]) {
-                  setScanResult('Photo captured! AI food recognition coming soon. Enter details manually for now.')
-                  setShowCustom(true); setShowAdd(true)
-                  e.target.value = ''
-                }
-              }} />
+              onChange={handleBarcodeScan} />
             <div className="flex items-center justify-center gap-2 bg-bg-card border border-border rounded-xl py-3 hover:border-lime/30 transition-colors active:scale-[0.98]">
               <Camera size={16} className="text-blue-400" />
-              <span className="font-display font-bold text-xs">Photo</span>
+              <span className="font-display font-bold text-xs">{scanning ? 'Scanning...' : 'Photo'}</span>
             </div>
           </label>
         </div>

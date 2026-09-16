@@ -12,6 +12,7 @@
   "dependencies": {
     "@stripe/stripe-js": "^9.15.0",
     "@supabase/supabase-js": "^2.116.0",
+    "barcode-detector": "^3.2.2",
     "lucide-react": "^1.39.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
