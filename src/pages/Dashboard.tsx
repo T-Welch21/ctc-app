@@ -97,7 +97,7 @@ export default function Dashboard() {
       return stored ? new Set(JSON.parse(stored)) : new Set()
     } catch { return new Set() }
   })
-  const firstName = user?.name?.split(' ')[0] || 'Athlete'
+  const displayName = user?.name || 'Athlete'
   const devotional = getDevotional()
   const challenge = getDailyChallenge()
   const hour = new Date().getHours()
@@ -210,8 +210,8 @@ export default function Dashboard() {
           <div className="flex items-end justify-between mb-2">
             <div>
               <p className="text-text-muted text-[10px] uppercase tracking-[0.3em] font-medium mb-2">{greeting}</p>
-              <h1 className="font-display text-[42px] font-bold tracking-tighter leading-[0.9]">
-                {firstName}<span className="text-lime">.</span>
+              <h1 className="font-display text-[32px] font-bold tracking-tighter leading-[0.9]">
+                {displayName}<span className="text-lime">.</span>
               </h1>
             </div>
 
