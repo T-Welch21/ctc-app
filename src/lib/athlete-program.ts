@@ -13,7 +13,7 @@ export const athleticProgram = {
     {
       day: 'Day 1',
       title: 'W1 · Lower Body',
-      warmup: '10 min: Skip for height — like a playground skip, but drive one knee up toward your chest and pop off the ground with the other foot. 2 sets of 20 yards, walking back between. Then bound for distance — take big, exaggerated running strides, pushing off hard with each leg to cover as much ground as possible. 2 sets of 20 yards. Finish with 5 broad jumps: feet shoulder-width apart, swing your arms back, bend your knees, then jump forward as far as you can and land softly on both feet. This wakes up your legs and hips before you lift.',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to get your blood flowing and your body temperature up. Then move into skip for height — like a playground skip, but drive one knee up toward your chest and pop off the ground with the other foot. 2 sets of 20 yards, walking back between. Then bound for distance — take big, exaggerated running strides, pushing off hard with each leg to cover as much ground as possible. 2 sets of 20 yards. Finish with 5 broad jumps: feet shoulder-width apart, swing your arms back, bend your knees, then jump forward as far as you can and land softly on both feet.',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2},{'name':'Conditioning','start':7}],
       exercises: [
@@ -74,7 +74,7 @@ export const athleticProgram = {
     {
       day: 'Day 4',
       title: 'W1 · Lower Body II',
-      warmup: '10 min: Lateral shuffle — stand in an athletic stance (knees bent, weight on the balls of your feet) and shuffle sideways 10 yards without crossing your feet, then shuffle back. 2 sets each direction, sticking and holding each direction change for a second. Then the 5-10-5 shuttle run 3 times: set 3 cones 5 yards apart, sprint 5 yards one way, touch the ground, sprint 10 yards the other way, touch the ground, sprint 5 yards back through the middle.',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and loosen up your joints. Then lateral shuffle — stand in an athletic stance (knees bent, weight on the balls of your feet) and shuffle sideways 10 yards without crossing your feet, then shuffle back. 2 sets each direction, sticking and holding each direction change for a second. Then the 5-10-5 shuttle run 3 times: set 3 cones 5 yards apart, sprint 5 yards one way, touch the ground, sprint 10 yards the other way, touch the ground, sprint 5 yards back through the middle.',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -93,7 +93,7 @@ export const athleticProgram = {
     {
       day: 'Day 5',
       title: 'W1 · Upper Body II',
-      warmup: '10 min, 2 rounds: banded front raise into pull apart ×10 (hold a light band with both hands, raise it straight out in front to shoulder height, then pull it apart by driving your arms out to the sides — that\'s 1 rep), single arm dumbbell overhead carry 20 yards (hold a dumbbell locked out straight overhead in one hand and walk 20 yards without letting your arm drop, keeping your core tight), scalp push-ups ×10 (regular push-ups, hands slightly wider than shoulders), scalp pull-ups ×10 (regular pull-ups or an assisted/banded version).',
+      warmup: '12 min: Start with a 3 min easy jog or bike at a conversational pace to get your blood flowing. Then 2 rounds of: banded front raise into pull apart ×10 (hold a light band with both hands, raise it straight out in front to shoulder height, then pull it apart by driving your arms out to the sides — that\'s 1 rep), single arm dumbbell overhead carry 20 yards (hold a dumbbell locked out straight overhead in one hand and walk 20 yards without letting your arm drop, keeping your core tight), scalp push-ups ×10 (regular push-ups, hands slightly wider than shoulders), scalp pull-ups ×10 (regular pull-ups or an assisted/banded version).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
@@ -120,7 +120,7 @@ export const athleticProgram = {
     {
       day: 'Day 6',
       title: 'W2 · Lower Body',
-      warmup: '10 min: Kneeling starts, 2 sets each leg over 10 yards (kneel on one knee, opposite foot planted in front, explode up and sprint forward 10 yards — this teaches an explosive first step). Then med ball throws: 5 thrown backward overhead (hold the ball with both hands, squat down, then throw it up and behind you explosively), 5 thrown forward from your chest (like a explosive chest pass), and 5 thrown straight up in the air from a squat (drop into a quarter squat and explode the ball straight overhead).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and get your joints moving. Then kneeling starts, 2 sets each leg over 10 yards (kneel on one knee, opposite foot planted in front, explode up and sprint forward 10 yards — this teaches an explosive first step). Then med ball throws: 5 thrown backward overhead (hold the ball with both hands, squat down, then throw it up and behind you explosively), 5 thrown forward from your chest (like a explosive chest pass), and 5 thrown straight up in the air from a squat (drop into a quarter squat and explode the ball straight overhead).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':9}],
       exercises: [
@@ -185,7 +185,7 @@ export const athleticProgram = {
     {
       day: 'Day 9',
       title: 'W2 · Lower Body II',
-      warmup: '10 min: Ice skaters, 3 sets of 15 seconds (jump laterally from one foot to the other like a speed skater, swinging your arms across your body for balance and power, landing soft each time). Then lateral kneeling starts, 2 sets each leg over 10 yards (kneel sideways on one knee, explode up and sprint 10 yards to that side).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to get your blood flowing and your muscles warm. Then ice skaters, 3 sets of 15 seconds (jump laterally from one foot to the other like a speed skater, swinging your arms across your body for balance and power, landing soft each time). Then lateral kneeling starts, 2 sets each leg over 10 yards (kneel sideways on one knee, explode up and sprint 10 yards to that side).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -232,7 +232,7 @@ export const athleticProgram = {
     {
       day: 'Day 11',
       title: 'W3 · Lower Body',
-      warmup: '10 min: Kneeling starts, 2 sets each leg over 10 yards (kneel on one knee, opposite foot planted in front, explode up and sprint forward 10 yards).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and loosen up. Then do some dynamic stretches — 10 leg swings each leg (front to back, then side to side), 10 walking knee hugs, and 10 walking quad pulls. Then kneeling starts, 2 sets each leg over 10 yards (kneel on one knee, opposite foot planted in front, explode up and sprint forward 10 yards).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -294,7 +294,7 @@ export const athleticProgram = {
     {
       day: 'Day 14',
       title: 'W3 · Lower Body II',
-      warmup: '10 min: Lateral shuffle 2 sets of 6 (10 yards each direction, sticking and holding each direction change). Then the 5-10-5 shuttle run ×3 (sprint 5 yards, touch, sprint 10 yards the other way, touch, sprint 5 yards back through the middle).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to get your blood flowing and your body temperature up. Then lateral shuffle 2 sets of 6 (10 yards each direction, sticking and holding each direction change). Then the 5-10-5 shuttle run ×3 (sprint 5 yards, touch, sprint 10 yards the other way, touch, sprint 5 yards back through the middle).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -341,7 +341,7 @@ export const athleticProgram = {
     {
       day: 'Day 16',
       title: 'W4 · Lower Body',
-      warmup: '10 min: Kneeling starts, 2 sets each leg over 10 yards. Then med ball throws: 5 backward overhead, 5 forward from your chest, 5 vertical from a squat (same setup as Week 2, Day 6).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and loosen up your joints. Then kneeling starts, 2 sets each leg over 10 yards. Then med ball throws: 5 backward overhead, 5 forward from your chest, 5 vertical from a squat (same setup as Week 2, Day 6).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -403,7 +403,7 @@ export const athleticProgram = {
     {
       day: 'Day 19',
       title: 'W4 · Lower Body II',
-      warmup: '10 min: Ice skaters, 3 sets of 15 seconds (jump laterally from foot to foot, swinging your arms for balance and power). Then lateral kneeling starts, 2 sets each leg over 10 yards.',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to get your blood flowing and your muscles warm. Then ice skaters, 3 sets of 15 seconds (jump laterally from foot to foot, swinging your arms for balance and power). Then lateral kneeling starts, 2 sets each leg over 10 yards.',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -422,7 +422,7 @@ export const athleticProgram = {
     {
       day: 'Day 20',
       title: 'W4 · Upper Body II',
-      warmup: '10 min, 2 rounds: banded front raise into pull apart ×10, single arm dumbbell overhead carry 20 yards, scalp push-ups ×10, scalp pull-ups ×10 (same as Week 1, Day 5).',
+      warmup: '12 min: Start with a 3 min easy jog or bike at a conversational pace to get your blood flowing. Then 2 rounds of: banded front raise into pull apart ×10, single arm dumbbell overhead carry 20 yards, scalp push-ups ×10, scalp pull-ups ×10 (same as Week 1, Day 5).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
@@ -449,7 +449,7 @@ export const athleticProgram = {
     {
       day: 'Day 21',
       title: 'W5 · Lower Body',
-      warmup: '10 min: Broad jump to single leg landing, 2 sets of 4 each (jump forward with both feet like a regular broad jump, but land on just one foot each time, absorbing the impact with a bent knee). Then single leg cycling bounds, 2 sets of 20 yards (bound forward off one leg at a time, driving your knee high like a cycling motion, alternating legs as you cover ground). Finish with get-offs, 2 sets of 20 yards (an explosive first-step drill — start in an athletic stance and explode into a sprint for 20 yards).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and get your joints moving. Then broad jump to single leg landing, 2 sets of 4 each (jump forward with both feet like a regular broad jump, but land on just one foot each time, absorbing the impact with a bent knee). Then single leg cycling bounds, 2 sets of 20 yards (bound forward off one leg at a time, driving your knee high like a cycling motion, alternating legs as you cover ground). Finish with get-offs, 2 sets of 20 yards (an explosive first-step drill — start in an athletic stance and explode into a sprint for 20 yards).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1},{'name':'Conditioning','start':8}],
       exercises: [
@@ -509,7 +509,7 @@ export const athleticProgram = {
     {
       day: 'Day 24',
       title: 'W5 · Lower Body II',
-      warmup: '10 min: Mini hurdle hops (double and single leg), 2 sets each (small, quick hops over low hurdles or lines on the ground, landing soft between each one — do 2 sets with both feet, then 2 sets on each single leg). Then lateral ice skater jump into box jump, 3 sets of 3 each side (a sideways skater bound, landing on one foot, then immediately exploding straight up onto a box).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to get your blood flowing and your muscles warm. Then mini hurdle hops (double and single leg), 2 sets each (small, quick hops over low hurdles or lines on the ground, landing soft between each one — do 2 sets with both feet, then 2 sets on each single leg). Then lateral ice skater jump into box jump, 3 sets of 3 each side (a sideways skater bound, landing on one foot, then immediately exploding straight up onto a box).',
       duration: '65 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
@@ -553,7 +553,7 @@ export const athleticProgram = {
     {
       day: 'Day 26',
       title: 'W6 · Lower Body',
-      warmup: '10 min: Depth drop to broad jump, 2 sets of 3 (step off a low box, land and absorb the impact, then immediately explode forward into a broad jump). Then single leg bounding, 2 sets of 20 yards (bound forward off one leg at a time, driving your free knee up as you cover ground). Finish with lateral shuffle to sprint, 2 sets of 3 each side (shuffle sideways for a few steps, then explode into a forward sprint).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and prep your joints — this is peak week, so take the warmup seriously. Then depth drop to broad jump, 2 sets of 3 (step off a low box, land and absorb the impact, then immediately explode forward into a broad jump). Then single leg bounding, 2 sets of 20 yards (bound forward off one leg at a time, driving your free knee up as you cover ground). Finish with lateral shuffle to sprint, 2 sets of 3 each side (shuffle sideways for a few steps, then explode into a forward sprint).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
@@ -572,7 +572,7 @@ export const athleticProgram = {
     {
       day: 'Day 27',
       title: 'W6 · Upper Body',
-      warmup: '10 min, 2 rounds: band pull-apart ×15, push-up walkout ×5 (from standing, bend forward and walk your hands out to a push-up position, do a push-up, then walk your hands back to your feet and stand up), dumbbell hang clean ×8 each (light weight — same hip-drive pattern as the power clean, but with a single dumbbell), dead hang from a pull-up bar :30 (just hang with straight arms to open up your shoulders).',
+      warmup: '12 min: Start with a 3 min easy jog or row at a conversational pace to get your blood flowing. Then 2 rounds of: band pull-apart ×15, push-up walkout ×5 (from standing, bend forward and walk your hands out to a push-up position, do a push-up, then walk your hands back to your feet and stand up), dumbbell hang clean ×8 each (light weight — same hip-drive pattern as the power clean, but with a single dumbbell), dead hang from a pull-up bar :30 (just hang with straight arms to open up your shoulders).',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
@@ -614,7 +614,7 @@ export const athleticProgram = {
     {
       day: 'Day 29',
       title: 'W6 · Lower Body II',
-      warmup: '10 min: Mini hurdle hops (double and single leg), 2 sets each (same as Week 5, Day 24). Then depth jump to sprint, 3 sets of 2 (step off a low box, land and absorb the impact, and instantly explode into a short sprint). Finish with A-skips, 20 yards (a high-knee skip where you actively drive one knee up toward your chest while popping off the ground with the other foot, pumping your arms).',
+      warmup: '15 min: Start with a 5 min easy jog at a conversational pace to raise your body temperature and get your joints moving. Then mini hurdle hops (double and single leg), 2 sets each (same as Week 5, Day 24). Then depth jump to sprint, 3 sets of 2 (step off a low box, land and absorb the impact, and instantly explode into a short sprint). Finish with A-skips, 20 yards (a high-knee skip where you actively drive one knee up toward your chest while popping off the ground with the other foot, pumping your arms).',
       duration: '65 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':2}],
       exercises: [
@@ -633,7 +633,7 @@ export const athleticProgram = {
     {
       day: 'Day 30',
       title: 'W6 · Upper Body II',
-      warmup: '10 min, 2 rounds: banded face pull ×15 (same motion as the cable face pull, using a band anchored at head height), push-up to rotation ×8 each (do a push-up, then as you press up, rotate your body to one side and reach that arm toward the ceiling, alternating sides), dumbbell hang snatch ×5 each (light weight, focusing on the hip-drive pattern), dead hang :30.',
+      warmup: '12 min: Start with a 3 min easy jog or row at a conversational pace to get your blood flowing. Then 2 rounds of: banded face pull ×15 (same motion as the cable face pull, using a band anchored at head height), push-up to rotation ×8 each (do a push-up, then as you press up, rotate your body to one side and reach that arm toward the ceiling, alternating sides), dumbbell hang snatch ×5 each (light weight, focusing on the hip-drive pattern), dead hang :30.',
       duration: '70 min',
       sections: [{'name':'Strength','start':0},{'name':'Accessories','start':1}],
       exercises: [
