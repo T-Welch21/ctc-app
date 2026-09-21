@@ -20,6 +20,7 @@ const categoryColors: Record<string, { text: string; bg: string; accent: string 
   running: { text: 'text-cyan-400', bg: 'bg-cyan-400/10', accent: 'from-cyan-400/20 to-transparent' },
   athletic: { text: 'text-lime', bg: 'bg-lime/10', accent: 'from-lime/20 to-transparent' },
   sprint: { text: 'text-cyan-300', bg: 'bg-cyan-300/10', accent: 'from-cyan-300/20 to-transparent' },
+  baseball: { text: 'text-emerald-400', bg: 'bg-emerald-400/10', accent: 'from-emerald-400/20 to-transparent' },
 }
 
 function ProgramImage({ src, alt }: { src?: string; alt: string }) {
