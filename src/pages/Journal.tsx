@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronUp, Clock, Target, Eye, Trophy, ArrowUp, Heart, Star } from 'lucide-react'
+import { Sun, Moon, Zap, Brain, Check, CheckCircle, ChevronDown, ChevronLeft, ChevronRight, Calendar, Target, Eye, Trophy, ArrowUp, Heart, Star } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
@@ -42,6 +42,18 @@ function formatDayName(dateStr: string) {
   return d.toLocaleDateString('en-US', { weekday: 'short' })
 }
 
+function getWeekBounds(offset: number) {
+  const now = new Date()
+  const day = now.getDay()
+  const mondayDiff = day === 0 ? -6 : 1 - day
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + mondayDiff + offset * 7)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+  const fmt = (d: Date) => d.toISOString().split('T')[0]
+  const label = `${monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${sunday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+  return { start: fmt(monday), end: fmt(sunday), label }
+}
+
 export default function Journal() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -60,14 +72,24 @@ export default function Journal() {
   const [eveningGratitude, setEveningGratitude] = useState('')
   const [dayRating, setDayRating] = useState(7)
   const [saved, setSaved] = useState(false)
-  const [showHistory, setShowHistory] = useState(false)
+  const [weekOffset, setWeekOffset] = useState(0)
   const affirmation = getAffirmation()
 
   const entries = user ? getJournalEntries(user.id) : []
   const todayStr = new Date().toISOString().split('T')[0]
-  const pastEntries = entries
-    .filter((e) => e.date !== todayStr || e.timeOfDay !== timeOfDay)
-    .sort((a, b) => b.date.localeCompare(a.date))
+
+  const week = getWeekBounds(weekOffset)
+  const weekEntries = entries
+    .filter(e => e.date >= week.start && e.date <= week.end)
+    .sort((a, b) => b.date.localeCompare(a.date) || (a.timeOfDay === 'morning' ? 1 : -1))
+  const hasOlderEntries = entries.some(e => e.date < week.start)
+  const weekMornings = weekEntries.filter(e => e.timeOfDay === 'morning')
+  const uniqueDays = new Set(weekEntries.map(e => e.date)).size
+  const avgEnergy = weekEntries.length > 0 ? (weekEntries.reduce((s, e) => s + e.energy, 0) / weekEntries.length).toFixed(1) : '–'
+  const avgMind = weekEntries.length > 0 ? (weekEntries.reduce((s, e) => s + e.mind, 0) / weekEntries.length).toFixed(1) : '–'
+  const totalNeedle = weekMornings.reduce((s, e) => s + e.checkedItems.length, 0)
+  const maxNeedle = weekMornings.length * 5
+  const needlePct = maxNeedle > 0 ? Math.round((totalNeedle / maxNeedle) * 100) : 0
 
   const toggleCheck = (i: number) => {
     const next = new Set(checked)
@@ -394,30 +416,67 @@ export default function Journal() {
         )}
       </button>
 
-      {/* History section */}
-      {pastEntries.length > 0 && (
+      {/* Weekly Journal History */}
+      {entries.length > 0 && (
         <div className="mt-8">
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className="w-full flex items-center justify-between mb-4"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-bg-elevated flex items-center justify-center">
-                <Clock size={16} className="text-text-muted" />
+          {/* Week navigator */}
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => setWeekOffset(o => o - 1)}
+              disabled={!hasOlderEntries}
+              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-95 ${hasOlderEntries ? 'bg-bg-elevated text-text' : 'text-text-muted/20'}`}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-0.5">
+                <Calendar size={14} className="text-lime" />
+                <p className="font-display font-bold text-sm tracking-tight">
+                  {weekOffset === 0 ? 'This Week' : weekOffset === -1 ? 'Last Week' : week.label}
+                </p>
               </div>
-              <p className="font-display font-bold text-sm tracking-tight">Past Entries</p>
-              <span className="text-text-muted text-[10px] bg-bg-elevated px-2 py-0.5 rounded-md font-medium">{pastEntries.length}</span>
+              <p className="text-text-muted text-[10px] tracking-wider">{week.label}</p>
             </div>
-            {showHistory ? (
-              <ChevronUp size={16} className="text-text-muted" />
-            ) : (
-              <ChevronDown size={16} className="text-text-muted" />
-            )}
-          </button>
+            <button
+              onClick={() => setWeekOffset(o => Math.min(o + 1, 0))}
+              disabled={weekOffset >= 0}
+              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-95 ${weekOffset < 0 ? 'bg-bg-elevated text-text' : 'text-text-muted/20'}`}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
 
-          {showHistory && (
+          {/* Week summary stats */}
+          {weekEntries.length > 0 && (
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="bg-bg-card border border-border rounded-xl p-2.5 text-center">
+                <p className="text-lime font-display font-bold text-lg">{uniqueDays}</p>
+                <p className="text-text-muted text-[9px] uppercase tracking-wider">Days</p>
+              </div>
+              <div className="bg-bg-card border border-border rounded-xl p-2.5 text-center">
+                <p className="text-cyan-400 font-display font-bold text-lg">{avgEnergy}</p>
+                <p className="text-text-muted text-[9px] uppercase tracking-wider">Energy</p>
+              </div>
+              <div className="bg-bg-card border border-border rounded-xl p-2.5 text-center">
+                <p className="text-blue-400 font-display font-bold text-lg">{avgMind}</p>
+                <p className="text-text-muted text-[9px] uppercase tracking-wider">Mind</p>
+              </div>
+              <div className="bg-bg-card border border-border rounded-xl p-2.5 text-center">
+                <p className="text-lime font-display font-bold text-lg">{needlePct}%</p>
+                <p className="text-text-muted text-[9px] uppercase tracking-wider">Movers</p>
+              </div>
+            </div>
+          )}
+
+          {/* Week entries */}
+          {weekEntries.length === 0 ? (
+            <div className="bg-bg-card/50 border border-border rounded-2xl p-8 text-center">
+              <p className="text-text-muted text-sm font-medium">No entries this week</p>
+              <p className="text-text-muted/60 text-xs mt-1">Your words hold you accountable.</p>
+            </div>
+          ) : (
             <div className="space-y-2.5">
-              {pastEntries.slice(0, 10).map((entry, i) => (
+              {weekEntries.map((entry, i) => (
                 <HistoryCard key={`${entry.date}-${entry.timeOfDay}`} entry={entry} index={i} />
               ))}
             </div>
@@ -430,83 +489,131 @@ export default function Journal() {
 
 function HistoryCard({ entry, index }: { entry: JournalEntry; index: number }) {
   const isMorning = entry.timeOfDay === 'morning'
+  const [expanded, setExpanded] = useState(false)
+  const needleMoversRef = ['Train with intensity', 'Eat with purpose', 'Hydrate (1 gallon)', 'Read 10 pages', 'Stretch / Mobility work']
+
   return (
     <div
-      className="animate-slide-up opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border p-4 relative overflow-hidden"
+      className="animate-slide-up opacity-0 card-shine rounded-2xl bg-bg-card/80 border border-border relative overflow-hidden"
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isMorning ? 'bg-cyan-400/10' : 'bg-blue-400/10'}`}>
-            {isMorning ? (
-              <Sun size={14} className="text-cyan-400" />
-            ) : (
-              <Moon size={14} className="text-blue-400" />
-            )}
+      <button onClick={() => setExpanded(!expanded)} className="w-full p-4 text-left">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isMorning ? 'bg-cyan-400/10' : 'bg-blue-400/10'}`}>
+              {isMorning ? <Sun size={14} className="text-cyan-400" /> : <Moon size={14} className="text-blue-400" />}
+            </div>
+            <span className="font-display font-bold text-sm tracking-tight">
+              {formatDayName(entry.date)}, {formatDate(entry.date)}
+            </span>
           </div>
-          <span className="font-display font-bold text-sm tracking-tight">
-            {formatDayName(entry.date)}, {formatDate(entry.date)}
-          </span>
+          <div className="flex items-center gap-2">
+            {!isMorning && entry.dayRating !== undefined && (
+              <span className="text-lime font-display font-bold text-xs">{entry.dayRating}/10</span>
+            )}
+            {isMorning && (
+              <span className="text-lime text-[10px] font-medium">{entry.checkedItems.length}/5</span>
+            )}
+            <ChevronDown size={14} className={`text-text-muted transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+          </div>
         </div>
-        <span className="text-text-muted text-[10px] uppercase tracking-wider font-medium">{entry.timeOfDay}</span>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 mb-2">
-        <div className="flex items-center gap-1.5 bg-bg-elevated rounded-lg px-2.5 py-1.5">
-          <Zap size={12} className="text-cyan-400" />
-          <span className="text-text-muted text-[10px]">Energy</span>
-          <span className="text-lime font-display font-bold text-xs ml-auto">{entry.energy}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <Zap size={10} className="text-cyan-400" />
+            <span className="text-text-secondary text-[11px] font-medium">{entry.energy}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Brain size={10} className="text-blue-400" />
+            <span className="text-text-secondary text-[11px] font-medium">{entry.mind}</span>
+          </div>
+          {!expanded && isMorning && entry.topGoal && (
+            <span className="text-text-muted text-[11px] truncate flex-1">{entry.topGoal}</span>
+          )}
+          {!expanded && !isMorning && entry.winOfDay && (
+            <span className="text-text-muted text-[11px] truncate flex-1">{entry.winOfDay}</span>
+          )}
         </div>
-        <div className="flex items-center gap-1.5 bg-bg-elevated rounded-lg px-2.5 py-1.5">
-          <Brain size={12} className="text-blue-400" />
-          <span className="text-text-muted text-[10px]">Mind</span>
-          <span className="text-lime font-display font-bold text-xs ml-auto">{entry.mind}</span>
+      </button>
+
+      {expanded && (
+        <div className="px-4 pb-4 space-y-3 border-t border-border/50 pt-3">
+          {isMorning && entry.gratitude && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1.5">I Am...</p>
+              <div className="space-y-1">
+                {entry.gratitude.split('|||').map((a, i) => (
+                  <p key={i} className="text-text-secondary text-xs italic leading-relaxed">
+                    I am {a}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {isMorning && entry.topGoal && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1">Target</p>
+              <p className="text-text text-xs leading-relaxed">{entry.topGoal}</p>
+            </div>
+          )}
+
+          {isMorning && entry.visualization && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1">Visualization</p>
+              <p className="text-text-secondary text-xs leading-relaxed">{entry.visualization}</p>
+            </div>
+          )}
+
+          {isMorning && entry.checkedItems.length > 0 && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1.5">Needle Movers</p>
+              <div className="space-y-1">
+                {needleMoversRef.map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded flex items-center justify-center ${entry.checkedItems.includes(i) ? 'bg-lime' : 'border border-text-muted/30'}`}>
+                      {entry.checkedItems.includes(i) && <Check size={10} className="text-bg" />}
+                    </div>
+                    <span className={`text-xs ${entry.checkedItems.includes(i) ? 'text-text-secondary' : 'text-text-muted/50'}`}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!isMorning && entry.winOfDay && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1">Win of the Day</p>
+              <p className="text-text text-xs leading-relaxed">{entry.winOfDay}</p>
+            </div>
+          )}
+
+          {!isMorning && entry.improvement && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1">Level Up Tomorrow</p>
+              <p className="text-text-secondary text-xs leading-relaxed">{entry.improvement}</p>
+            </div>
+          )}
+
+          {!isMorning && entry.eveningGratitude && (
+            <div>
+              <p className="text-text-muted text-[10px] uppercase tracking-wider font-medium mb-1">Grateful For</p>
+              <p className="text-text-secondary text-xs italic leading-relaxed">{entry.eveningGratitude}</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <div className="flex items-center gap-1.5 bg-bg-elevated rounded-lg px-2.5 py-1.5">
+              <Zap size={12} className="text-cyan-400" />
+              <span className="text-text-muted text-[10px]">Energy</span>
+              <span className="text-lime font-display font-bold text-xs ml-auto">{entry.energy}</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-bg-elevated rounded-lg px-2.5 py-1.5">
+              <Brain size={12} className="text-blue-400" />
+              <span className="text-text-muted text-[10px]">Mind</span>
+              <span className="text-lime font-display font-bold text-xs ml-auto">{entry.mind}</span>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {isMorning && entry.checkedItems.length > 0 && (
-        <div className="flex items-center gap-1.5 mb-2">
-          <Check size={12} className="text-lime" />
-          <span className="text-text-muted text-xs">
-            {entry.checkedItems.length}/5 needle movers
-          </span>
-        </div>
-      )}
-
-      {isMorning && entry.topGoal && (
-        <p className="text-text-secondary text-xs mb-1 truncate">
-          <span className="text-cyan-400 font-medium">Target:</span> {entry.topGoal}
-        </p>
-      )}
-
-      {isMorning && entry.gratitude && (
-        <div className="space-y-0.5">
-          {entry.gratitude.split('|||').map((a, i) => (
-            <p key={i} className="text-text-secondary text-xs italic truncate">
-              I am {a}
-            </p>
-          ))}
-        </div>
-      )}
-
-      {!isMorning && entry.dayRating !== undefined && (
-        <div className="flex items-center gap-1.5 mb-1">
-          <Star size={12} className="text-cyan-400" />
-          <span className="text-text-muted text-[10px]">Day Rating</span>
-          <span className="text-lime font-display font-bold text-xs ml-1">{entry.dayRating}/10</span>
-        </div>
-      )}
-
-      {!isMorning && entry.winOfDay && (
-        <p className="text-text-secondary text-xs mb-1 truncate">
-          <span className="text-lime font-medium">Win:</span> {entry.winOfDay}
-        </p>
-      )}
-
-      {!isMorning && entry.eveningGratitude && (
-        <p className="text-text-secondary text-xs italic truncate">
-          Grateful for: {entry.eveningGratitude}
-        </p>
       )}
     </div>
   )
