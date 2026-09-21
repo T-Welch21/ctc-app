@@ -344,3 +344,60 @@ begin
   end if;
 end;
 $$ language plpgsql security definer;
+
+-- Coach can read all profiles (for Command Center roster)
+drop policy if exists "Coach can read all profiles" on public.profiles;
+create policy "Coach can read all profiles"
+  on public.profiles for select
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+
+-- Coach can read all completed sessions (for athlete stats)
+drop policy if exists "Coach can read all sessions" on public.completed_sessions;
+create policy "Coach can read all sessions"
+  on public.completed_sessions for select
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+
+-- Coach can read all check-ins (for athlete stats)
+drop policy if exists "Coach can read all check-ins" on public.check_ins;
+create policy "Coach can read all check-ins"
+  on public.check_ins for select
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+
+-- Direct messages (1:1 between coach and athlete)
+create table if not exists public.messages (
+  id uuid default gen_random_uuid() primary key,
+  sender_id uuid references public.profiles(id) on delete cascade not null,
+  recipient_id uuid references public.profiles(id) on delete cascade not null,
+  message text not null,
+  read boolean default false,
+  created_at timestamptz default now()
+);
+
+alter table public.messages enable row level security;
+
+drop policy if exists "Users can read own messages" on public.messages;
+create policy "Users can read own messages"
+  on public.messages for select
+  using (auth.uid() = sender_id or auth.uid() = recipient_id);
+
+drop policy if exists "Users can send messages" on public.messages;
+create policy "Users can send messages"
+  on public.messages for insert
+  with check (auth.uid() = sender_id);
+
+drop policy if exists "Recipients can mark messages read" on public.messages;
+create policy "Recipients can mark messages read"
+  on public.messages for update
+  using (auth.uid() = recipient_id)
+  with check (auth.uid() = recipient_id);
+
+-- Enable realtime for messages
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and tablename = 'messages'
+  ) then
+    alter publication supabase_realtime add table public.messages;
+  end if;
+end $$;

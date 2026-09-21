@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Navigate } from 'react-router-dom'
 import {
   Users,
@@ -18,6 +18,9 @@ import {
   Copy,
   Check,
   Trash2,
+  MessageSquare,
+  DollarSign,
+  ChevronRight,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
@@ -25,6 +28,7 @@ import { allPrograms } from '../lib/programs'
 import { createInviteCode, listInviteCodes, deactivateInviteCode, type InviteCode } from '../lib/invite-codes'
 
 const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+const SUBSCRIPTION_PRICE = 29.99
 
 type AthleteProfile = {
   id: string
@@ -33,11 +37,22 @@ type AthleteProfile = {
   identity: string | null
   onboarded: boolean
   created_at: string
+  subscription_status: string | null
+  subscription_source: string | null
 }
 
 type Broadcast = {
   id: string
   message: string
+  created_at: string
+}
+
+type DirectMessage = {
+  id: string
+  sender_id: string
+  recipient_id: string
+  message: string
+  read: boolean
   created_at: string
 }
 
@@ -78,6 +93,19 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
+function getStatusBadge(status: string | null, source: string | null) {
+  if (status === 'active' || status === 'trialing') {
+    return { label: source === 'invite' ? 'Invited' : 'Paid', bg: 'bg-lime/10', text: 'text-lime' }
+  }
+  if (status === 'past_due') {
+    return { label: 'Past Due', bg: 'bg-amber-400/10', text: 'text-amber-400' }
+  }
+  if (status === 'canceled') {
+    return { label: 'Canceled', bg: 'bg-red-400/10', text: 'text-red-400' }
+  }
+  return { label: 'Free', bg: 'bg-white/[0.04]', text: 'text-text-muted' }
+}
+
 export default function Command() {
   const { user } = useAuth()
   const [athletes, setAthletes] = useState<AthleteProfile[]>([])
@@ -94,6 +122,13 @@ export default function Command() {
   const [newCodeLabel, setNewCodeLabel] = useState('')
   const [newCodeUses, setNewCodeUses] = useState(1)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
+  const [dmText, setDmText] = useState('')
+  const [sendingDm, setSendingDm] = useState(false)
+  const [sentDm, setSentDm] = useState(false)
+  const [athleteMessages, setAthleteMessages] = useState<DirectMessage[]>([])
+  const [rosterFilter, setRosterFilter] = useState<'all' | 'paid' | 'free'>('all')
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   if (!user || !COACH_EMAILS.includes(user.email)) {
     return <Navigate to="/dashboard" replace />
@@ -104,7 +139,7 @@ export default function Command() {
     try {
       const { data } = await supabase
         .from('profiles')
-        .select('id, name, email, identity, onboarded, created_at')
+        .select('id, name, email, identity, onboarded, created_at, subscription_status, subscription_source')
         .order('created_at', { ascending: false })
       setAthletes(data || [])
     } catch {
@@ -123,6 +158,26 @@ export default function Command() {
       setBroadcasts(data || [])
     } catch {
       setBroadcasts([])
+    }
+  }
+
+  const loadUnreadCounts = async () => {
+    if (!user) return
+    try {
+      const { data } = await supabase
+        .from('messages')
+        .select('sender_id')
+        .eq('recipient_id', user.id)
+        .eq('read', false)
+      if (data) {
+        const counts: Record<string, number> = {}
+        data.forEach((m: { sender_id: string }) => {
+          counts[m.sender_id] = (counts[m.sender_id] || 0) + 1
+        })
+        setUnreadCounts(counts)
+      }
+    } catch {
+      // messages table may not exist yet
     }
   }
 
@@ -150,6 +205,10 @@ export default function Command() {
   const openAthleteDetail = async (athlete: AthleteProfile) => {
     setSelectedAthlete(athlete)
     setAthleteStats({ sessions: 0, lastActive: null, checkIns: 0 })
+    setAthleteMessages([])
+    setDmText('')
+    setSentDm(false)
+
     try {
       const [sessionsRes, checkInsRes] = await Promise.all([
         supabase
@@ -170,6 +229,53 @@ export default function Command() {
     } catch {
       // tables may not exist yet
     }
+
+    loadAthleteMessages(athlete.id)
+  }
+
+  const loadAthleteMessages = async (athleteId: string) => {
+    if (!user) return
+    try {
+      const { data } = await supabase
+        .from('messages')
+        .select('*')
+        .or(`and(sender_id.eq.${user.id},recipient_id.eq.${athleteId}),and(sender_id.eq.${athleteId},recipient_id.eq.${user.id})`)
+        .order('created_at', { ascending: true })
+        .limit(50)
+      setAthleteMessages(data || [])
+
+      // mark athlete's messages as read
+      if (data?.some((m: DirectMessage) => m.sender_id === athleteId && !m.read)) {
+        await supabase
+          .from('messages')
+          .update({ read: true })
+          .eq('sender_id', athleteId)
+          .eq('recipient_id', user.id)
+          .eq('read', false)
+        loadUnreadCounts()
+      }
+    } catch {
+      // messages table may not exist yet
+    }
+  }
+
+  const sendDirectMessage = async () => {
+    if (!dmText.trim() || !user || !selectedAthlete) return
+    setSendingDm(true)
+    try {
+      await supabase.from('messages').insert({
+        sender_id: user.id,
+        recipient_id: selectedAthlete.id,
+        message: dmText.trim(),
+      })
+      setDmText('')
+      setSentDm(true)
+      setTimeout(() => setSentDm(false), 1500)
+      loadAthleteMessages(selectedAthlete.id)
+    } catch {
+      // messages table may not exist yet
+    }
+    setSendingDm(false)
   }
 
   const loadInviteCodes = async () => {
@@ -201,9 +307,27 @@ export default function Command() {
     loadAthletes()
     loadBroadcasts()
     loadInviteCodes()
+    loadUnreadCounts()
   }, [])
 
-  const athleteCount = athletes.filter((a) => a.onboarded).length
+  useEffect(() => {
+    if (messagesEndRef.current && athleteMessages.length > 0) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [athleteMessages])
+
+  const nonCoachAthletes = athletes.filter((a) => !COACH_EMAILS.includes(a.email))
+  const athleteCount = nonCoachAthletes.filter((a) => a.onboarded).length
+  const paidCount = nonCoachAthletes.filter((a) => a.subscription_status === 'active' || a.subscription_status === 'trialing').length
+  const mrr = paidCount * SUBSCRIPTION_PRICE
+
+  const filteredAthletes = nonCoachAthletes.filter((a) => {
+    if (rosterFilter === 'paid') return a.subscription_status === 'active' || a.subscription_status === 'trialing'
+    if (rosterFilter === 'free') return !a.subscription_status || a.subscription_status === 'canceled' || a.subscription_status === 'past_due'
+    return true
+  })
+
+  const totalUnread = Object.values(unreadCounts).reduce((s, c) => s + c, 0)
 
   return (
     <div className="min-h-screen pb-28 px-5 pt-14">
@@ -213,21 +337,29 @@ export default function Command() {
       </div>
 
       {/* Quick stats */}
-      <div className="animate-slide-up grid grid-cols-3 gap-3 mb-6">
-        <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
-          <Users size={18} className="text-lime mx-auto mb-1" />
-          <p className="font-display font-bold text-xl">{athleteCount}</p>
-          <p className="text-text-muted text-[10px]">Athletes</p>
+      <div className="animate-slide-up grid grid-cols-4 gap-2.5 mb-6">
+        <div className="rounded-2xl bg-bg-card border border-border p-3 text-center">
+          <Users size={16} className="text-lime mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">{athleteCount}</p>
+          <p className="text-text-muted text-[9px]">Athletes</p>
         </div>
-        <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
-          <Dumbbell size={18} className="text-cyan-400 mx-auto mb-1" />
-          <p className="font-display font-bold text-xl">{allPrograms.length}</p>
-          <p className="text-text-muted text-[10px]">Programs</p>
+        <div className="rounded-2xl bg-bg-card border border-border p-3 text-center">
+          <DollarSign size={16} className="text-cyan-400 mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">{paidCount}</p>
+          <p className="text-text-muted text-[9px]">Paying</p>
         </div>
-        <div className="rounded-2xl bg-bg-card border border-border p-4 text-center">
-          <BarChart3 size={18} className="text-blue-400 mx-auto mb-1" />
-          <p className="font-display font-bold text-xl">$0</p>
-          <p className="text-text-muted text-[10px]">MRR</p>
+        <div className="rounded-2xl bg-bg-card border border-border p-3 text-center">
+          <BarChart3 size={16} className="text-blue-400 mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">${mrr.toFixed(0)}</p>
+          <p className="text-text-muted text-[9px]">MRR</p>
+        </div>
+        <div className="rounded-2xl bg-bg-card border border-border p-3 text-center relative">
+          <MessageSquare size={16} className="text-indigo-400 mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">{totalUnread}</p>
+          <p className="text-text-muted text-[9px]">Unread</p>
+          {totalUnread > 0 && (
+            <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+          )}
         </div>
       </div>
 
@@ -431,49 +563,71 @@ export default function Command() {
           </button>
         </div>
 
-        {athletes.length === 0 ? (
+        {/* Filter tabs */}
+        <div className="flex gap-2 mb-3">
+          {(['all', 'paid', 'free'] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setRosterFilter(f)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                rosterFilter === f
+                  ? 'bg-lime/15 text-lime'
+                  : 'bg-white/[0.04] text-text-muted hover:text-text'
+              }`}
+            >
+              {f === 'all' ? `All (${nonCoachAthletes.length})` : f === 'paid' ? `Paid (${paidCount})` : `Free (${nonCoachAthletes.length - paidCount})`}
+            </button>
+          ))}
+        </div>
+
+        {filteredAthletes.length === 0 ? (
           <div className="py-8 text-center">
             <Users size={32} className="text-text-muted mx-auto mb-2" />
-            <p className="text-text-muted text-sm">No athletes yet</p>
-            <p className="text-text-muted text-xs mt-1">
-              Athletes appear here when they sign up through the app
+            <p className="text-text-muted text-sm">
+              {rosterFilter === 'all' ? 'No athletes yet' : `No ${rosterFilter} athletes`}
             </p>
           </div>
         ) : (
           <div className="space-y-2">
-            {athletes.map((athlete) => (
-              <button
-                key={athlete.id}
-                onClick={() => openAthleteDetail(athlete)}
-                className="w-full flex items-center gap-3 p-3 rounded-xl bg-bg-elevated hover:bg-bg-elevated/80 transition-colors text-left"
-              >
-                <div className="w-9 h-9 rounded-xl bg-lime/10 flex items-center justify-center shrink-0">
-                  <span className="font-display text-lime text-sm font-bold">
-                    {(athlete.name || athlete.email).charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-display font-semibold text-sm truncate">
-                    {athlete.name || 'No name'}
-                  </p>
-                  <p className="text-text-muted text-xs truncate">{athlete.email}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <span
-                    className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                      athlete.onboarded
-                        ? 'bg-lime/10 text-lime'
-                        : 'bg-cyan-400/10 text-cyan-400'
-                    }`}
-                  >
-                    {athlete.onboarded ? 'Active' : 'New'}
-                  </span>
-                  <p className="text-text-muted text-[10px] mt-1">
-                    {formatDate(athlete.created_at)}
-                  </p>
-                </div>
-              </button>
-            ))}
+            {filteredAthletes.map((athlete) => {
+              const badge = getStatusBadge(athlete.subscription_status, athlete.subscription_source)
+              const unread = unreadCounts[athlete.id] || 0
+              return (
+                <button
+                  key={athlete.id}
+                  onClick={() => openAthleteDetail(athlete)}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-bg-elevated hover:bg-bg-elevated/80 transition-colors text-left"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-lime/10 flex items-center justify-center shrink-0 relative">
+                    <span className="font-display text-lime text-sm font-bold">
+                      {(athlete.name || athlete.email).charAt(0).toUpperCase()}
+                    </span>
+                    {unread > 0 && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-400 flex items-center justify-center">
+                        <span className="text-[8px] font-bold text-white">{unread}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display font-semibold text-sm truncate">
+                      {athlete.name || 'No name'}
+                    </p>
+                    <p className="text-text-muted text-xs truncate">{athlete.email}</p>
+                  </div>
+                  <div className="text-right shrink-0 flex items-center gap-2">
+                    <div>
+                      <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
+                        {badge.label}
+                      </span>
+                      <p className="text-text-muted text-[10px] mt-1">
+                        {formatDate(athlete.created_at)}
+                      </p>
+                    </div>
+                    <ChevronRight size={14} className="text-text-muted" />
+                  </div>
+                </button>
+              )
+            })}
           </div>
         )}
       </div>
@@ -485,7 +639,7 @@ export default function Command() {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setSelectedAthlete(null)}
           />
-          <div className="relative w-full max-w-lg bg-bg-card border border-border rounded-2xl p-6 animate-slide-up max-h-[80vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-bg-card border border-border rounded-2xl p-6 animate-slide-up max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-xl bg-lime/10 flex items-center justify-center">
@@ -506,7 +660,7 @@ export default function Command() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="grid grid-cols-3 gap-3 mb-5">
               <div className="rounded-xl bg-bg-elevated p-3 text-center">
                 <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Identity</p>
                 <p className="font-display font-semibold text-sm capitalize">{selectedAthlete.identity || 'Not set'}</p>
@@ -516,6 +670,13 @@ export default function Command() {
                 <p className={`font-display font-semibold text-sm ${selectedAthlete.onboarded ? 'text-lime' : 'text-cyan-400'}`}>
                   {selectedAthlete.onboarded ? 'Active' : 'New'}
                 </p>
+              </div>
+              <div className="rounded-xl bg-bg-elevated p-3 text-center">
+                <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Plan</p>
+                {(() => {
+                  const badge = getStatusBadge(selectedAthlete.subscription_status, selectedAthlete.subscription_source)
+                  return <p className={`font-display font-semibold text-sm ${badge.text}`}>{badge.label}</p>
+                })()}
               </div>
             </div>
 
@@ -538,14 +699,76 @@ export default function Command() {
               </div>
             </div>
 
-            <div className="rounded-xl bg-bg-elevated p-3">
+            <div className="rounded-xl bg-bg-elevated p-3 mb-4">
               <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">Joined</p>
               <p className="text-sm">{new Date(selectedAthlete.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
             </div>
 
+            {/* Message thread */}
+            <div className="rounded-xl bg-bg-elevated p-4 mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <MessageSquare size={14} className="text-cyan-400" />
+                <p className="font-display font-semibold text-sm">Direct Messages</p>
+              </div>
+
+              {athleteMessages.length > 0 && (
+                <div className="max-h-48 overflow-y-auto space-y-2 mb-3 scrollbar-thin">
+                  {athleteMessages.map((m) => {
+                    const isCoach = m.sender_id === user!.id
+                    return (
+                      <div key={m.id} className={`flex ${isCoach ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] rounded-xl px-3 py-2 ${
+                          isCoach
+                            ? 'bg-cyan-400/15 text-text'
+                            : 'bg-white/[0.06] text-text'
+                        }`}>
+                          <p className="text-sm leading-relaxed">{m.message}</p>
+                          <p className="text-text-muted text-[9px] mt-1">
+                            {new Date(m.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                            {' · '}
+                            {new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+
+              {athleteMessages.length === 0 && (
+                <p className="text-text-muted text-xs text-center py-3 mb-3">No messages yet. Start the conversation.</p>
+              )}
+
+              {sentDm ? (
+                <div className="flex items-center justify-center gap-2 py-2">
+                  <Check size={14} className="text-lime" />
+                  <span className="text-lime text-sm font-display font-bold">Message Sent</span>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={dmText}
+                    onChange={(e) => setDmText(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendDirectMessage() } }}
+                    placeholder={`Message ${selectedAthlete.name || 'athlete'}...`}
+                    className="flex-1 bg-white/[0.04] border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm placeholder-text-muted focus:outline-none focus:border-cyan-400/30"
+                  />
+                  <button
+                    onClick={sendDirectMessage}
+                    disabled={!dmText.trim() || sendingDm}
+                    className="px-4 rounded-xl bg-cyan-400 text-black font-display font-bold text-sm disabled:opacity-40 transition-all active:scale-95"
+                  >
+                    <Send size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+
             <a
               href={`mailto:${selectedAthlete.email}`}
-              className="mt-4 w-full py-3 rounded-xl font-display font-bold text-sm bg-lime/10 text-lime text-center block hover:bg-lime/20 transition-colors"
+              className="w-full py-3 rounded-xl font-display font-bold text-sm bg-lime/10 text-lime text-center block hover:bg-lime/20 transition-colors"
             >
               Email Athlete
             </a>
