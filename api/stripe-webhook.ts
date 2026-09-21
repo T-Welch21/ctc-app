@@ -16,6 +16,30 @@ async function getRawBody(req: VercelRequest): Promise<Buffer> {
   return Buffer.concat(chunks)
 }
 
+async function syncToWebsiteLedger(data: {
+  amount: number
+  description: string
+  stripe_payment_id: string
+  date: string
+  category: string
+}) {
+  const syncKey = process.env.WEBSITE_SYNC_KEY
+  if (!syncKey) return
+
+  try {
+    await fetch('https://calledtocompete.net/api/app-sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Sync-Key': syncKey,
+      },
+      body: JSON.stringify(data),
+    })
+  } catch {
+    // Non-blocking — ledger sync failure should not break webhook processing
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -57,6 +81,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               : null,
           })
           .eq('id', userId)
+      }
+      break
+    }
+
+    case 'invoice.payment_succeeded': {
+      const invoice = event.data.object as Stripe.Invoice
+      const customerId = invoice.customer as string
+      const amountPaid = (invoice.amount_paid || 0) / 100
+
+      if (amountPaid > 0) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, name, email')
+          .eq('stripe_customer_id', customerId)
+          .single()
+
+        if (profile) {
+          const name = profile.name || profile.email || 'App Subscriber'
+          const today = new Date().toISOString().split('T')[0]
+
+          await syncToWebsiteLedger({
+            amount: amountPaid,
+            description: `CTC App — ${name} ($${amountPaid.toFixed(2)}/mo)`,
+            stripe_payment_id: invoice.id || `inv_${Date.now()}`,
+            date: today,
+            category: 'App Subscription',
+          })
+        }
       }
       break
     }
