@@ -24,7 +24,6 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
-import { allPrograms } from '../lib/programs'
 import { createInviteCode, listInviteCodes, deactivateInviteCode, type InviteCode } from '../lib/invite-codes'
 
 const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
