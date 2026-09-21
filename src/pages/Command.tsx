@@ -21,6 +21,8 @@ import {
   MessageSquare,
   DollarSign,
   ChevronRight,
+  ShieldCheck,
+  ShieldOff,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
@@ -127,6 +129,7 @@ export default function Command() {
   const [athleteMessages, setAthleteMessages] = useState<DirectMessage[]>([])
   const [rosterFilter, setRosterFilter] = useState<'all' | 'paid' | 'free'>('all')
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
+  const [togglingAccess, setTogglingAccess] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   if (!user || !COACH_EMAILS.includes(user.email)) {
@@ -275,6 +278,36 @@ export default function Command() {
       // messages table may not exist yet
     }
     setSendingDm(false)
+  }
+
+  const toggleAccess = async (athleteId: string, currentStatus: string | null) => {
+    setTogglingAccess(true)
+    const action = currentStatus === 'active' || currentStatus === 'trialing' ? 'revoke_access' : 'grant_access'
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+      const res = await fetch('/api/coach-admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ action, athlete_id: athleteId }),
+      })
+      if (res.ok) {
+        const newStatus = action === 'grant_access' ? 'active' : null
+        const newSource = action === 'grant_access' ? 'coach' : null
+        setAthletes((prev) => prev.map((a) =>
+          a.id === athleteId ? { ...a, subscription_status: newStatus, subscription_source: newSource } : a
+        ))
+        if (selectedAthlete?.id === athleteId) {
+          setSelectedAthlete((prev) => prev ? { ...prev, subscription_status: newStatus, subscription_source: newSource } : prev)
+        }
+      }
+    } catch {
+      // API may not be deployed yet
+    }
+    setTogglingAccess(false)
   }
 
   const loadInviteCodes = async () => {
@@ -764,6 +797,30 @@ export default function Command() {
                 </div>
               )}
             </div>
+
+            {/* Grant / Revoke Access */}
+            {(() => {
+              const hasAccess = selectedAthlete.subscription_status === 'active' || selectedAthlete.subscription_status === 'trialing'
+              return (
+                <button
+                  onClick={() => toggleAccess(selectedAthlete.id, selectedAthlete.subscription_status)}
+                  disabled={togglingAccess}
+                  className={`w-full py-3 rounded-xl font-display font-bold text-sm mb-3 transition-all active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2 ${
+                    hasAccess
+                      ? 'bg-red-400/10 text-red-400 hover:bg-red-400/20'
+                      : 'bg-lime text-black'
+                  }`}
+                >
+                  {togglingAccess ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : hasAccess ? (
+                    <><ShieldOff size={16} /> Revoke Access</>
+                  ) : (
+                    <><ShieldCheck size={16} /> Grant Full Access</>
+                  )}
+                </button>
+              )
+            })()}
 
             <a
               href={`mailto:${selectedAthlete.email}`}
