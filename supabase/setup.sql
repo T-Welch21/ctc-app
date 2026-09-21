@@ -345,6 +345,12 @@ begin
 end;
 $$ language plpgsql security definer;
 
+-- Authenticated users can read profile names (for community posts, messages)
+drop policy if exists "Authenticated can read profile names" on public.profiles;
+create policy "Authenticated can read profile names"
+  on public.profiles for select
+  using (auth.role() = 'authenticated');
+
 -- Coach can read all profiles (for Command Center roster)
 drop policy if exists "Coach can read all profiles" on public.profiles;
 create policy "Coach can read all profiles"

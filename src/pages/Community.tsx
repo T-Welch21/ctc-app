@@ -148,6 +148,7 @@ export default function Community() {
           posts.map((post, i) => {
             const isWin = post.post_type === 'win'
             const isOwn = post.user_id === user?.id
+            const displayName = post.user_name || 'Athlete'
             return (
               <div
                 key={post.id}
@@ -169,14 +170,14 @@ export default function Community() {
                       <Trophy size={15} className="text-lime" />
                     ) : (
                       <span className="font-display font-bold text-sm text-text-secondary">
-                        {post.user_name.charAt(0).toUpperCase()}
+                        {displayName.charAt(0).toUpperCase()}
                       </span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <p className="font-display font-bold text-sm tracking-tight">
-                        {isOwn ? 'You' : post.user_name.split(' ')[0]}
+                        {isOwn ? 'You' : displayName}
                       </p>
                       {isWin && (
                         <span className="flex items-center gap-0.5 text-lime text-[8px] font-bold uppercase tracking-wider bg-lime/10 px-1.5 py-0.5 rounded-full">
