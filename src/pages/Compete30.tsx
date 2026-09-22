@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
-import { ChevronLeft, Dumbbell, BookOpen, Droplets, Swords, BookOpenCheck, Wine, Check, RotateCcw, Trophy, ArrowRight, Shield } from 'lucide-react'
+import { ChevronLeft, Dumbbell, BookOpen, Droplets, Swords, BookOpenCheck, Salad, Check, RotateCcw, Trophy, ArrowRight, Shield } from 'lucide-react'
 import {
   getCompete30State, enrollCompete30, resetCompete30, toggleDayLog,
   getCompete30Days, getCurrentStreak, getTodayDayNumber, getDayStatus,
@@ -10,32 +10,30 @@ import {
 import { getWaterIntake } from '../lib/storage'
 
 const RULES = [
-  { key: 'trained', label: 'Train', desc: 'Complete your CTC workout', icon: Dumbbell, link: '/training', auto: true },
-  { key: 'journal', label: 'Journal', desc: 'Morning & evening entries', icon: BookOpen, link: '/journal', auto: true },
+  { key: 'trained', label: 'Train', desc: '6x/week — Sundays off', icon: Dumbbell, link: '/training', auto: true },
+  { key: 'journal', label: 'Journal', desc: '1 entry per day', icon: BookOpen, link: '/journal', auto: true },
   { key: 'water', label: 'Hydrate', desc: '1 gallon (16 cups)', icon: Droplets, link: '/dashboard', auto: true },
   { key: 'challengeCompleted', label: 'Daily Challenge', desc: 'Accept & complete it', icon: Swords, link: '/dashboard', auto: false },
   { key: 'reading', label: 'Read', desc: '10 min personal development', icon: BookOpenCheck, link: null, auto: false },
-  { key: 'noAlcohol', label: 'No Alcohol', desc: '30 days clean', icon: Wine, link: null, auto: false },
+  { key: 'cleanDiet', label: 'Clean Diet', desc: 'No junk, no alcohol, eat with purpose', icon: Salad, link: null, auto: false },
 ] as const
 
 function getRuleComplete(day: DayStatus, key: string): boolean {
   switch (key) {
     case 'trained': return day.trained
-    case 'journal': return day.journaledMorning && day.journaledEvening
+    case 'journal': return day.journaled
     case 'water': return day.waterGoalMet
     case 'challengeCompleted': return day.challengeCompleted
     case 'reading': return day.reading
-    case 'noAlcohol': return day.noAlcohol
+    case 'cleanDiet': return day.cleanDiet
     default: return false
   }
 }
 
 function getRuleDetail(day: DayStatus, key: string, userId: string): string | null {
   switch (key) {
-    case 'journal':
-      if (day.journaledMorning && day.journaledEvening) return 'AM + PM done'
-      if (day.journaledMorning) return 'AM done — need PM'
-      if (day.journaledEvening) return 'PM done — need AM'
+    case 'trained':
+      if (day.isSunday) return 'Rest day — auto-complete'
       return null
     case 'water': {
       const cups = getWaterIntake(userId, day.date)
@@ -69,7 +67,7 @@ export default function Compete30() {
   const challengeOver = dayNumber === 0 && days.length > 0
   const challengeComplete = completedDays === 30
 
-  const handleToggle = (field: 'challengeCompleted' | 'reading' | 'noAlcohol') => {
+  const handleToggle = (field: 'challengeCompleted' | 'reading' | 'cleanDiet') => {
     toggleDayLog(user.id, new Date().toISOString().split('T')[0], field)
     refresh()
   }
@@ -92,7 +90,7 @@ export default function Compete30() {
         </button>
         <div className="flex items-center gap-2 mb-1">
           <Shield size={18} className="text-lime" />
-          <h1 className="font-display font-bold text-2xl tracking-tight">Compete 30</h1>
+          <h1 className="font-display font-bold text-2xl tracking-tight">The 30 Reset</h1>
         </div>
         <p className="text-text-muted text-xs uppercase tracking-[0.2em] font-bold">30 Days · 6 Rules · No Exceptions</p>
       </div>
@@ -104,7 +102,7 @@ export default function Compete30() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(179,255,29,0.08)_0%,transparent_70%)]" />
             <div className="relative">
               <Trophy size={48} className="text-lime mx-auto mb-4 drop-shadow-[0_0_20px_rgba(179,255,29,0.4)]" />
-              <h2 className="font-display font-bold text-2xl mb-2">Challenge Complete</h2>
+              <h2 className="font-display font-bold text-2xl mb-2">Reset Complete</h2>
               <p className="text-text-secondary text-sm mb-1">You did what most won't.</p>
               <p className="text-text-secondary text-sm mb-4">30 days. No excuses. No exceptions.</p>
               <p className="text-lime font-display font-bold text-lg">You competed.</p>
@@ -205,7 +203,7 @@ export default function Compete30() {
                     </div>
                     {isManual && !complete && (
                       <button
-                        onClick={() => handleToggle(rule.key as 'challengeCompleted' | 'reading' | 'noAlcohol')}
+                        onClick={() => handleToggle(rule.key as 'challengeCompleted' | 'reading' | 'cleanDiet')}
                         className="w-8 h-8 rounded-lg border border-border bg-white/[0.02] flex items-center justify-center hover:bg-white/[0.06] transition-colors shrink-0"
                       >
                         <Check size={14} className="text-text-muted" />
@@ -213,7 +211,7 @@ export default function Compete30() {
                     )}
                     {isManual && complete && (
                       <button
-                        onClick={() => handleToggle(rule.key as 'challengeCompleted' | 'reading' | 'noAlcohol')}
+                        onClick={() => handleToggle(rule.key as 'challengeCompleted' | 'reading' | 'cleanDiet')}
                         className="w-8 h-8 rounded-lg bg-lime/10 flex items-center justify-center shrink-0"
                       >
                         <Check size={14} className="text-lime" />
@@ -307,12 +305,12 @@ export default function Compete30() {
 
 function EnrollScreen({ onEnroll, onBack }: { onEnroll: () => void; onBack: () => void }) {
   const rules = [
-    { icon: Dumbbell, label: 'Train', desc: 'Complete your CTC workout every day' },
-    { icon: BookOpen, label: 'Journal', desc: 'Morning AND evening entries' },
+    { icon: Dumbbell, label: 'Train', desc: 'Complete your CTC workout 6x/week — Sundays off' },
+    { icon: BookOpen, label: 'Journal', desc: '1 entry per day — morning or evening' },
     { icon: Droplets, label: 'Hydrate', desc: 'Drink 1 gallon of water (16 cups)' },
     { icon: Swords, label: 'Daily Challenge', desc: 'Accept and complete it' },
     { icon: BookOpenCheck, label: 'Read', desc: '10 minutes of personal development' },
-    { icon: Wine, label: 'No Alcohol', desc: '30 days clean' },
+    { icon: Salad, label: 'Clean Diet', desc: 'No junk food, no alcohol, eat with purpose' },
   ]
 
   return (
@@ -328,7 +326,7 @@ function EnrollScreen({ onEnroll, onBack }: { onEnroll: () => void; onBack: () =
           <div className="w-16 h-16 rounded-2xl bg-lime/[0.08] border border-lime/15 flex items-center justify-center mx-auto mb-5">
             <Shield size={32} className="text-lime drop-shadow-[0_0_15px_rgba(179,255,29,0.3)]" />
           </div>
-          <h1 className="font-display font-bold text-3xl tracking-tight mb-2">Compete 30</h1>
+          <h1 className="font-display font-bold text-3xl tracking-tight mb-2">The 30 Reset</h1>
           <p className="text-text-muted text-xs uppercase tracking-[0.25em] font-bold">30 Days · 6 Rules · No Exceptions</p>
         </div>
 

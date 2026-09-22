@@ -3,7 +3,7 @@ import { getCompletedSessions, getJournalEntries, getWaterIntake } from './stora
 export type Compete30DayLog = {
   challengeCompleted: boolean
   reading: boolean
-  noAlcohol: boolean
+  cleanDiet: boolean
 }
 
 export type Compete30State = {
@@ -52,7 +52,7 @@ export function resetCompete30(userId: string, newStartDate: string) {
 
 export function toggleDayLog(userId: string, date: string, field: keyof Compete30DayLog) {
   const state = getCompete30State(userId)
-  const log = state.dayLogs[date] || { challengeCompleted: false, reading: false, noAlcohol: false }
+  const log = state.dayLogs[date] || { challengeCompleted: false, reading: false, cleanDiet: false }
   log[field] = !log[field]
   state.dayLogs[date] = log
   saveCompete30State(userId, state)
@@ -62,12 +62,12 @@ export type DayStatus = {
   date: string
   dayNumber: number
   trained: boolean
-  journaledMorning: boolean
-  journaledEvening: boolean
+  isSunday: boolean
+  journaled: boolean
   waterGoalMet: boolean
   challengeCompleted: boolean
   reading: boolean
-  noAlcohol: boolean
+  cleanDiet: boolean
   allComplete: boolean
   completedCount: number
   isFuture: boolean
@@ -80,35 +80,36 @@ export function getDayStatus(userId: string, date: string, dayNumber: number, st
   const today = new Date().toISOString().split('T')[0]
   const isFuture = date > today
   const isToday = date === today
+  const dayOfWeek = new Date(date + 'T12:00:00').getDay()
+  const isSunday = dayOfWeek === 0
 
   if (isFuture) {
     return {
-      date, dayNumber, trained: false, journaledMorning: false, journaledEvening: false,
-      waterGoalMet: false, challengeCompleted: false, reading: false, noAlcohol: false,
+      date, dayNumber, trained: false, isSunday, journaled: false,
+      waterGoalMet: false, challengeCompleted: false, reading: false, cleanDiet: false,
       allComplete: false, completedCount: 0, isFuture: true, isToday: false,
     }
   }
 
   const sessions = getCompletedSessions(userId)
-  const trained = sessions.some(s => s.date === date)
+  const trained = isSunday ? true : sessions.some(s => s.date === date)
 
   const entries = getJournalEntries(userId)
-  const journaledMorning = entries.some(e => e.date === date && e.timeOfDay === 'morning')
-  const journaledEvening = entries.some(e => e.date === date && e.timeOfDay === 'evening')
+  const journaled = entries.some(e => e.date === date)
 
   const waterCups = getWaterIntake(userId, date)
   const waterGoalMet = waterCups >= WATER_GOAL_CUPS
 
-  const log = state.dayLogs[date] || { challengeCompleted: false, reading: false, noAlcohol: false }
+  const log = state.dayLogs[date] || { challengeCompleted: false, reading: false, cleanDiet: false }
 
-  const rules = [trained, journaledMorning && journaledEvening, waterGoalMet, log.challengeCompleted, log.reading, log.noAlcohol]
+  const rules = [trained, journaled, waterGoalMet, log.challengeCompleted, log.reading, log.cleanDiet]
   const completedCount = rules.filter(Boolean).length
   const allComplete = completedCount === 6
 
   return {
-    date, dayNumber, trained, journaledMorning, journaledEvening,
+    date, dayNumber, trained, isSunday, journaled,
     waterGoalMet, challengeCompleted: log.challengeCompleted,
-    reading: log.reading, noAlcohol: log.noAlcohol,
+    reading: log.reading, cleanDiet: log.cleanDiet,
     allComplete, completedCount, isFuture, isToday,
   }
 }

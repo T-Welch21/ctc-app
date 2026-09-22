@@ -250,7 +250,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Compete 30 Widget ── */}
+      {/* ── The 30 Reset Widget ── */}
       {(() => {
         if (!user) return null
         const c30State = getCompete30State(user.id)
@@ -265,7 +265,7 @@ export default function Dashboard() {
                     <Shield size={20} className="text-lime" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-display font-bold text-sm">Compete 30</p>
+                    <p className="font-display font-bold text-sm">The 30 Reset</p>
                     <p className="text-text-muted text-xs">30 days. 6 rules. No exceptions.</p>
                   </div>
                   <div className="text-lime text-[9px] font-bold uppercase tracking-wider bg-lime/[0.08] px-3 py-1.5 rounded-lg shrink-0">
@@ -288,7 +288,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Shield size={14} className="text-lime" />
-                  <p className="font-display font-bold text-xs uppercase tracking-[0.15em]">Compete 30</p>
+                  <p className="font-display font-bold text-xs uppercase tracking-[0.15em]">The 30 Reset</p>
                 </div>
                 <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider">Day {c30DayNum}</p>
               </div>
