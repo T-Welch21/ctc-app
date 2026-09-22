@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Flame, ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Zap, Droplets, Plus, Minus, Target } from 'lucide-react'
+import { ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Droplets, Plus, Minus, Target } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
-import { getStreak, getCompletedSessions, getJournalEntries, getCheckIns, getSelectedProgramId, getWaterIntake, saveWaterIntake } from '../lib/storage'
+import { getCompletedSessions, getJournalEntries, getCheckIns, getSelectedProgramId, getWaterIntake, saveWaterIntake } from '../lib/storage'
 import { getProgramById, getProgram } from '../lib/programs'
 import { supabase } from '../lib/supabase'
 
@@ -127,14 +127,11 @@ export default function Dashboard() {
     if (navigator.vibrate) navigator.vibrate(100)
   }
 
-  const streak = user ? getStreak(user.id) : 0
   const sessions = user ? getCompletedSessions(user.id) : []
   const trainedToday = sessions.some((s) => s.date === todayStr)
 
   const savedProgramId = user ? getSelectedProgramId(user.id) : null
   const program = (savedProgramId && getProgramById(savedProgramId)) || getProgram(user?.identity || '')
-  const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-
   const programSessions = sessions.filter((s) => s.programId === program.id)
   const sortedProgramSessions = [...programSessions].sort((a, b) => b.date.localeCompare(a.date))
   const lastDayIndex = sortedProgramSessions.length > 0 ? sortedProgramSessions[0].dayIndex : -1
@@ -147,16 +144,6 @@ export default function Dashboard() {
     }
   }
   const nextDay = program.days[nextDayIndex]
-
-  const last7 = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date(Date.now() - (6 - i) * 86400000)
-    const dateStr = d.toISOString().split('T')[0]
-    return {
-      label: dayLabels[d.getDay()],
-      trained: sessions.some((s) => s.date === dateStr),
-      isToday: i === 6,
-    }
-  })
 
   const journalEntries = user ? getJournalEntries(user.id) : []
   const journaledToday = journalEntries.some((e) => e.date === todayStr)
@@ -360,52 +347,6 @@ export default function Dashboard() {
                 </p>
               )}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Streak bar ── */}
-      <div className="animate-slide-up [animation-delay:80ms] opacity-0 px-5 mb-5">
-        <div className="rounded-2xl bg-bg-card/80 border border-border p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Flame size={16} className={streak > 0 ? 'text-lime drop-shadow-[0_0_6px_rgba(189,255,58,0.4)]' : 'text-text-muted'} />
-              {streak > 0 ? (
-                <p className="font-display font-bold text-sm">
-                  <span className="text-lime">{streak}</span> day streak
-                </p>
-              ) : (
-                <p className="font-display font-bold text-sm text-text-muted">Build your streak</p>
-              )}
-            </div>
-            <div className="flex items-center gap-1">
-              {[
-                { done: trainedToday, icon: Zap, label: 'Train' },
-                { done: journaledToday, icon: BookOpen, label: 'Journal' },
-                { done: challengeAccepted, icon: Swords, label: 'Compete' },
-              ].map((a) => (
-                <div key={a.label} className={`flex items-center gap-0.5 px-1.5 py-1 rounded-full text-[7px] font-bold uppercase tracking-wide transition-all ${
-                  a.done ? 'bg-lime/[0.12] text-lime' : 'bg-white/[0.03] text-text-muted'
-                }`}>
-                  {a.done ? <Check size={7} /> : <a.icon size={7} />}
-                  {a.label}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex gap-[3px]">
-            {last7.map((day, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div className={`w-full h-[5px] rounded-full transition-all duration-500 ${
-                  day.trained
-                    ? 'bg-gradient-to-r from-lime to-cyan-400 shadow-[0_0_6px_rgba(189,255,58,0.25)]'
-                    : day.isToday ? 'bg-white/[0.08]' : 'bg-white/[0.03]'
-                }`} />
-                <span className={`text-[8px] ${day.isToday ? 'text-text font-bold' : 'text-text-muted'}`}>
-                  {day.label}
-                </span>
-              </div>
-            ))}
           </div>
         </div>
       </div>
