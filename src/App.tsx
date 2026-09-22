@@ -20,6 +20,7 @@ const Shop = lazy(() => import('./pages/Shop'))
 const Community = lazy(() => import('./pages/Community'))
 const Subscribe = lazy(() => import('./pages/Subscribe'))
 const Nutrition = lazy(() => import('./pages/Nutrition'))
+const Compete30 = lazy(() => import('./pages/Compete30'))
 
 function LoadingFallback() {
   return (
@@ -81,7 +82,7 @@ function AppRoutes() {
   }
 
   const showNav =
-    !['/onboarding', '/settings', '/check-in', '/messages', '/subscribe'].includes(location.pathname) &&
+    !['/onboarding', '/settings', '/check-in', '/messages', '/subscribe', '/compete30'].includes(location.pathname) &&
     !location.pathname.match(/^\/training\/\d/)
 
   return (
@@ -98,6 +99,7 @@ function AppRoutes() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/nutrition" element={<Nutrition />} />
+          <Route path="/compete30" element={<Compete30 />} />
           <Route path="/community" element={<Community />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/command" element={<Command />} />

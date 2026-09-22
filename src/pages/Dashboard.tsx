@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Droplets, Plus, Minus, Target } from 'lucide-react'
+import { ChevronRight, Settings, Play, Check, Megaphone, X, Bell, BookOpen, ClipboardCheck, TrendingUp, MessageCircle, MessageSquare, Swords, Droplets, Plus, Minus, Target, Shield, ArrowRight } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { isSubscribed } from '../lib/subscription'
 import { getCompletedSessions, getJournalEntries, getCheckIns, getSelectedProgramId, getWaterIntake, saveWaterIntake } from '../lib/storage'
 import { getProgramById, getProgram } from '../lib/programs'
+import { getCompete30State, getCompete30Days, getCurrentStreak, getTodayDayNumber, getDayStatus } from '../lib/compete30'
 import { supabase } from '../lib/supabase'
 
 const devotionals = [
@@ -248,6 +249,64 @@ export default function Dashboard() {
           <p className="text-text-muted text-xs mt-3 relative">— {devotional.author}</p>
         </div>
       </div>
+
+      {/* ── Compete 30 Widget ── */}
+      {(() => {
+        if (!user) return null
+        const c30State = getCompete30State(user.id)
+        if (!c30State.enrolled) {
+          return (
+            <div className="animate-slide-up [animation-delay:30ms] opacity-0 px-5 mb-5">
+              <button onClick={() => navigate('/compete30')} className="w-full rounded-2xl bg-bg-card/80 border border-lime/15 p-4 text-left relative overflow-hidden group active:scale-[0.98] transition-transform">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime/25 to-transparent" />
+                <div className="absolute -right-8 -top-8 w-32 h-32 bg-lime/[0.04] rounded-full blur-[40px]" />
+                <div className="relative flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-lime/[0.08] flex items-center justify-center shrink-0">
+                    <Shield size={20} className="text-lime" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-display font-bold text-sm">Compete 30</p>
+                    <p className="text-text-muted text-xs">30 days. 6 rules. No exceptions.</p>
+                  </div>
+                  <div className="text-lime text-[9px] font-bold uppercase tracking-wider bg-lime/[0.08] px-3 py-1.5 rounded-lg shrink-0">
+                    Join <ArrowRight size={10} className="inline ml-0.5" />
+                  </div>
+                </div>
+              </button>
+            </div>
+          )
+        }
+        const c30DayNum = getTodayDayNumber(c30State)
+        if (c30DayNum === 0) return null
+        const c30Days = getCompete30Days(user.id)
+        const c30Today = c30Days.find(d => d.isToday) || getDayStatus(user.id, new Date().toISOString().split('T')[0], c30DayNum, c30State)
+        const c30Streak = getCurrentStreak(c30Days)
+        return (
+          <div className="animate-slide-up [animation-delay:30ms] opacity-0 px-5 mb-5">
+            <button onClick={() => navigate('/compete30')} className="w-full rounded-2xl bg-bg-card/80 border border-border p-4 text-left relative overflow-hidden group active:scale-[0.98] transition-transform">
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime/20 to-transparent" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Shield size={14} className="text-lime" />
+                  <p className="font-display font-bold text-xs uppercase tracking-[0.15em]">Compete 30</p>
+                </div>
+                <p className="text-text-muted text-[10px] font-bold uppercase tracking-wider">Day {c30DayNum}</p>
+              </div>
+              <div className="flex items-center gap-2 mb-2.5">
+                {[1,2,3,4,5,6].map(i => (
+                  <div key={i} className={`flex-1 h-1.5 rounded-full transition-all ${i <= c30Today.completedCount ? 'bg-lime shadow-[0_0_4px_rgba(179,255,29,0.3)]' : 'bg-white/[0.06]'}`} />
+                ))}
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-text-secondary text-xs">
+                  <span className={c30Today.completedCount === 6 ? 'text-lime font-bold' : 'font-bold'}>{c30Today.completedCount}/6</span> rules today
+                </p>
+                {c30Streak > 0 && <p className="text-text-muted text-[10px]">{c30Streak} day streak</p>}
+              </div>
+            </button>
+          </div>
+        )
+      })()}
 
       {/* ── Next Workout CTA ── */}
       <div className="animate-slide-up [animation-delay:40ms] opacity-0 px-5 mb-5">
