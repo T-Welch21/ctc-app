@@ -319,8 +319,53 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* ── Streak bar ── */}
+      {/* ── Daily Challenge ── */}
       <div className="animate-slide-up [animation-delay:60ms] opacity-0 px-5 mb-5">
+        <div className={`rounded-2xl border p-4 transition-all relative overflow-hidden ${
+          challengeAccepted
+            ? 'bg-lime/[0.03] border-lime/15'
+            : 'bg-bg-card/80 border-border'
+        }`}>
+          {!challengeAccepted && (
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent" />
+          )}
+          <div className="flex items-start gap-3">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+              challengeAccepted ? 'bg-lime/10' : 'bg-cyan-400/[0.08]'
+            }`}>
+              <Swords size={17} className={challengeAccepted ? 'text-lime' : 'text-cyan-400'} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1.5">
+                <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
+                  challengeAccepted ? 'text-lime' : 'text-cyan-400'
+                }`}>Daily Challenge</p>
+                <span className="text-[8px] text-text-muted bg-white/[0.04] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
+                  {challenge.tag}
+                </span>
+              </div>
+              <p className={`text-[15px] leading-relaxed ${challengeAccepted ? 'text-text-secondary' : 'text-text'}`}>
+                {challenge.text}
+              </p>
+              {!challengeAccepted ? (
+                <button
+                  onClick={acceptChallenge}
+                  className="mt-3 bg-gradient-to-r from-cyan-400/[0.1] to-cyan-400/[0.05] border border-cyan-400/25 text-cyan-400 font-display font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl hover:from-cyan-400/[0.15] transition-all active:scale-[0.97]"
+                >
+                  I Accept
+                </button>
+              ) : (
+                <p className="mt-2.5 text-lime text-xs font-display font-bold flex items-center gap-1.5">
+                  <Check size={12} /> Challenge accepted
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Streak bar ── */}
+      <div className="animate-slide-up [animation-delay:80ms] opacity-0 px-5 mb-5">
         <div className="rounded-2xl bg-bg-card/80 border border-border p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -432,51 +477,6 @@ export default function Dashboard() {
                 </button>
               )
             })}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Daily Challenge ── */}
-      <div className="animate-slide-up [animation-delay:180ms] opacity-0 px-5 mb-5">
-        <div className={`rounded-2xl border p-4 transition-all relative overflow-hidden ${
-          challengeAccepted
-            ? 'bg-lime/[0.03] border-lime/15'
-            : 'bg-bg-card/80 border-border'
-        }`}>
-          {!challengeAccepted && (
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/25 to-transparent" />
-          )}
-          <div className="flex items-start gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-              challengeAccepted ? 'bg-lime/10' : 'bg-cyan-400/[0.08]'
-            }`}>
-              <Swords size={17} className={challengeAccepted ? 'text-lime' : 'text-cyan-400'} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1.5">
-                <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
-                  challengeAccepted ? 'text-lime' : 'text-cyan-400'
-                }`}>Daily Challenge</p>
-                <span className="text-[8px] text-text-muted bg-white/[0.04] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
-                  {challenge.tag}
-                </span>
-              </div>
-              <p className={`text-[15px] leading-relaxed ${challengeAccepted ? 'text-text-secondary' : 'text-text'}`}>
-                {challenge.text}
-              </p>
-              {!challengeAccepted ? (
-                <button
-                  onClick={acceptChallenge}
-                  className="mt-3 bg-gradient-to-r from-cyan-400/[0.1] to-cyan-400/[0.05] border border-cyan-400/25 text-cyan-400 font-display font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl hover:from-cyan-400/[0.15] transition-all active:scale-[0.97]"
-                >
-                  I Accept
-                </button>
-              ) : (
-                <p className="mt-2.5 text-lime text-xs font-display font-bold flex items-center gap-1.5">
-                  <Check size={12} /> Challenge accepted
-                </p>
-              )}
-            </div>
           </div>
         </div>
       </div>
