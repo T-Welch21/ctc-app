@@ -125,20 +125,19 @@ export async function redeemInviteCode(code: string, userId: string): Promise<bo
   }
 
   try {
-    await supabase
+    const { error } = await supabase
       .from('profiles')
       .update({ subscription_status: 'active', subscription_source: 'invite' })
       .eq('id', userId)
-  } catch {
-    // profile table might not have subscription_source column yet — try without it
-    try {
-      await supabase
+    if (error) {
+      const { error: fallbackError } = await supabase
         .from('profiles')
         .update({ subscription_status: 'active' })
         .eq('id', userId)
-    } catch {
-      // worst case — will show as free until DB is set up
+      if (fallbackError) return false
     }
+  } catch {
+    return false
   }
 
   return true

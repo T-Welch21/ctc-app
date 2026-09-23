@@ -2,7 +2,7 @@ import { supabase } from './supabase'
 
 export type SubscriptionStatus = 'active' | 'trialing' | 'canceled' | 'past_due' | 'incomplete' | null
 
-const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+const COACH_EMAILS = ['tyler21welch@gmail.com']
 
 export function isSubscribed(user: { email: string; subscription_status?: string | null }): boolean {
   if (COACH_EMAILS.includes(user.email)) return true

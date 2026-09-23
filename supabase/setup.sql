@@ -321,7 +321,7 @@ alter table public.invite_codes enable row level security;
 drop policy if exists "Coach can manage invite codes" on public.invite_codes;
 create policy "Coach can manage invite codes"
   on public.invite_codes for all
-  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com'));
 
 drop policy if exists "Anyone can read invite codes for validation" on public.invite_codes;
 create policy "Anyone can read invite codes for validation"
@@ -355,19 +355,19 @@ create policy "Authenticated can read profile names"
 drop policy if exists "Coach can read all profiles" on public.profiles;
 create policy "Coach can read all profiles"
   on public.profiles for select
-  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com'));
 
 -- Coach can read all completed sessions (for athlete stats)
 drop policy if exists "Coach can read all sessions" on public.completed_sessions;
 create policy "Coach can read all sessions"
   on public.completed_sessions for select
-  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com'));
 
 -- Coach can read all check-ins (for athlete stats)
 drop policy if exists "Coach can read all check-ins" on public.check_ins;
 create policy "Coach can read all check-ins"
   on public.check_ins for select
-  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com', 'test@ctctest.com'));
+  using (auth.jwt() ->> 'email' in ('tyler21welch@gmail.com'));
 
 -- Direct messages (1:1 between coach and athlete)
 create table if not exists public.messages (

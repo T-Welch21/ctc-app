@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
 
-const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+const COACH_EMAILS = ['tyler21welch@gmail.com']
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL!,
@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', 'https://calledtocompete.app')
     res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type')
     return res.status(200).end()
   }

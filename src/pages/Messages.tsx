@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 
-const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+const COACH_EMAILS = ['tyler21welch@gmail.com']
 
 type Broadcast = {
   id: string

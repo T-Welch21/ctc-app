@@ -28,7 +28,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { createInviteCode, listInviteCodes, deactivateInviteCode, type InviteCode } from '../lib/invite-codes'
 
-const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+const COACH_EMAILS = ['tyler21welch@gmail.com']
 const SUBSCRIPTION_PRICE = 29.99
 
 type AthleteProfile = {

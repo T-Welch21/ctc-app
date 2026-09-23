@@ -2,7 +2,7 @@ import { Home, Dumbbell, Utensils, ShoppingBag, BookOpen, LayoutDashboard } from
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 
-const COACH_EMAILS = ['tyler21welch@gmail.com', 'test@ctctest.com']
+const COACH_EMAILS = ['tyler21welch@gmail.com']
 
 const baseTabs = [
   { path: '/dashboard', icon: Home, label: 'Home' },
