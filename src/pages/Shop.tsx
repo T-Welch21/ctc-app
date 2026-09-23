@@ -72,19 +72,14 @@ const merch: Product[] = [
     image: '/merch-tee.webp',
   },
   {
-    name: 'Called to Compete Tee',
-    description: 'CTC Athletics — Speed · Strength · Mindset. No excuses. Only standards.',
+    name: 'CTC Hat',
+    description: 'Called to Compete performance hat — EST. 2026.',
     badge: 'Coming Soon',
-    image: '/merch-tee2.webp',
+    image: '/merch-hat.webp',
   },
   {
     name: 'CTC Hoodie',
     description: 'Called to Compete heavyweight hoodie.',
-    badge: 'Coming Soon',
-  },
-  {
-    name: 'CTC Hat',
-    description: 'Called to Compete snapback — represent the standard.',
     badge: 'Coming Soon',
   },
 ]
@@ -100,7 +95,7 @@ function ProductCard({ product, icon: Icon }: { product: Product; icon: typeof P
     <Tag
       {...(props as Record<string, string>)}
       className={`card-shine rounded-2xl bg-bg-card/80 border border-border block transition-all relative overflow-hidden ${
-        hasLink ? 'hover:border-white/[0.06] active:scale-[0.98]' : 'opacity-50'
+        hasLink ? 'hover:border-white/[0.06] active:scale-[0.98]' : ''
       }`}
     >
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
