@@ -78,6 +78,12 @@ const merch: Product[] = [
     image: '/merch-hat.webp',
   },
   {
+    name: '"Called." Hat',
+    description: 'Script logo performance hat with cross detail — EST. 2026.',
+    badge: 'Coming Soon',
+    image: '/merch-hat2.webp',
+  },
+  {
     name: 'CTC Hoodie',
     description: 'Called to Compete heavyweight hoodie.',
     badge: 'Coming Soon',
