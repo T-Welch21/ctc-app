@@ -67,6 +67,12 @@ export default function Login() {
         setError('Too many attempts. Wait a minute and try again.')
       } else if (msg.includes('network') || msg.includes('fetch')) {
         setError('Connection issue. Check your internet and try again.')
+      } else if (msg.includes('Invalid API key') || msg.includes('apikey')) {
+        setError('App needs a refresh. Close and reopen, or pull down to refresh.')
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()))
+          caches.keys().then(keys => keys.forEach(k => caches.delete(k)))
+        }
       } else {
         setError(msg)
       }

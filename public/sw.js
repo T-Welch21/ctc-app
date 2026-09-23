@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ctc-v5'
+const CACHE_NAME = 'ctc-v6'
 const PRECACHE = [
   '/',
   '/manifest.json',
@@ -27,6 +27,24 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return
   const url = new URL(e.request.url)
   if (url.origin !== location.origin) return
+
+  // Never cache the index — always get the latest HTML so new JS bundles load
+  if (url.pathname === '/' || url.pathname === '/index.html') {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          if (res.ok) {
+            const clone = res.clone()
+            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone))
+          }
+          return res
+        })
+        .catch(() => caches.match(e.request).then((cached) => {
+          return cached || new Response('Offline', { status: 503 })
+        }))
+    )
+    return
+  }
 
   // Hashed assets are immutable — cache-first
   if (url.pathname.startsWith('/assets/')) {
