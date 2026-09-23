@@ -90,6 +90,12 @@ const merch: Product[] = [
     image: '/merch-hat2.webp',
   },
   {
+    name: 'CTC Hat — Black',
+    description: 'All-black performance hat with lime rope — EST. 2026.',
+    badge: 'Coming Soon',
+    image: '/merch-hat3.webp',
+  },
+  {
     name: 'CTC Hoodie',
     description: 'Discomfort = Growth collection — heavyweight, 3D embroidery, premium tag.',
     badge: 'Coming Soon',
