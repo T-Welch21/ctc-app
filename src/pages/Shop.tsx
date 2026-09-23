@@ -6,6 +6,7 @@ type Product = {
   price?: string
   href?: string
   badge?: string
+  image?: string
 }
 
 const supplements: Product[] = [
@@ -65,9 +66,16 @@ const supplements: Product[] = [
 
 const merch: Product[] = [
   {
-    name: 'CTC Performance Tee',
-    description: 'Compete Harder · Train Smarter · Feel Better',
+    name: 'Discomfort = Growth Tee',
+    description: 'CTC signature tee — Purpose · Strength · Mindset. EST. 2026.',
     badge: 'Coming Soon',
+    image: '/merch-tee.webp',
+  },
+  {
+    name: 'Called to Compete Tee',
+    description: 'CTC Athletics — Speed · Strength · Mindset. No excuses. Only standards.',
+    badge: 'Coming Soon',
+    image: '/merch-tee2.webp',
   },
   {
     name: 'CTC Hoodie',
@@ -75,8 +83,8 @@ const merch: Product[] = [
     badge: 'Coming Soon',
   },
   {
-    name: 'CTC Shaker Bottle',
-    description: 'Branded 28oz shaker for your daily shake.',
+    name: 'CTC Hat',
+    description: 'Called to Compete snapback — represent the standard.',
     badge: 'Coming Soon',
   },
 ]
@@ -91,12 +99,17 @@ function ProductCard({ product, icon: Icon }: { product: Product; icon: typeof P
   return (
     <Tag
       {...(props as Record<string, string>)}
-      className={`card-shine rounded-2xl bg-bg-card/80 border border-border p-4 block transition-all relative overflow-hidden ${
+      className={`card-shine rounded-2xl bg-bg-card/80 border border-border block transition-all relative overflow-hidden ${
         hasLink ? 'hover:border-white/[0.06] active:scale-[0.98]' : 'opacity-50'
       }`}
     >
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
-      <div className="flex items-start gap-3.5">
+      {product.image && (
+        <div className="w-full aspect-[16/9] overflow-hidden rounded-t-2xl">
+          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+      )}
+      <div className={`flex items-start gap-3.5 p-4`}>
         <div className="w-11 h-11 rounded-xl bg-white/[0.04] flex items-center justify-center shrink-0">
           <Icon size={18} className="text-lime" />
         </div>
