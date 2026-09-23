@@ -91,8 +91,9 @@ const merch: Product[] = [
   },
   {
     name: 'CTC Hoodie',
-    description: 'Called to Compete heavyweight hoodie.',
+    description: 'Discomfort = Growth collection — heavyweight, 3D embroidery, premium tag.',
     badge: 'Coming Soon',
+    image: '/merch-hoodie.webp',
   },
 ]
 
