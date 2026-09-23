@@ -72,6 +72,12 @@ const merch: Product[] = [
     image: '/merch-tee.webp',
   },
   {
+    name: 'Called to Compete Tee',
+    description: 'Script logo collection — Speed · Strength · Mindset. EST. 2026.',
+    badge: 'Coming Soon',
+    image: '/merch-tee2.webp',
+  },
+  {
     name: 'CTC Hat',
     description: 'Called to Compete performance hat — EST. 2026.',
     badge: 'Coming Soon',
