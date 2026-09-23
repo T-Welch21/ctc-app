@@ -30,7 +30,14 @@ export default function Subscribe() {
       const url = await createCheckoutSession()
       window.location.href = url
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
+      const msg = e instanceof Error ? e.message : 'Something went wrong.'
+      if (msg.includes('API key') || msg.includes('apikey') || msg.includes('sk_live')) {
+        setError('Payment system is being set up. Contact Coach Tyler to get access.')
+      } else if (msg.includes('fetch') || msg.includes('network') || msg.includes('Failed')) {
+        setError('Connection issue. Check your internet and try again.')
+      } else {
+        setError(msg)
+      }
       setLoading(false)
     }
   }
