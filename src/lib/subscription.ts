@@ -41,7 +41,31 @@ export async function createCheckoutSession(): Promise<string> {
   return data.url
 }
 
+export async function verifySubscription(): Promise<SubscriptionStatus> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token) return null
+
+    const res = await fetch('/api/verify-subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    })
+
+    if (!res.ok) return null
+    const data = await res.json()
+    return (data.status as SubscriptionStatus) || null
+  } catch {
+    return null
+  }
+}
+
 export async function pollSubscriptionStatus(userId: string, maxAttempts = 10): Promise<boolean> {
+  const verified = await verifySubscription()
+  if (verified === 'active' || verified === 'trialing') return true
+
   for (let i = 0; i < maxAttempts; i++) {
     const status = await fetchSubscriptionStatus(userId)
     if (status === 'active' || status === 'trialing') return true
