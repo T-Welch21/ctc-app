@@ -92,7 +92,7 @@ export default function Subscribe() {
               <span className="text-text-muted text-sm">/month</span>
             </div>
             <p className="text-lime font-display font-bold text-sm mb-4">
-              7 days free — cancel anytime
+              Cancel anytime
             </p>
 
             {/* Features */}
@@ -132,13 +132,12 @@ export default function Subscribe() {
               <span>Connecting...</span>
             </div>
           ) : (
-            'Start 7-Day Free Trial'
+            'Subscribe Now'
           )}
         </button>
 
         <p className="text-text-muted text-[10px] text-center mt-3 leading-relaxed">
-          You won't be charged until after your free trial ends.
-          <br />Cancel anytime from your account settings.
+          Billed monthly. Cancel anytime from your account settings.
         </p>
 
         {/* Trust badges */}

@@ -65,7 +65,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
-      subscription_data: { trial_period_days: 7 },
       success_url: `${appUrl}/training?checkout=success`,
       cancel_url: `${appUrl}/subscribe?checkout=canceled`,
       metadata: { supabase_user_id: user.id },
