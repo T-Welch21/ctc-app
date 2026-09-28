@@ -96,7 +96,13 @@ function formatDate(dateStr: string) {
 
 function getStatusBadge(status: string | null, source: string | null) {
   if (status === 'active' || status === 'trialing') {
-    return { label: source === 'invite' ? 'Invited' : 'Paid', bg: 'bg-lime/10', text: 'text-lime' }
+    if (source === 'in_person' || source === 'coach') {
+      return { label: 'In-Person', bg: 'bg-cyan-400/10', text: 'text-cyan-400' }
+    }
+    if (source === 'invite') {
+      return { label: 'Invited', bg: 'bg-indigo-400/10', text: 'text-indigo-400' }
+    }
+    return { label: 'App Sub', bg: 'bg-lime/10', text: 'text-lime' }
   }
   if (status === 'past_due') {
     return { label: 'Past Due', bg: 'bg-amber-400/10', text: 'text-amber-400' }
@@ -106,6 +112,8 @@ function getStatusBadge(status: string | null, source: string | null) {
   }
   return { label: 'Free', bg: 'bg-white/[0.04]', text: 'text-text-muted' }
 }
+
+type RosterFilter = 'all' | 'app' | 'in_person' | 'free'
 
 export default function Command() {
   const { user } = useAuth()
@@ -127,7 +135,7 @@ export default function Command() {
   const [sendingDm, setSendingDm] = useState(false)
   const [sentDm, setSentDm] = useState(false)
   const [athleteMessages, setAthleteMessages] = useState<DirectMessage[]>([])
-  const [rosterFilter, setRosterFilter] = useState<'all' | 'paid' | 'free'>('all')
+  const [rosterFilter, setRosterFilter] = useState<RosterFilter>('all')
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
   const [togglingAccess, setTogglingAccess] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -296,7 +304,7 @@ export default function Command() {
       })
       if (res.ok) {
         const newStatus = action === 'grant_access' ? 'active' : null
-        const newSource = action === 'grant_access' ? 'coach' : null
+        const newSource = action === 'grant_access' ? 'in_person' : null
         setAthletes((prev) => prev.map((a) =>
           a.id === athleteId ? { ...a, subscription_status: newStatus, subscription_source: newSource } : a
         ))
@@ -350,12 +358,17 @@ export default function Command() {
 
   const nonCoachAthletes = athletes.filter((a) => !COACH_EMAILS.includes(a.email))
   const athleteCount = nonCoachAthletes.filter((a) => a.onboarded).length
-  const paidCount = nonCoachAthletes.filter((a) => a.subscription_status === 'active' || a.subscription_status === 'trialing').length
-  const mrr = paidCount * SUBSCRIPTION_PRICE
+  const isActive = (a: AthleteProfile) => a.subscription_status === 'active' || a.subscription_status === 'trialing'
+  const isAppSub = (a: AthleteProfile) => isActive(a) && !a.subscription_source
+  const isInPerson = (a: AthleteProfile) => isActive(a) && (a.subscription_source === 'in_person' || a.subscription_source === 'coach' || a.subscription_source === 'invite')
+  const appSubCount = nonCoachAthletes.filter(isAppSub).length
+  const inPersonCount = nonCoachAthletes.filter(isInPerson).length
+  const mrr = appSubCount * SUBSCRIPTION_PRICE
 
   const filteredAthletes = nonCoachAthletes.filter((a) => {
-    if (rosterFilter === 'paid') return a.subscription_status === 'active' || a.subscription_status === 'trialing'
-    if (rosterFilter === 'free') return !a.subscription_status || a.subscription_status === 'canceled' || a.subscription_status === 'past_due'
+    if (rosterFilter === 'app') return isAppSub(a)
+    if (rosterFilter === 'in_person') return isInPerson(a)
+    if (rosterFilter === 'free') return !isActive(a)
     return true
   })
 
@@ -376,22 +389,19 @@ export default function Command() {
           <p className="text-text-muted text-[9px]">Athletes</p>
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-3 text-center">
-          <DollarSign size={16} className="text-cyan-400 mx-auto mb-1" />
-          <p className="font-display font-bold text-lg">{paidCount}</p>
-          <p className="text-text-muted text-[9px]">Paying</p>
+          <DollarSign size={16} className="text-lime mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">{appSubCount}</p>
+          <p className="text-text-muted text-[9px]">App Subs</p>
         </div>
         <div className="rounded-2xl bg-bg-card border border-border p-3 text-center">
-          <BarChart3 size={16} className="text-blue-400 mx-auto mb-1" />
-          <p className="font-display font-bold text-lg">${mrr.toFixed(0)}</p>
-          <p className="text-text-muted text-[9px]">MRR</p>
+          <Dumbbell size={16} className="text-cyan-400 mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">{inPersonCount}</p>
+          <p className="text-text-muted text-[9px]">In-Person</p>
         </div>
-        <div className="rounded-2xl bg-bg-card border border-border p-3 text-center relative">
-          <MessageSquare size={16} className="text-indigo-400 mx-auto mb-1" />
-          <p className="font-display font-bold text-lg">{totalUnread}</p>
-          <p className="text-text-muted text-[9px]">Unread</p>
-          {totalUnread > 0 && (
-            <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-          )}
+        <div className="rounded-2xl bg-bg-card border border-border p-3 text-center">
+          <BarChart3 size={16} className="text-lime mx-auto mb-1" />
+          <p className="font-display font-bold text-lg">${mrr.toFixed(0)}</p>
+          <p className="text-text-muted text-[9px]">App MRR</p>
         </div>
       </div>
 
@@ -596,18 +606,23 @@ export default function Command() {
         </div>
 
         {/* Filter tabs */}
-        <div className="flex gap-2 mb-3">
-          {(['all', 'paid', 'free'] as const).map((f) => (
+        <div className="flex gap-1.5 mb-3 overflow-x-auto">
+          {([
+            { key: 'all' as RosterFilter, label: 'All', count: nonCoachAthletes.length },
+            { key: 'app' as RosterFilter, label: 'App', count: appSubCount },
+            { key: 'in_person' as RosterFilter, label: 'In-Person', count: inPersonCount },
+            { key: 'free' as RosterFilter, label: 'Free', count: nonCoachAthletes.length - appSubCount - inPersonCount },
+          ]).map((f) => (
             <button
-              key={f}
-              onClick={() => setRosterFilter(f)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
-                rosterFilter === f
-                  ? 'bg-lime/15 text-lime'
+              key={f.key}
+              onClick={() => setRosterFilter(f.key)}
+              className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors whitespace-nowrap ${
+                rosterFilter === f.key
+                  ? f.key === 'in_person' ? 'bg-cyan-400/15 text-cyan-400' : 'bg-lime/15 text-lime'
                   : 'bg-white/[0.04] text-text-muted hover:text-text'
               }`}
             >
-              {f === 'all' ? `All (${nonCoachAthletes.length})` : f === 'paid' ? `Paid (${paidCount})` : `Free (${nonCoachAthletes.length - paidCount})`}
+              {f.label} ({f.count})
             </button>
           ))}
         </div>

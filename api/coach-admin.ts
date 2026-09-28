@@ -40,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (action === 'grant_access') {
     const { error } = await supabase
       .from('profiles')
-      .update({ subscription_status: 'active', subscription_source: 'coach' })
+      .update({ subscription_status: 'active', subscription_source: 'in_person' })
       .eq('id', athlete_id)
     if (error) return res.status(500).json({ error: error.message })
     return res.status(200).json({ ok: true })
