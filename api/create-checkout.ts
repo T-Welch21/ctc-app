@@ -36,7 +36,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const priceId = process.env.STRIPE_PRICE_ID!
+    // Founding Member window: $29 price until the deadline, then the standard price.
+    // Keep in sync with FOUNDING_DEADLINE in src/lib/pricing.ts.
+    const foundingDeadline = new Date('2026-10-23T05:00:00Z')
+    const priceId = new Date() < foundingDeadline
+      ? process.env.STRIPE_PRICE_ID!
+      : process.env.STRIPE_STANDARD_PRICE_ID || process.env.STRIPE_PRICE_ID!
     const appUrl = process.env.APP_URL || 'https://calledtocompete.app'
 
     const { data: profile } = await supabase

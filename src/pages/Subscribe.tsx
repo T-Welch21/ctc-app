@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Check, Shield, Dumbbell, BookOpen, TrendingUp, Zap, Crown } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { createCheckoutSession, isSubscribed } from '../lib/subscription'
+import { isFoundingWindow, currentPrice, foundingDaysLeft, STANDARD_PRICE } from '../lib/pricing'
 
 const features = [
   { icon: Dumbbell, text: '6 training programs', sub: 'Strength, conditioning, running & more' },
@@ -17,6 +18,8 @@ export default function Subscribe() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const founding = isFoundingWindow()
+  const daysLeft = foundingDaysLeft()
 
   if (user && isSubscribed(user)) {
     return <Navigate to="/training" replace />
@@ -84,15 +87,20 @@ export default function Subscribe() {
           <div className="relative">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-lime text-[10px] font-bold uppercase tracking-[0.2em] bg-lime/10 px-2 py-0.5 rounded-full">
-                CTC Premium
+                {founding ? 'Founding Member' : 'CTC Premium'}
               </span>
             </div>
             <div className="flex items-baseline gap-1 mb-1 mt-3">
-              <span className="font-display text-4xl font-bold">$29</span>
+              <span className="font-display text-4xl font-bold">${currentPrice()}</span>
               <span className="text-text-muted text-sm">/month</span>
+              {founding && (
+                <span className="text-text-muted text-lg line-through ml-2">${STANDARD_PRICE}</span>
+              )}
             </div>
             <p className="text-lime font-display font-bold text-sm mb-4">
-              Cancel anytime
+              {founding
+                ? `Lock in $${currentPrice()} for life · ${daysLeft === 1 ? 'Last day' : `${daysLeft} days left`}`
+                : 'Cancel anytime'}
             </p>
 
             {/* Features */}

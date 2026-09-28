@@ -151,7 +151,7 @@ export default function Settings() {
                 </p>
                 <p className="text-text-muted text-[11px]">
                   {isSubscribed(user)
-                    ? user.subscription_status === 'trialing' ? '7-day free trial' : '$29/mo · Cancel anytime'
+                    ? user.subscription_status === 'trialing' ? '7-day free trial' : 'CTC Premium · Cancel anytime'
                     : 'Upgrade to start training'}
                 </p>
               </div>
