@@ -8,6 +8,28 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+// $39/mo standard price, on the same product as the founding price.
+// Found by lookup key, and created on first use so no dashboard setup is needed.
+const STANDARD_LOOKUP_KEY = 'ctc_premium_monthly_39'
+
+async function getStandardPriceId(): Promise<string> {
+  if (process.env.STRIPE_STANDARD_PRICE_ID) return process.env.STRIPE_STANDARD_PRICE_ID
+
+  const existing = await stripe.prices.list({ lookup_keys: [STANDARD_LOOKUP_KEY], active: true, limit: 1 })
+  if (existing.data[0]) return existing.data[0].id
+
+  const founding = await stripe.prices.retrieve(process.env.STRIPE_PRICE_ID!)
+  const created = await stripe.prices.create({
+    product: typeof founding.product === 'string' ? founding.product : founding.product.id,
+    currency: founding.currency,
+    unit_amount: 3900,
+    recurring: { interval: 'month' },
+    lookup_key: STANDARD_LOOKUP_KEY,
+    nickname: 'CTC Premium $39/mo',
+  })
+  return created.id
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', 'https://calledtocompete.app')
@@ -41,7 +63,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const foundingDeadline = new Date('2026-10-23T05:00:00Z')
     const priceId = new Date() < foundingDeadline
       ? process.env.STRIPE_PRICE_ID!
-      : process.env.STRIPE_STANDARD_PRICE_ID || process.env.STRIPE_PRICE_ID!
+      : await getStandardPriceId()
     const appUrl = process.env.APP_URL || 'https://calledtocompete.app'
 
     const { data: profile } = await supabase
