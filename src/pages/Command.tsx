@@ -596,7 +596,12 @@ export default function Command() {
       {/* Roster */}
       <div className="animate-slide-up [animation-delay:300ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5">
         <div className="flex items-center justify-between mb-3">
-          <p className="font-display font-semibold">Athlete Roster</p>
+          <div className="flex items-center gap-2">
+            <p className="font-display font-semibold">Athlete Roster</p>
+            {totalUnread > 0 && (
+              <span className="text-[9px] font-bold bg-red-400/15 text-red-400 px-1.5 py-0.5 rounded-full">{totalUnread} unread</span>
+            )}
+          </div>
           <button
             onClick={loadAthletes}
             className="text-text-muted hover:text-text-secondary transition-colors"
