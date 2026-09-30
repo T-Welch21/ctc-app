@@ -597,7 +597,7 @@ export default function Command() {
       <div className="animate-slide-up [animation-delay:300ms] opacity-0 rounded-2xl bg-bg-card border border-border p-5">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <p className="font-display font-semibold">Athlete Roster</p>
+            <p className="font-display font-semibold">Clients</p>
             {totalUnread > 0 && (
               <span className="text-[9px] font-bold bg-red-400/15 text-red-400 px-1.5 py-0.5 rounded-full">{totalUnread} unread</span>
             )}
@@ -614,7 +614,7 @@ export default function Command() {
         <div className="flex gap-1.5 mb-3 overflow-x-auto">
           {([
             { key: 'all' as RosterFilter, label: 'All', count: nonCoachAthletes.length },
-            { key: 'app' as RosterFilter, label: 'App', count: appSubCount },
+            { key: 'app' as RosterFilter, label: 'Online', count: appSubCount },
             { key: 'in_person' as RosterFilter, label: 'In-Person', count: inPersonCount },
             { key: 'free' as RosterFilter, label: 'Free', count: nonCoachAthletes.length - appSubCount - inPersonCount },
           ]).map((f) => (
@@ -636,7 +636,7 @@ export default function Command() {
           <div className="py-8 text-center">
             <Users size={32} className="text-text-muted mx-auto mb-2" />
             <p className="text-text-muted text-sm">
-              {rosterFilter === 'all' ? 'No athletes yet' : `No ${rosterFilter} athletes`}
+              {rosterFilter === 'all' ? 'No clients yet' : `No ${rosterFilter === 'app' ? 'online' : rosterFilter === 'in_person' ? 'in-person' : 'free'} clients`}
             </p>
           </div>
         ) : (
