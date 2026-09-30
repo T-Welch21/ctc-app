@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const profile: User = { id: data.user.id, email, name, onboarded: false }
       saveLocalProfile(profile)
       await syncProfile(profile)
-      sendWelcomeEmail(data.user.id, name)
+      sendWelcomeEmail(name)
     }
 
     if (data.user && !data.session) {
@@ -187,7 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
-async function sendWelcomeEmail(userId: string, name: string) {
+async function sendWelcomeEmail(name: string) {
   try {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session?.access_token) return
