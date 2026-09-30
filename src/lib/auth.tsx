@@ -143,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const profile: User = { id: data.user.id, email, name, onboarded: false }
       saveLocalProfile(profile)
       await syncProfile(profile)
+      sendWelcomeEmail(data.user.id, name)
     }
 
     if (data.user && !data.session) {
@@ -184,6 +185,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   )
+}
+
+async function sendWelcomeEmail(userId: string, name: string) {
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token) return
+    fetch('/api/welcome-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ name }),
+    })
+  } catch {
+    // non-blocking
+  }
 }
 
 export function useAuth() {
