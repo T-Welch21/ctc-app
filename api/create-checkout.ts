@@ -60,7 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Founding Member window: $29 price until the deadline, then the standard price.
     // Keep in sync with FOUNDING_DEADLINE in src/lib/pricing.ts.
-    const foundingDeadline = new Date('2026-10-23T05:00:00Z')
+    const foundingDeadline = new Date('2026-10-26T05:00:00Z')
     const priceId = new Date() < foundingDeadline
       ? process.env.STRIPE_PRICE_ID!
       : await getStandardPriceId()

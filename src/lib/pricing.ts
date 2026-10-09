@@ -3,7 +3,7 @@
 // founding members stay at $29 for life after the switch.
 // Keep FOUNDING_DEADLINE in sync with api/create-checkout.ts.
 
-export const FOUNDING_DEADLINE = new Date('2026-10-23T05:00:00Z') // Thu Oct 22, 11:59 pm Central
+export const FOUNDING_DEADLINE = new Date('2026-10-26T05:00:00Z') // Sun Oct 25, 11:59 pm Central
 export const FOUNDING_PRICE = 29
 export const STANDARD_PRICE = 39
 
